@@ -15,7 +15,6 @@ module.exports = {
       },
       sku: {
         type: Sequelize.STRING,
-        allowNull: false,
         unique: true
       },
       price: {
