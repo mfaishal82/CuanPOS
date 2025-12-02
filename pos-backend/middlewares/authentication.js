@@ -1,7 +1,7 @@
 const { User } = require("../models")
 const { verifyToken } = require("../helpers/jwt")
 
-async function authentication(req, res, next) {
+async function Authentication(req, res, next) {
   try {
     const accessToken = req.headers.authentication
     if(!accessToken) {
@@ -30,3 +30,5 @@ async function authentication(req, res, next) {
     next(error)
   }
 }
+
+module.exports = Authentication

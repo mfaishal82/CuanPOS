@@ -1,9 +1,11 @@
 const express = require('express');
+const Authentication = require('../middlewares/authentication');
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-  res.send('Server is running normally 🚀')
-})
 router.use('/auth', require('./userRouter'))
+
+router.use(Authentication)
+
+router.get('/product')
 
 module.exports = router;
