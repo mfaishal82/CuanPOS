@@ -2,8 +2,9 @@ const { User } = require("../models")
 const { verifyToken } = require("../helpers/jwt")
 
 async function Authentication(req, res, next) {
+  console.log("AUTHENTICATION MIDDLEWARE JALAN")
   try {
-    const accessToken = req.headers.authentication
+    const accessToken = req.headers.authorization
     if(!accessToken) {
       throw { name: "Unauthorized" }
     }
@@ -14,7 +15,9 @@ async function Authentication(req, res, next) {
     }
 
     const payload = verifyToken(token)
+    console.log(payload)
     const user = await User.findByPk(payload.id)
+    console.log("user.role:", user.role)
 
     if(!user) {
       throw { name: "Unauthorized" }

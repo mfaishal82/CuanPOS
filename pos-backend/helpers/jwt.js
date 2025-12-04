@@ -1,7 +1,7 @@
 const { sign, verify } = require("jsonwebtoken")
-const secret = process.env.JWT_SECRET
+const secret = process.env.JWT_SECRET || 'rahasiaaaa'
 
 module.exports = {
-  signToken : (payload) => sign(payload, secret, { expiresIn: '7d' }),
+  signToken : (payload) => sign(payload, secret),
   verifyToken : (token) => verify(token, secret)
 }

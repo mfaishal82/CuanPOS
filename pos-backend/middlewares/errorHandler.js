@@ -17,10 +17,14 @@ async function errorHandler(error, req, res, next) {
     case "Unauthorized":
       status = 403
       message = "Forbidden"
+      break
     case "NotFound":
       status = 404
       message = "Error not found"
+      break
   }
 
   res.status(status).json({ message })
 }
+
+module.exports = errorHandler
