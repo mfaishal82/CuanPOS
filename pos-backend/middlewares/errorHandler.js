@@ -22,6 +22,9 @@ async function errorHandler(error, req, res, next) {
       status = 404
       message = "Error not found"
       break
+    case "InsufficientStock":
+      status = 400
+      message = "Product stock is not enough"
   }
 
   res.status(status).json({ message })

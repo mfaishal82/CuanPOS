@@ -3,20 +3,25 @@ const { Op } = require("sequelize")
 
 class PurchaseController{
   static async addPurchaseItem(req, res, next){
+    const t = await sequelize.transaction()
     try{
       const { purchase_id, product_id, quantity } = req.body
 
-      const t = await sequelize.transaction()
       const product = await Product.findByPk(product_id, { transaction: t })
       if(!product) throw { name: "NotFound" }
 
-      const purchase = await Purchase.findByPk(purchase_id, { transaction: t })
-      if(!purchase) throw { name: "NotFound" }
+      let purchase = await Purchase.findByPk(purchase_id, { transaction: t })
+      if(!purchase) {
+        purchase = await Purchase.create({
+          user_id: req.user.id,
+          total_cost: 0
+        }, { transaction: t })
+      }
 
       const subtotal = quantity * product.cost_price
 
       await PurchaseItem.create({
-        purchase_id,
+        purchase_id: purchase.id,
         product_id,
         quantity,
         cost_price: product.cost_price,
@@ -29,8 +34,8 @@ class PurchaseController{
 
       const allItems = await PurchaseItem.findAll({
         where: {
-          purchase_id
-        }
+          purchase_id: purchase.id
+        },
       }, { transaction: t })
 
       let totalCost = 0
