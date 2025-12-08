@@ -2,6 +2,50 @@ const { Purchase, PurchaseItem, Product, sequelize } = require("../models")
 const { Op } = require("sequelize")
 
 class PurchaseController{
+  static async getAllPurchases(req, res, next){
+    try{
+      const purchases = await Purchase.findAll({
+        include: [{
+          model: PurchaseItem,
+          include: [{
+            model: Product,
+            attributes: ['id', 'name', 'cost_price']
+          }]
+        }],
+        order: [[ 'updatedAt', 'DESC' ]]
+      })
+
+      res.status(200).json({
+        message: "Success get all purchases",
+        data: {
+          purchases
+        }
+      })
+    }catch(error){
+      next(error)
+    }
+  }
+
+  static async getPurchaseById(req, res, next){
+    try{
+      const id = req.params.id
+      const purchase = await Purchase.findByPk(id, {
+        include: [{
+          model: PurchaseItem,
+          include: [{
+            model: Product,
+            attributes: ['id', 'name', 'cost_price']
+          }]
+        }]
+      })
+      if(!purchase) throw { name: "NotFound" }
+
+      res.status(200).json(purchase)
+    }catch(error){
+      next(error)
+    }
+  }
+
   static async addPurchaseItem(req, res, next){
     const t = await sequelize.transaction()
     try{
@@ -40,7 +84,7 @@ class PurchaseController{
 
       let totalCost = 0
       for (let i = 0; i < allItems.length; i++){
-        console.log(allItems[i])
+        // console.log(allItems[i])
         totalCost = totalCost + allItems[i].subtotal
       }
 

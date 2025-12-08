@@ -29,7 +29,15 @@ class SaleController {
   static async getSaleById(req, res, next){
     try{
       const id = req.params.id
-      const sale = await Sale.findByPk(id)
+      const sale = await Sale.findByPk(id, {
+        include: [{
+          model: SaleItem,
+          include: [{
+            model: Product,
+            attributes: ['id', 'name', 'price']
+          }]
+        }]
+      })
       if(!sale) throw { name: "NotFound" }
 
       res.status(200).json({
