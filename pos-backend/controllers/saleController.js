@@ -2,6 +2,47 @@ const { invoiceGenerator } = require("../helpers/invoiceGenerator")
 const { Sale, SaleItem, Product, sequelize } = require("../models")
 
 class SaleController {
+  static async getAllSales(req, res, next){
+    try{
+      const allSales = await Sale.findAll({
+        include: [{
+          model: SaleItem,
+          include: [{
+            model: Product,
+            attributes: ['id', 'name', 'price']
+          }]
+        }],
+        order: [['updatedAt', 'DESC']]
+      })
+
+      res.status(200).json({
+        message: "Success get all sales",
+        data: {
+          allSales
+        }
+      })
+    }catch(error){
+      next(error)
+    }
+  }
+
+  static async getSaleById(req, res, next){
+    try{
+      const id = req.params.id
+      const sale = await Sale.findByPk(id)
+      if(!sale) throw { name: "NotFound" }
+
+      res.status(200).json({
+        message: "Success get sale",
+        data: {
+          sale
+        }
+      })
+    }catch(error){
+      next(error)
+    }
+  }
+
   static async addSaleItem(req, res, next){
     const t = await sequelize.transaction()
     try{
