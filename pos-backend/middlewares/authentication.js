@@ -15,9 +15,9 @@ async function Authentication(req, res, next) {
     }
 
     const payload = verifyToken(token)
-    console.log(payload)
+    // console.log(payload)
     const user = await User.findByPk(payload.id)
-    console.log("user.role:", user.role)
+    // console.log("user.role:", user.role)
 
     if(!user) {
       throw { name: "Unauthorized" }

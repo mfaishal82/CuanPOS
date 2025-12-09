@@ -11,7 +11,7 @@ router.use(Authentication)
 router.use('/product', require('./productRouter'))
 router.use('/category', require('./categoryRouter'))
 router.use('/purchase', require('./purchaseRouter'))
-// router.get('/sale', require('./'))
+router.use('/sale', require('./saleRouter'))
 router.use(errorHandler)
 
 module.exports = router;
