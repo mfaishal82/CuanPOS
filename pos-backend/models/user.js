@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       User.hasMany(models.Purchase, { foreignKey: 'user_id' })
-      User.hasMany(models.User, { foreignKey: 'user_id' })
     }
   }
   User.init({
