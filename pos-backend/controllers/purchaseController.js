@@ -73,7 +73,7 @@ class PurchaseController{
       }, { transaction: t })
 
       await product.update({
-        stock: product.stock + quantity
+        stock: product.stock + parseInt(quantity)
       }, { transaction: t })
 
       const allItems = await PurchaseItem.findAll({

@@ -18,7 +18,12 @@ module.exports = (sequelize, DataTypes) => {
   PurchaseItem.init({
     purchase_id: DataTypes.INTEGER,
     product_id: DataTypes.INTEGER,
-    quantity: DataTypes.INTEGER,
+    quantity: {
+      type: DataTypes.INTEGER,
+      validate: {
+        isInt: true
+      }
+    },
     cost_price: DataTypes.INTEGER,
     subtotal: DataTypes.INTEGER
   }, {

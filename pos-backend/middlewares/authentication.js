@@ -2,7 +2,7 @@ const { User } = require("../models")
 const { verifyToken } = require("../helpers/jwt")
 
 async function Authentication(req, res, next) {
-  console.log("AUTHENTICATION MIDDLEWARE JALAN")
+  // console.log("AUTHENTICATION MIDDLEWARE JALAN")
   try {
     const accessToken = req.headers.authorization
     if(!accessToken) {
