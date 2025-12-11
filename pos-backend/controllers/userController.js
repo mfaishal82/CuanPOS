@@ -27,7 +27,16 @@ class UserController {
         username: user.username,
       })
 
-      res.status(200).json({acessToken: token})
+      res.cookie(
+        'token', token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'none',
+          // domain: '.aws.com'
+        }
+      )
+
+      res.status(200).json({ message: "Login Success" })
     } catch (error) {
       // res.status(500).json({message: "error test"})
       next(error);

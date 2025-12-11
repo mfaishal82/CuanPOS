@@ -4,17 +4,19 @@ const { verifyToken } = require("../helpers/jwt")
 async function Authentication(req, res, next) {
   // console.log("AUTHENTICATION MIDDLEWARE JALAN")
   try {
-    const accessToken = req.headers.authorization
+    // const accessToken = req.headers.authorization
+    const accessToken = req.cookies.token
+    // console.log(accessToken)
     if(!accessToken) {
       throw { name: "Unauthorized" }
     }
 
-    const [type, token] = accessToken.split(" ")
-    if(type !== "Bearer") {
-      throw { name: "Unauthorized" }
-    }
+    // const [type, token] = accessToken.split(" ")
+    // if(type !== "Bearer") {
+    //   throw { name: "Unauthorized" }
+    // }
 
-    const payload = verifyToken(token)
+    const payload = verifyToken(accessToken)
     // console.log(payload)
     const user = await User.findByPk(payload.id)
     // console.log("user.role:", user.role)
