@@ -1,17 +1,43 @@
 const { Product, User, Category } = require("../models")
-
+const { Op } = require('sequelize')
 class ProductController {
   static async getProducts(req, res, next) {
     try{
-      const products = await Product.findAll({
+      let { page, limit, searchProduct } = req.query
+      page = parseInt(page) || 1
+      limit = parseInt(limit) || 10
+      let offset = (page - 1) * limit
+
+      let option = searchProduct ? {
+          name: {
+            [Op.iLike] : `%${searchProduct}%`
+          }
+      } : ''
+
+      // doc sequelize:
+      // https://sequelize.org/docs/v6/core-concepts/model-querying-finders/#findandcountall
+
+      const { count, rows } = await Product.findAndCountAll({
+        message: `${searchProduct ? 'Success get ' + searchProduct : 'Success get all products'}`,
+        where: option,
         include: {
           model: Category,
           attributes: ['name']
         },
-        order: [['id', 'ASC']]
+        order: [['updatedAt', 'DESC']],
+        offset,
+        limit
       })
 
-      res.status(200).json(products)
+      res.status(200).json({
+        pagination: {
+          page,
+          limit,
+          total: count,
+          totalPages: Math.ceil(count / limit)
+        },
+        data: rows
+      })
     } catch(error){
       next(error)
     }
