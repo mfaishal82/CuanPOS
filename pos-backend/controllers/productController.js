@@ -1,3 +1,4 @@
+const redis = require("../helpers/redis")
 const { Product, User, Category } = require("../models")
 const { Op } = require('sequelize')
 
@@ -28,6 +29,11 @@ class ProductController {
         offset,
         limit
       })
+
+      // console.log(rows[0].dataValues)
+      // await redis.set('products', 'test')
+      // const cekredis = await redis.get('products')
+      // console.log(cekredis)
 
       res.status(200).json({
         message: `${searchProduct ? 'Success get product name: ' + searchProduct : 'Success get all products'}`,

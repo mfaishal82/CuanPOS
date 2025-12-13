@@ -1,6 +1,6 @@
 const { createClient } =  require('redis');
 
-const client = createClient({
+const redis = createClient({
     socket: {
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT
@@ -9,16 +9,16 @@ const client = createClient({
     password: process.env.REDIS_PASSWORD,
 });
 
-client.on('error', err => console.log('Redis Client Error', err));
+redis.on('error', err => console.log('Redis Client Error', err));
 
-async function testRedis(){
-  await client.connect();
+// async function testRedis(){
+//   await redis.connect();
 
-  await client.set('foo', 'bar');
-  const result = await client.get('foo');
-  console.log(result)  // >>> bar
-}
+//   await redis.set('foo', 'bar');
+//   const result = await redis.get('foo');
+//   console.log("Redis lewat")  // >>> bar
+// }
 
-testRedis()
+// testRedis()
 
-module.exports = client
+module.exports = redis
