@@ -1,6 +1,7 @@
 const { comparePassword, hashPassword } = require('../helpers/bcrypt');
 const { signToken } = require('../helpers/jwt');
 const { User } = require('../models');
+const { Op } = require('sequelize')
 
 class UserController {
   static async login(req, res, next) {
@@ -70,13 +71,39 @@ class UserController {
 
   static async getUsers(req, res, next){
     try{
-      const users = await User.findAll({
+      let { page, limit, searchUser, filter } = req.query
+      page = parseInt(page) || 1
+      limit = parseInt(limit) || 10
+      let offset = (page - 1) * limit
+
+      let option = searchUser ? {
+          name: {
+            [Op.iLike]: `%${searchUser}%`
+          },
+          username: {
+            [Op.iLike]: `%${searchUser}%`
+          },
+      } : {}
+
+      const { count, rows } = await User.findAndCountAll({
         attributes: {
           exclude: ['password']
-        }
+        },
+        where: option,
+        offset,
+        limit
       })
 
-      res.status(200).json(users)
+      res.status(200).json({
+        message: `Success get ` + searchUser ? searchUser : 'all users',
+        pagination: {
+          page,
+          limit,
+          total: count,
+          totalPages: Math.ceil(count / limit)
+        },
+        data: rows
+      })
     }catch(error){
       next(error)
     }
