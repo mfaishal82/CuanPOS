@@ -71,18 +71,21 @@ class UserController {
 
   static async getUsers(req, res, next){
     try{
-      let { page, limit, searchUser, filter } = req.query
+      let { page, limit, searchUser } = req.query
       page = parseInt(page) || 1
       limit = parseInt(limit) || 10
       let offset = (page - 1) * limit
 
       let option = searchUser ? {
+        [Op.or]: [{
           name: {
             [Op.iLike]: `%${searchUser}%`
-          },
+          }
+        }, {
           username: {
             [Op.iLike]: `%${searchUser}%`
-          },
+          }
+        }]
       } : {}
 
       const { count, rows } = await User.findAndCountAll({

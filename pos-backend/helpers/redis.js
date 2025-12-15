@@ -1,4 +1,5 @@
 const { createClient } =  require('redis');
+// require('dotenv').config()
 
 const redis = createClient({
     socket: {
@@ -11,14 +12,14 @@ const redis = createClient({
 
 redis.on('error', err => console.log('Redis Client Error', err));
 
-// async function testRedis(){
-//   await redis.connect();
+async function connectRedis(){
+  await redis.connect();
 
-//   await redis.set('foo', 'bar');
-//   const result = await redis.get('foo');
-//   console.log("Redis lewat")  // >>> bar
-// }
+  // await redis.set('foo', 'bar');
+  // const result = await redis.get('foo');
+  // console.log(result, ">>> Redis lewat")  // >>> bar
+}
 
-// testRedis()
+connectRedis()
 
 module.exports = redis

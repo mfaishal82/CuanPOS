@@ -8,9 +8,17 @@ class ProductController {
       let { page, limit, searchProduct } = req.query
       page = parseInt(page) || 1
       limit = parseInt(limit) || 10
-      let offset = (page - 1) * limit // example: page 1 - 1 = 0 x 10 = 0 <-- offset / batas bawah
+      const offset = (page - 1) * limit // example: page 1 - 1 = 0 x 10 = 0 <-- offset / batas bawah
 
-      let option = searchProduct ? {
+      const cacheKey = `products:${page}:${limit}:${searchProduct || 'all'}`
+      const cacheData = await redis.get(cacheKey)
+      if(cacheData) {
+        return res.status(200).json(JSON.parse(cacheData))
+      }
+      console.log(cacheKey, '(<=== ini cache key')
+      console.log(cacheData, '(<=== ini cache data')
+
+      const option = searchProduct && searchProduct !== 'all' ? {
           name: {
             [Op.iLike] : `%${searchProduct}%`
           }
@@ -30,12 +38,10 @@ class ProductController {
         limit
       })
 
-      // console.log(rows[0].dataValues)
-      // await redis.set('products', 'test')
       // const cekredis = await redis.get('products')
       // console.log(cekredis)
 
-      res.status(200).json({
+      const response = {
         message: `${searchProduct ? 'Success get product name: ' + searchProduct : 'Success get all products'}`,
         pagination: {
           page,
@@ -44,7 +50,11 @@ class ProductController {
           totalPages: Math.ceil(count / limit)
         },
         data: rows
-      })
+      }
+
+      await redis.set(cacheKey, JSON.stringify(response))
+
+      res.status(200).json(response)
     } catch(error){
       next(error)
     }
@@ -70,6 +80,11 @@ class ProductController {
 
       await Product.create({name, price, cost_price, stock, category_id})
 
+      const keys = await redis.keys('products:*')
+      if(keys.length > 0) {
+        await redis.del(keys)
+      }
+
       res.status(201).json({
         message: "Success"
       })
@@ -90,6 +105,11 @@ class ProductController {
 
       await product.update({ name, price, cost_price, stock, category_id })
 
+      const keys = await redis.keys('products:*')
+      if(keys.length > 0) {
+        await redis.del(keys)
+      }
+
       res.status(200).json({
         message: "Update success"
       })
@@ -108,6 +128,12 @@ class ProductController {
       }
 
       await product.destroy()
+
+      const keys = await redis.keys('products:*')
+      if(keys.length > 0) {
+        await redis.del(keys)
+      }
+
       res.status(200).json({
         message: "Delete Success"
       })
