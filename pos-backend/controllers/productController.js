@@ -1,7 +1,7 @@
 const redis = require("../helpers/redis")
 const { Product, User, Category } = require("../models")
 const { Op } = require('sequelize')
-
+const ImageKit = require('@imagekit/nodejs');
 
 class ProductController {
   static async getProducts(req, res, next) {
@@ -78,9 +78,30 @@ class ProductController {
 
   static async createProduct(req, res, next){
     try{
-      const { name, price, cost_price, image, stock, category_id } = req.body
+      const { name, price, cost_price, stock, category_id } = req.body
+      let checkType = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp']
 
-      await Product.create({name, price, cost_price, image, stock, category_id})
+      if(!checkType.includes(req.file.mimeType)) {
+        throw { name: "BadRequest" }
+      }
+
+      const client = new ImageKit({
+        privateKey: process.env['IMAGEKIT_PRIVATE_KEY'], // This is the default and can be omitted
+        publicKey: process.env['IMAGEKIT_PUBLIC_KEY'], // This is the default and can be omitted
+        urlEndpoint: process.env['IMAGEKIT_URL_ENDPOINT'], // This is the default and can be omitted
+      });
+
+      // console.log(req.file)
+
+      const response = await client.files.upload({
+        file: req.file.buffer.toString('base64'),
+        fileName: `${name}-${new Date().toISOString()}`,
+        folder: '/products'
+      });
+
+      // console.log(response);
+
+      await Product.create({name, price, cost_price, image: response.url, stock, category_id})
 
       const keys = await redis.keys('products:*')
       if(keys.length > 0) {
@@ -91,6 +112,10 @@ class ProductController {
         message: "Success"
       })
     }catch(error){
+      // console.log('Error name:', error.name)
+      // console.log('Error message:', error.message)
+      // console.log('Error response:', error.response)  // ← ImageKit error detail
+      // console.log('Full error:', error)
       next(error)
     }
   }

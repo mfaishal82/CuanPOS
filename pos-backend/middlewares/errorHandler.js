@@ -25,6 +25,10 @@ async function errorHandler(error, req, res, next) {
     case "InsufficientStock":
       status = 400
       message = "Product stock is not enough"
+      break
+    case "BadRequest":
+      status = 400
+      message = "Only PNG, JPG, JPEG, WEBP are allowed"
   }
 
   res.status(status).json({ message })
