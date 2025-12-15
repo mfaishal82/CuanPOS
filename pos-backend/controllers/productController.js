@@ -2,6 +2,7 @@ const redis = require("../helpers/redis")
 const { Product, User, Category } = require("../models")
 const { Op } = require('sequelize')
 
+
 class ProductController {
   static async getProducts(req, res, next) {
     try{
