@@ -77,9 +77,9 @@ class ProductController {
 
   static async createProduct(req, res, next){
     try{
-      const { name, price, cost_price, stock, category_id } = req.body
+      const { name, price, cost_price, image, stock, category_id } = req.body
 
-      await Product.create({name, price, cost_price, stock, category_id})
+      await Product.create({name, price, cost_price, image, stock, category_id})
 
       const keys = await redis.keys('products:*')
       if(keys.length > 0) {

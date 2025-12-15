@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         min: 0
       }
     },
+    image: {
+      type: DataTypes.STRING,
+      defaultValue: ''
+    },
     stock: {
       type: DataTypes.INTEGER,
       validate: {
