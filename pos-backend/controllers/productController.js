@@ -13,10 +13,11 @@ class ProductController {
       const cacheKey = `products:${page}:${limit}:${searchProduct || 'all'}`
       const cacheData = await redis.get(cacheKey)
       if(cacheData) {
+        // console.log("lewat")
         return res.status(200).json(JSON.parse(cacheData))
       }
-      console.log(cacheKey, '(<=== ini cache key')
-      console.log(cacheData, '(<=== ini cache data')
+      // console.log(cacheKey, '(<=== ini cache key')
+      // console.log(cacheData, '(<=== ini cache data')
 
       const option = searchProduct && searchProduct !== 'all' ? {
           name: {
