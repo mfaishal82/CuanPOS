@@ -34,6 +34,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: ''
     },
+    imageId: {
+      type: DataTypes.STRING,
+    },
     stock: {
       type: DataTypes.INTEGER,
       validate: {

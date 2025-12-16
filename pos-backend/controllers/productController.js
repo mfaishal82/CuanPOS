@@ -1,7 +1,8 @@
+const { randomUUID } = require("crypto")
+const imageKit = require("../helpers/imagekit")
 const redis = require("../helpers/redis")
 const { Product, User, Category } = require("../models")
 const { Op } = require('sequelize')
-const ImageKit = require('@imagekit/nodejs');
 
 class ProductController {
   static async getProducts(req, res, next) {
@@ -81,27 +82,24 @@ class ProductController {
       const { name, price, cost_price, stock, category_id } = req.body
       let checkType = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp']
 
-      if(!checkType.includes(req.file.mimeType)) {
+      console.log(req.file)
+      if(!checkType.includes(req.file.mimetype)) {
         throw { name: "BadRequest" }
       }
 
-      const client = new ImageKit({
-        privateKey: process.env['IMAGEKIT_PRIVATE_KEY'], // This is the default and can be omitted
-        publicKey: process.env['IMAGEKIT_PUBLIC_KEY'], // This is the default and can be omitted
-        urlEndpoint: process.env['IMAGEKIT_URL_ENDPOINT'], // This is the default and can be omitted
-      });
+      // https://github.com/imagekit-developer/imagekit-nodejs
 
       // console.log(req.file)
 
-      const response = await client.files.upload({
+      const response = await imageKit.files.upload({
         file: req.file.buffer.toString('base64'),
-        fileName: `${name}-${new Date().toISOString()}`,
+        fileName: `${name}-${randomUUID()}.png`,
         folder: '/products'
       });
 
-      // console.log(response);
+      console.log(response);
 
-      await Product.create({name, price, cost_price, image: response.url, stock, category_id})
+      await Product.create({name, price, cost_price, image: response.url, imageId: response.fileId, stock, category_id})
 
       const keys = await redis.keys('products:*')
       if(keys.length > 0) {
@@ -130,7 +128,26 @@ class ProductController {
         throw { name: "NotFound" }
       }
 
-      await product.update({ name, price, cost_price, stock, category_id })
+      let fileId = product.imageId
+
+      let checkImage = await imageKit.files.get(fileId)
+      // console.log(checkImage, "<<< checkImage")
+
+      if(!checkImage) {
+        throw { name: "NotFound" }
+      }
+
+      await imageKit.files.delete(fileId)
+
+      const response = await imageKit.files.upload({
+        file: req.file.buffer.toString('base64'),
+        fileName: `${product.name}-${randomUUID()}.png`,
+        folder: '/products'
+      })
+      // console.log("masuk")
+      // console.log(response)
+
+      await product.update({ name, price, cost_price, stock, image:response.url, imageId:response.fileId, category_id })
 
       const keys = await redis.keys('products:*')
       if(keys.length > 0) {
@@ -154,7 +171,10 @@ class ProductController {
         throw { name: "NotFound" }
       }
 
+      const fileId = product.imageId
+
       await product.destroy()
+      await imageKit.files.delete(fileId)
 
       const keys = await redis.keys('products:*')
       if(keys.length > 0) {
