@@ -1,13 +1,19 @@
 const { Category, Product } = require("../models")
-
+const { Op } = require('sequelize')
 class CategoryController {
 
   static async getCategories(req, res, next) {
     try{
+      let { searchCategory } = req.query
       const categories = await Category.findAll({
         include: {
           model: Product,
           attributes: ['name', 'sku', 'price', 'cost_price', 'stock']
+        },
+        where: {
+          name: {
+            [Op.iLike] : `%${searchCategory}%`
+          }
         }
       })
 
