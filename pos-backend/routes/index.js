@@ -3,6 +3,10 @@ const Authentication = require('../middlewares/authentication');
 const errorHandler = require('../middlewares/errorHandler');
 const router = express.Router();
 
+router.get('/', (req, res) => {
+  res.status(200).json({ message: 'Server is running'})
+})
+
 router.use('/auth', require('./userRouter'))
 
 router.use(Authentication)

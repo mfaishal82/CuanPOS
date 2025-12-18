@@ -7,12 +7,12 @@ const { Op } = require('sequelize')
 class ProductController {
   static async getProducts(req, res, next) {
     try{
-      let { page, limit, searchProduct } = req.query
+      let { page, limit, searchProduct, order, sort } = req.query
       page = parseInt(page) || 1
       limit = parseInt(limit) || 10
       const offset = (page - 1) * limit // example: page 1 - 1 = 0 x 10 = 0 <-- offset / batas bawah
 
-      const cacheKey = `products:${page}:${limit}:${searchProduct || 'all'}`
+      const cacheKey = `products:${page}:${limit}:${searchProduct || 'all'}:${order || 'updatedAt'}:${sort || 'DESC'}`
       const cacheData = await redis.get(cacheKey)
       if(cacheData) {
         // console.log("lewat")
@@ -36,7 +36,7 @@ class ProductController {
           model: Category,
           attributes: ['name']
         },
-        order: [['updatedAt', 'DESC']],
+        order: [[`${order ? order : 'updatedAt'}`, `${sort ? sort.toUpperCase() : 'DESC'}`]],
         offset,
         limit
       })
