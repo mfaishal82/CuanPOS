@@ -1,0 +1,11 @@
+const { ImageKit } = require("@imagekit/nodejs/client.js");
+
+const imageKit = new ImageKit({
+  privateKey: process.env['IMAGEKIT_PRIVATE_KEY'], // This is the default and can be omitted
+  publicKey: process.env['IMAGEKIT_PUBLIC_KEY'], // This is the default and can be omitted
+  urlEndpoint: process.env['IMAGEKIT_URL_ENDPOINT'], // This is the default and can be omitted
+});
+
+module.exports = imageKit
+
+      // https://github.com/imagekit-developer/imagekit-nodejs
