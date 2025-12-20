@@ -11,12 +11,19 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      PurchaseItem.belongsTo(models.Purchase, { foreignKey: "purchase_id" })
+      PurchaseItem.belongsTo(models.Product, { foreignKey: "product_id" })
     }
   }
   PurchaseItem.init({
     purchase_id: DataTypes.INTEGER,
     product_id: DataTypes.INTEGER,
-    quantity: DataTypes.INTEGER,
+    quantity: {
+      type: DataTypes.INTEGER,
+      validate: {
+        isInt: true
+      }
+    },
     cost_price: DataTypes.INTEGER,
     subtotal: DataTypes.INTEGER
   }, {

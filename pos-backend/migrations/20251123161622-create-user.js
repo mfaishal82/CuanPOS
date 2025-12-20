@@ -21,6 +21,12 @@ module.exports = {
       password: {
         type: Sequelize.STRING,
         allowNull: false,
+        validate: {
+          len: {
+            args: [8, 14],
+            msg: 'Password length should be between 8 and 14 characters'
+          }
+        }
       },
       role: {
         type: Sequelize.ENUM("admin", "cashier"),

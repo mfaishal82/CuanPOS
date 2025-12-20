@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      SaleItem.belongsTo(models.Sale, { foreignKey: "sale_id" })
+      SaleItem.belongsTo(models.Product, { foreignKey: "product_id" })
     }
   }
   SaleItem.init({
