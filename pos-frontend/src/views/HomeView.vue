@@ -8,9 +8,7 @@
     <div class="max-w-7xl mx-auto flex flex-col gap-8">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1
-            class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight"
-          >
+          <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
             Halo, Budi Santoso 👋
           </h1>
           <p class="text-slate-500 dark:text-slate-400 mt-1">

@@ -291,9 +291,7 @@
             "
           ></div>
           <div class="flex-1 min-w-0">
-            <h4 class="font-semibold text-secondary dark:text-white truncate">
-              Roti Bakar Coklat
-            </h4>
+            <h4 class="font-semibold text-secondary dark:text-white truncate">Roti Bakar Coklat</h4>
             <div class="text-sm text-primary font-medium">Rp 15.000</div>
           </div>
           <div

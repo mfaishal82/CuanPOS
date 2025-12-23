@@ -183,9 +183,7 @@
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                  <tr
-                    class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors"
-                  >
+                  <tr class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
                     <td class="px-6 py-4">
                       <div class="flex items-center gap-3">
                         <div
@@ -246,9 +244,7 @@
                       </div>
                     </td>
                   </tr>
-                  <tr
-                    class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors"
-                  >
+                  <tr class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
                     <td class="px-6 py-4">
                       <div class="flex items-center gap-3">
                         <div
@@ -268,9 +264,7 @@
                         </div>
                       </div>
                     </td>
-                    <td class="px-6 py-4 font-mono text-gray-600 dark:text-gray-400">
-                      WH-BT-500
-                    </td>
+                    <td class="px-6 py-4 font-mono text-gray-600 dark:text-gray-400">WH-BT-500</td>
                     <td class="px-6 py-4 text-gray-600 dark:text-gray-400">Accessories</td>
                     <td class="px-6 py-4">
                       <div class="flex flex-col">
@@ -309,9 +303,7 @@
                       </div>
                     </td>
                   </tr>
-                  <tr
-                    class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors"
-                  >
+                  <tr class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
                     <td class="px-6 py-4">
                       <div class="flex items-center gap-3">
                         <div
@@ -331,9 +323,7 @@
                         </div>
                       </div>
                     </td>
-                    <td class="px-6 py-4 font-mono text-gray-600 dark:text-gray-400">
-                      SNK-RD-42
-                    </td>
+                    <td class="px-6 py-4 font-mono text-gray-600 dark:text-gray-400">SNK-RD-42</td>
                     <td class="px-6 py-4 text-gray-600 dark:text-gray-400">Footwear</td>
                     <td class="px-6 py-4">
                       <div class="flex flex-col">
@@ -372,9 +362,7 @@
                       </div>
                     </td>
                   </tr>
-                  <tr
-                    class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors"
-                  >
+                  <tr class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
                     <td class="px-6 py-4">
                       <div class="flex items-center gap-3">
                         <div
@@ -394,9 +382,7 @@
                         </div>
                       </div>
                     </td>
-                    <td class="px-6 py-4 font-mono text-gray-600 dark:text-gray-400">
-                      LB-BR-001
-                    </td>
+                    <td class="px-6 py-4 font-mono text-gray-600 dark:text-gray-400">LB-BR-001</td>
                     <td class="px-6 py-4 text-gray-600 dark:text-gray-400">Accessories</td>
                     <td class="px-6 py-4">
                       <div class="flex flex-col">
@@ -435,9 +421,7 @@
                       </div>
                     </td>
                   </tr>
-                  <tr
-                    class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors"
-                  >
+                  <tr class="group hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
                     <td class="px-6 py-4">
                       <div class="flex items-center gap-3">
                         <div
@@ -457,9 +441,7 @@
                         </div>
                       </div>
                     </td>
-                    <td class="px-6 py-4 font-mono text-gray-600 dark:text-gray-400">
-                      CNV-BL-39
-                    </td>
+                    <td class="px-6 py-4 font-mono text-gray-600 dark:text-gray-400">CNV-BL-39</td>
                     <td class="px-6 py-4 text-gray-600 dark:text-gray-400">Footwear</td>
                     <td class="px-6 py-4">
                       <div class="flex flex-col">

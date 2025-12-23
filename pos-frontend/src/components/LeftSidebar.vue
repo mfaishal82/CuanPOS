@@ -1,3 +1,22 @@
+<script setup>
+import { useRoute } from 'vue-router';
+
+
+const route = useRoute()
+// console.log(route, '<<< route saat ini')
+// console.log('Path:', route.path)
+// console.log('Name:', route.name)
+// console.log('Params:', route.params)
+// console.log('Query:', route.query)
+// result:
+//  '<<< route saat ini'
+// LeftSidebar.vue?t=1766444753733:26 Path: /sales
+// LeftSidebar.vue?t=1766444753733:27 Name: sales
+// LeftSidebar.vue?t=1766444753733:28 Params: {}
+// LeftSidebar.vue?t=1766444753733:29 Query: {}
+
+</script>
+
 <template>
   <aside
     class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-surface-dark hidden md:flex flex-col z-20"
@@ -15,8 +34,9 @@
     <div class="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-1.5">
       <RouterLink to="/">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary-dark dark:text-primary font-medium group transition-all duration-200"
-        >
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-dark dark:text-primary font-medium group transition-all duration-200"
+          :class="route.path === '/' ? 'bg-primary/10' : ''"
+          >
           <span class="material-symbols-outlined filled">dashboard</span>
           <span>Dashboard</span>
         </div>
@@ -25,7 +45,8 @@
       <RouterLink to="/sales">
         <div
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-        >
+          :class="route.path === '/sales' ? 'bg-primary/10' : ''"
+          >
           <span class="material-symbols-outlined">receipt_long</span>
           <span>Transaksi</span>
         </div>
@@ -34,7 +55,7 @@
       <RouterLink to="/product">
         <div
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          href="#"
+          :class="route.path === '/product' ? 'bg-primary/10' : ''"
         >
           <span class="material-symbols-outlined">inventory_2</span>
           <span>Produk</span>
@@ -44,7 +65,7 @@
       <RouterLink to="/inventory">
         <div
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          href="#"
+          :class="route.path === '/inventory' ? 'bg-primary/10' : ''"
         >
           <span class="material-symbols-outlined">package_2</span>
           <span>Inventaris</span>
@@ -70,8 +91,8 @@
           <span>Pengaturan</span>
         </div>
       </RouterLink>
-
     </div>
+
     <div class="p-4 border-t border-slate-200 dark:border-slate-800">
       <div
         class="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50"
@@ -84,7 +105,7 @@
           "
         ></div>
         <div class="flex-1 min-w-0">
-          <p class="text-sm font-medium truncate">Budi Santoso</p>
+          <p class="text-sm font-medium truncate">M Faisal</p>
           <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Admin Toko</p>
         </div>
         <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
