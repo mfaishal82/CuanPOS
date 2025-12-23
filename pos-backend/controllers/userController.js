@@ -51,12 +51,12 @@ class UserController {
     try {
       const { name, username, password, role } = req.body;
 
-      console.log(req.body)
+      // console.log(req.body)
       const newUser = await User.create({
         name, username, password, role
       })
 
-      console.log(newUser)
+      // console.log(newUser)
 
       res.status(201).json({
         id: newUser.id,
