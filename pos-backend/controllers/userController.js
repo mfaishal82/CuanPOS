@@ -111,6 +111,41 @@ class UserController {
       next(error)
     }
   }
+
+  static async editUserById(req, res, next){
+    try{
+      const id = req.params.id
+      const { name, username, password, status, role } = req.body
+
+      const user = await User.findByPk(id)
+      if(!user) throw { name: "NotFound" }
+
+      await user.update({ name, username, password, status, role })
+
+      res.status(200).json({
+        message: `Success update data for ${user.username}`
+      })
+    }catch(error){
+      next(error)
+    }
+  }
+
+  static async deleteUserById(req, res, next) {
+    try{
+      const id = req.params.id
+
+      const user = await User.findByPk(id)
+      if(!user) throw { name: "NotFound" }
+
+      await user.destroy()
+
+      res.status(200).json({
+        message: "Delete user success"
+      })
+    }catch(error){
+      next(error)
+    }
+  }
 }
 
 module.exports = UserController;

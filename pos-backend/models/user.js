@@ -36,7 +36,15 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    role: DataTypes.ENUM('admin', 'user')
+    role: DataTypes.ENUM('admin', 'user'),
+    image: {
+      type: DataTypes.STRING,
+      defaultValue: 'https://ik.imagekit.io/myfiles/vecteezy_male-profile-picture-placeholder-for-social-media-forum_.jpg'
+    },
+    status: {
+      type: DataTypes.ENUM('active', 'inactive'),
+      defaultValue: 'active'
+    }
   }, {
     sequelize,
     modelName: 'User',
