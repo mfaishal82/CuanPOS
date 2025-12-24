@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     image: {
       type: DataTypes.STRING,
-      defaultValue: ''
+      defaultValue: 'https://ik.imagekit.io/myfiles/default-image-1.jpg?updatedAt=1766536256955'
     },
     imageId: {
       type: DataTypes.STRING,
