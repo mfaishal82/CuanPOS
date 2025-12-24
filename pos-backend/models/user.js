@@ -28,8 +28,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: {msg: 'Password is required'},
-        notNull: {msg: 'Password is required'},
+        notEmpty: { msg: 'Password is required' },
+        notNull: { msg: 'Password is required' },
         len: {
           args: [8, 14],
           msg: 'Password length should be between 5 and 14 characters'
@@ -51,6 +51,11 @@ module.exports = (sequelize, DataTypes) => {
     hooks: {
       beforeCreate: (user) => {
         user.password = hashPassword(user.password)
+      },
+      beforeUpdate: (user) => {
+        if (user.changed('password')) {
+          user.password = hashPassword(user.password)
+        }
       }
     }
   });
