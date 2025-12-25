@@ -35,7 +35,7 @@ const route = useRoute()
       <RouterLink to="/">
         <div
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-dark dark:text-primary font-medium group transition-all duration-200"
-          :class="route.path === '/' ? 'bg-primary/10' : ''"
+          :class="route.path === '/' ? 'bg-primary/10' : 'hover:ml-2  hover:bg-slate-50'"
           >
           <span class="material-symbols-outlined filled">dashboard</span>
           <span>Dashboard</span>
@@ -44,8 +44,8 @@ const route = useRoute()
 
       <RouterLink to="/sales">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          :class="route.path === '/sales' ? 'bg-primary/10' : ''"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
+          :class="route.path === '/sales' ? 'bg-primary/10' : 'hover:ml-2 hover:bg-slate-50'"
           >
           <span class="material-symbols-outlined">receipt_long</span>
           <span>Transaksi</span>
@@ -54,8 +54,8 @@ const route = useRoute()
 
       <RouterLink to="/product">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          :class="route.path === '/product' ? 'bg-primary/10' : ''"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400  dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
+          :class="route.path === '/product' ? 'bg-primary/10' : 'hover:ml-2 hover:bg-slate-50'"
         >
           <span class="material-symbols-outlined">inventory_2</span>
           <span>Produk</span>
@@ -64,8 +64,8 @@ const route = useRoute()
 
       <RouterLink to="/inventory">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          :class="route.path === '/inventory' ? 'bg-primary/10' : ''"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:ml-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
+          :class="route.path === '/inventory' ? 'bg-primary/10' : 'hover:ml-2 hover:bg-slate-50'"
         >
           <span class="material-symbols-outlined">package_2</span>
           <span>Inventaris</span>

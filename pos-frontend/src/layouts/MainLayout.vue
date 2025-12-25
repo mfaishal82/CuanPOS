@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Header from '@/components/Header.vue'
+import MainHeader from '@/components/MainHeader.vue'
 import LeftSidebar from '@/components/LeftSidebar.vue'
 </script>
 
@@ -10,7 +10,7 @@ import LeftSidebar from '@/components/LeftSidebar.vue'
     <!-- End Sidebar -->
     <div class="flex-1 flex flex-col h-full min-w-0">
       <!-- Header -->
-      <Header></Header>
+      <MainHeader></MainHeader>
       <!-- End Header -->
       <RouterView></RouterView>
     </div>
