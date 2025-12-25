@@ -1,6 +1,7 @@
 <script setup>
+import useUserStore from '@/stores/userStore';
+import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-
 
 const route = useRoute()
 // console.log(route, '<<< route saat ini')
@@ -14,6 +15,7 @@ const route = useRoute()
 // LeftSidebar.vue?t=1766444753733:27 Name: sales
 // LeftSidebar.vue?t=1766444753733:28 Params: {}
 // LeftSidebar.vue?t=1766444753733:29 Query: {}
+const userStore = useUserStore()
 
 </script>
 
@@ -105,8 +107,8 @@ const route = useRoute()
           "
         ></div>
         <div class="flex-1 min-w-0">
-          <p class="text-sm font-medium truncate">M Faisal</p>
-          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Admin Toko</p>
+          <p class="text-sm font-medium truncate">{{ userStore.name }}</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ userStore.role }} Toko</p>
         </div>
         <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
           <span class="material-symbols-outlined text-[20px]">logout</span>

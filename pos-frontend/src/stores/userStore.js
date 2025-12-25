@@ -1,10 +1,11 @@
+import axios from "axios";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
 const useUserStore = defineStore('user', () => {
-  const name = ref("")
-  const username = ref("")
-  const role = ref("")
+  const name = ref("Muhammad Faisal")
+  const username = ref("mfaishal82")
+  const role = ref("Admin")
 
   function setUser(userData){
     name.value = userData.name
@@ -19,7 +20,12 @@ const useUserStore = defineStore('user', () => {
   }
 
   async function fetchUser(){
-
+    try{
+      const response = await axios.get("https://api-backend.biz.id/")
+      console.log(response.data)
+    }catch(error){
+      console.log(error)
+    }
   }
 
   return { name, username, role, setUser, clearUser, fetchUser }
