@@ -64,7 +64,7 @@ const route = useRoute()
 
       <RouterLink to="/inventory">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:ml-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
           :class="route.path === '/inventory' ? 'bg-primary/10' : 'hover:ml-2 hover:bg-slate-50'"
         >
           <span class="material-symbols-outlined">package_2</span>

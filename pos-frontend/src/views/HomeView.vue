@@ -1,6 +1,13 @@
 <script setup>
+import useUserStore from '@/stores/userStore';
+
+
+const userStore = useUserStore()
+
 // import { RouterLink } from 'vue-router'
 // import TheWelcome from '../components/TheWelcome.vue'
+
+
 </script>
 
 <template>
@@ -9,7 +16,7 @@
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-            Halo, Budi Santoso 👋
+            Halo, {{ name }} 👋
           </h1>
           <p class="text-slate-500 dark:text-slate-400 mt-1">
             Berikut adalah ringkasan performa bisnismu hari ini.

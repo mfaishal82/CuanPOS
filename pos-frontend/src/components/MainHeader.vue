@@ -1,3 +1,7 @@
+<script setup>
+
+</script>
+
 <template>
   <header
     class="h-16 flex items-center justify-between px-6 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10"
