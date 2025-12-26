@@ -36,7 +36,7 @@ class UserController {
           httpOnly: true,
           secure: false,
           sameSite: 'none',
-          domain: process.env.FRONTEND_URL
+          // domain: process.env.FRONTEND_URL
           // domain: 'mydomain.com' || '.vercel.app'
         }
       )
@@ -54,7 +54,7 @@ class UserController {
         httpOnly: true,
         secure: false,
         sameSite: 'none',
-        domain: process.env.FRONTEND_URL
+        // domain: process.env.FRONTEND_URL
       })
 
       res.status(200).json({
