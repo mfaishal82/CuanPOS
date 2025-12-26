@@ -47,6 +47,22 @@ class UserController {
     }
   }
 
+  static async logout(req, res, next){
+    try{
+      res.clearCookie('token', {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'none'
+      })
+
+      res.status(200).json({
+        message: "Logout success"
+      })
+    }catch(error){
+      next(error)
+    }
+  }
+
   static async createUser(req, res, next) {
     try {
       const { name, username, password, role } = req.body;

@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { login, createUser, getUsers, editUserById, deleteUserById } = require("../controllers/userController");
+const { login, createUser, getUsers, editUserById, deleteUserById, logout } = require("../controllers/userController");
 const isAdmin = require('../middlewares/isAdmin');
 
 router.post('/login', login)
+router.post('/logout', logout)
 router.use(isAdmin)
 router.post('/register', createUser)
 router.get('/list-users', getUsers)
