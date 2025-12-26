@@ -1,5 +1,26 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import useUserStore from '@/stores/userStore';
+import { ref } from 'vue';
+import { RouterLink, useRouter } from 'vue-router'
+
+const router = useRouter()
+const userStore = useUserStore()
+
+const username = ref("")
+const password = ref("")
+const loading = ref(false)
+
+async function handleLogin() {
+  loading.value = true
+  console.log(`username: ${username.value} || password: ${password.value}`)
+  const success = await userStore.login(username.value, password.value)
+  if(success) {
+    router.push('/')
+  } else {
+    alert('login failed')
+  }
+  loading.value = false
+}
 </script>
 
 <template>
@@ -50,7 +71,7 @@ import { RouterLink } from 'vue-router'
                 Manage your store efficiently and boost your sales.
               </p>
             </div>
-            <form class="flex flex-col gap-6">
+            <form class="flex flex-col gap-6" @submit.prevent="handleLogin">
               <label class="flex flex-col gap-2">
                 <span class="text-text-main dark:text-gray-200 text-sm font-semibold"
                   >Email Address</span
@@ -63,8 +84,9 @@ import { RouterLink } from 'vue-router'
                   </div>
                   <input
                     class="w-full h-12 rounded-lg bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-main dark:text-white placeholder:text-text-muted/70 pl-11 pr-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
-                    placeholder="name@company.com"
-                    type="email"
+                    v-model="username"
+                    placeholder="yourusername"
+                    type=""
                   />
                 </div>
               </label>
@@ -80,6 +102,7 @@ import { RouterLink } from 'vue-router'
                   </div>
                   <input
                     class="w-full h-12 rounded-lg bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-main dark:text-white placeholder:text-text-muted/70 pl-11 pr-12 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                    v-model="password"
                     placeholder="Enter your password"
                     type="password"
                   />
@@ -107,8 +130,11 @@ import { RouterLink } from 'vue-router'
               </div>
               <button
                 class="w-full h-12 mt-2 bg-primary hover:bg-primary/90 text-text-main font-bold text-base rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2"
+                :disable="loading"
               >
-                <span>Sign In</span>
+                <span>
+                  {{ loading ? 'Signing in...' : 'Sign in' }}
+                </span>
                 <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
               </button>
             </form>

@@ -1,12 +1,14 @@
 <script setup>
 import useUserStore from '@/stores/userStore';
+import axios from 'axios';
 import { onMounted } from 'vue';
 
 // import { RouterLink } from 'vue-router'
 // import TheWelcome from '../components/TheWelcome.vue'
+//
 const userStore = useUserStore()
 onMounted(() => {
-  userStore.fetchUser()
+  userStore
 })
 
 </script>
