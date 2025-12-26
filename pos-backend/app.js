@@ -9,6 +9,7 @@ const router = require('./routes');
 const cookieParser = require('cookie-parser')
 
 app.use(cors({
+  // origin: '*',
   origin: process.env.FRONTEND_URL,
   credentials: true
 }));

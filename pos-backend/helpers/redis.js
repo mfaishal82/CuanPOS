@@ -1,5 +1,5 @@
 const { createClient } =  require('redis');
-// require('dotenv').config()
+require('dotenv').config()
 
 const redis = createClient({
     socket: {
@@ -11,14 +11,16 @@ const redis = createClient({
             return new Error('Max retries');
           }
           return retries * 100;
-        }
+        },
+        connectTimeout: 10000,  // ← Timeout 10 detik
+        keepAlive: 30000        // ← Keep alive 30 detik
     },
     username: process.env.REDIS_USERNAME,
     password: process.env.REDIS_PASSWORD,
-    socket: {
-        connectTimeout: 10000,  // ← Timeout 10 detik
-        keepAlive: 30000        // ← Keep alive 30 detik
-      }
+    // socket: {
+    //     connectTimeout: 10000,  // ← Timeout 10 detik
+    //     keepAlive: 30000        // ← Keep alive 30 detik
+    //   }
 });
 
 redis.on('error', err => console.log('Redis Client Error', err));
