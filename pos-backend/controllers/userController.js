@@ -34,8 +34,8 @@ class UserController {
             Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
           ),
           httpOnly: true,
-          secure: false,        // karena masih http
-          sameSite: 'lax',      // ✅ WAJIB lax / strict di local
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
           path: '/',
           // maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
           // domain: 'mydomain.com' || '.vercel.app'
@@ -57,8 +57,9 @@ class UserController {
     try{
       res.clearCookie('token', {
         httpOnly: true,
-        secure: false,
-        sameSite: 'none',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        path: '/',
         // domain: process.env.FRONTEND_URL
       })
 
