@@ -5,7 +5,7 @@ const isAdmin = require('../middlewares/isAdmin');
 const Authentication = require('../middlewares/authentication');
 
 router.post('/login', login)
-router.post('/logout', logout)
+router.post('/logout', Authentication, logout)
 router.get('/getme', Authentication, getMe)
 router.use(isAdmin)
 router.post('/register', createUser)

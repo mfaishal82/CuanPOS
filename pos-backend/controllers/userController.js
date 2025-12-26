@@ -34,14 +34,19 @@ class UserController {
             Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
           ),
           httpOnly: true,
-          secure: false,
-          sameSite: 'none',
-          // domain: process.env.FRONTEND_URL
+          secure: false,        // karena masih http
+          sameSite: 'lax',      // ✅ WAJIB lax / strict di local
+          path: '/',
+          // maxAge: process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
           // domain: 'mydomain.com' || '.vercel.app'
         }
       )
 
-      res.status(200).json({ message: "Login Success" })
+      res.status(200).json({
+        name: user.name,
+        username: user.username,
+        role: user.role
+      })
     } catch (error) {
       // res.status(500).json({message: "error test"})
       next(error);
