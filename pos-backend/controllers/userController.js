@@ -87,6 +87,22 @@ class UserController {
     }
   }
 
+  static async getMe(req, res, next) {
+    try{
+      const id = req.user.id
+      if(!id) throw { name: "NotFound" }
+
+      const user = await User.findByPk(id, {
+        attributes: ['id', 'name', 'username', 'role']
+      })
+      if(!user) throw { name: "NotFound" }
+
+      res.status(200).json(user)
+    }catch(error){
+      next(error)
+    }
+  }
+
   static async getUsers(req, res, next){
     try{
       let { page, limit, searchUser } = req.query
