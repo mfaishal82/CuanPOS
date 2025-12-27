@@ -1,3 +1,15 @@
+<script setup>
+import useProductStore from '@/stores/productStore';
+import { onMounted } from 'vue';
+
+
+const productStore = useProductStore()
+
+onMounted(()=>{
+  productStore.fetchProduct()
+})
+</script>
+
 <template>
   <div class="flex h-screen overflow-hidden">
     <main class="flex-1 flex flex-col h-full relative overflow-y-auto">

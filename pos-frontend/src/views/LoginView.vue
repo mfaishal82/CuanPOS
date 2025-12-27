@@ -12,7 +12,7 @@ const loading = ref(false)
 
 async function handleLogin() {
   loading.value = true
-  console.log(`username: ${username.value} || password: ${password.value}`)
+  // console.log(`username: ${username.value} || password: ${password.value}`)
   const success = await userStore.login(username.value, password.value)
   if(success) {
     router.push('/')

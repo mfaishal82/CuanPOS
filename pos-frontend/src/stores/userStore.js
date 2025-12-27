@@ -38,12 +38,12 @@ const useUserStore = defineStore('user', () => {
 
   async function login(username, password){
     try{
-      const response = await axios.post(`${apiUrl}/auth/login`, {
+      await axios.post(`${apiUrl}/auth/login`, {
         username, password
       }, {
         withCredentials: true
       })
-      console.log(response.data)
+      // console.log(response.data)
       await fetchUser()
       return true
     }catch(error){
@@ -80,12 +80,12 @@ const useUserStore = defineStore('user', () => {
       const response = await axios.get(`${apiUrl}/auth/getme`, {
         withCredentials: true
       })
-      console.log(response.data)
+      // console.log(response.data)
       if (!response.data) throw new Error()
       setUser(response.data)
       // return true
-    }catch(error){
-      console.log(error)
+    }catch{
+      // console.log(error)
       clearUser()
       // return false
     }finally{

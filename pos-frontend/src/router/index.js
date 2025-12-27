@@ -61,11 +61,6 @@ router.beforeEach(async(to, from, next) => {
   console.log('isLoggedIn:', userStore.isLoggedIn)
   console.log('going to:', to.path)
 
-  // ⛔ JANGAN cek auth kalau ke halaman guest
-  if (to.meta.guestOnly) {
-    return next()
-  }
-
   if (userStore.loading) {
     await userStore.fetchUser()
   }
