@@ -3,41 +3,37 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
 const useUserStore = defineStore('user', () => {
-  const name = ref(localStorage.getItem('userName') || "Muhammad Faisal")
-  const username = ref( localStorage.getItem('username') || "mfaishal82")
-  const role = ref(localStorage.getItem('userRole') || "Admin")
-  const user = ref(null)
+  // const name = ref(localStorage.getItem('userName') || "Muhammad Faisal")
+  // const username = ref( localStorage.getItem('username') || "mfaishal82")
+  // const role = ref(localStorage.getItem('userRole') || "Admin")
   // const isLoggedIn = ref()
+  const user = ref(null)
   const isLoggedIn = computed(()=> user.value !== null)
   const loading = ref(true)
   const apiUrl = import.meta.env.VITE_API_URL
 
   function setUser(userData){
-    name.value = userData.name
-    username.value = userData.username
-    role.value = userData.role
-    // isLoggedIn.value = true
-
     user.value = userData
-
-    localStorage.setItem('userName', userData.name)
-    localStorage.setItem('username', userData.username)
-    localStorage.setItem('userRole', userData.role)
+    // name.value = userData.name
+    // username.value = userData.username
+    // role.value = userData.role
+    // isLoggedIn.value = true
+    // localStorage.setItem('userName', userData.name)
+    // localStorage.setItem('username', userData.username)
+    // localStorage.setItem('userRole', userData.role)
     // localStorage.setItem('isLoggedIn', 'true')
   }
 
   function clearUser(){
-    name.value = ""
-    username.value = ""
-    role.value = ""
-    // isLoggedIn.value = false
-
     user.value = null
-
-    localStorage.removeItem('userName')
-    localStorage.removeItem('username')
-    localStorage.removeItem('userRole')
-    localStorage.removeItem('isLoggedIn')
+    // name.value = ""
+    // username.value = ""
+    // role.value = ""
+    // isLoggedIn.value = false
+    // localStorage.removeItem('userName')
+    // localStorage.removeItem('username')
+    // localStorage.removeItem('userRole')
+    // localStorage.removeItem('isLoggedIn')
   }
 
   async function login(username, password){
@@ -70,9 +66,9 @@ const useUserStore = defineStore('user', () => {
   }
 
   async function logout(){
-    name.value = ""
-    username.value = ""
-    role.value = ""
+    // name.value = ""
+    // username.value = ""
+    // role.value = ""
     await axios.post(`${apiUrl}/auth/logout`, {}, {
       withCredentials: true
     })
@@ -97,7 +93,7 @@ const useUserStore = defineStore('user', () => {
     }
   }
 
-  return { name, username, role, setUser, clearUser, loading, user, login, logout, isLoggedIn, fetchUser }
+  return { setUser, clearUser, loading, user, login, logout, isLoggedIn, fetchUser }
 })
 
 export default useUserStore

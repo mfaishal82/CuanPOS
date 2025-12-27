@@ -1,6 +1,6 @@
 <script setup>
 import useUserStore from '@/stores/userStore';
-import { onMounted } from 'vue';
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
@@ -16,6 +16,7 @@ const route = useRoute()
 // LeftSidebar.vue?t=1766444753733:28 Params: {}
 // LeftSidebar.vue?t=1766444753733:29 Query: {}
 const userStore = useUserStore()
+const user = computed(()=> userStore.user)
 
 </script>
 
@@ -97,7 +98,7 @@ const userStore = useUserStore()
 
     <div class="p-4 border-t border-slate-200 dark:border-slate-800">
       <div
-        class="flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50"
+        class="flex items-center gap-3 p-2 rounded-lg cursor-default bg-slate-50 hover:bg-slate-200 transition-all duration-300 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50"
       >
         <div
           class="size-9 rounded-full bg-cover bg-center"
@@ -107,8 +108,8 @@ const userStore = useUserStore()
           "
         ></div>
         <div class="flex-1 min-w-0">
-          <p class="text-sm font-medium truncate">{{ userStore.name }}</p>
-          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ userStore.role }} Toko</p>
+          <p class="text-sm font-medium truncate">{{ user.name }}</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ user.role }} Toko</p>
         </div>
         <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
           <span class="material-symbols-outlined text-[20px]">logout</span>

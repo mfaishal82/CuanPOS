@@ -231,7 +231,7 @@
       </div>
     </main>
     <aside
-      class="w-[420px] bg-surface-light dark:bg-surface-dark border-l border-border-light dark:border-border-dark flex flex-col z-30 shadow-xl shrink-0"
+      class="w-[420px] overflow-scroll bg-surface-light dark:bg-surface-dark border-l border-border-light dark:border-border-dark flex flex-col z-30 shadow-xl shrink-0"
     >
       <div
         class="p-5 border-b border-border-light dark:border-border-dark flex justify-between items-start"
@@ -246,7 +246,7 @@
           <span class="material-symbols-outlined">delete_sweep</span>
         </button>
       </div>
-      <div class="flex-1 overflow-y-auto p-4 space-y-3">
+      <div class="flex-1 p-4 space-y-3">
         <div
           class="flex items-center gap-3 bg-background-light dark:bg-background-dark p-2 rounded-xl group animate-fade-in-up"
         >
