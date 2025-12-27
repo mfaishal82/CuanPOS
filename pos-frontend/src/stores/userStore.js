@@ -85,6 +85,7 @@ const useUserStore = defineStore('user', () => {
         withCredentials: true
       })
       console.log(response.data)
+      if (!response.data) throw new Error()
       setUser(response.data)
       // return true
     }catch(error){
