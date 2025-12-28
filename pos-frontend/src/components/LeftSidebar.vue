@@ -1,7 +1,7 @@
 <script setup>
 import useUserStore from '@/stores/userStore';
 import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute()
 // console.log(route, '<<< route saat ini')
@@ -17,6 +17,12 @@ const route = useRoute()
 // LeftSidebar.vue?t=1766444753733:29 Query: {}
 const userStore = useUserStore()
 const user = computed(()=> userStore.user)
+const router = useRouter()
+
+async function handleLogout(){
+  await userStore.logout()
+  router.push("/login")
+}
 
 </script>
 
@@ -111,7 +117,9 @@ const user = computed(()=> userStore.user)
           <p class="text-sm font-medium truncate">{{ user.name }}</p>
           <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ user.role }} Toko</p>
         </div>
-        <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+        <button
+          @click=(handleLogout)
+          class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
           <span class="material-symbols-outlined text-[20px]">logout</span>
         </button>
       </div>

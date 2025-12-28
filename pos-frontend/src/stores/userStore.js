@@ -8,11 +8,13 @@ const useUserStore = defineStore('user', () => {
   // const role = ref(localStorage.getItem('userRole') || "Admin")
   // const isLoggedIn = ref()
   const user = ref(null)
-  const isLoggedIn = computed(()=> user.value !== null)
-  const loading = ref(true)
+  const loading = ref(false)
+  const authChecked = ref(false)
+  const message = ref("")
   const apiUrl = import.meta.env.VITE_API_URL
+  const isLoggedIn = computed(() => user.value !== null)
 
-  function setUser(userData){
+  function setUser(userData) {
     user.value = userData
     // name.value = userData.name
     // username.value = userData.username
@@ -24,7 +26,7 @@ const useUserStore = defineStore('user', () => {
     // localStorage.setItem('isLoggedIn', 'true')
   }
 
-  function clearUser(){
+  function clearUser() {
     user.value = null
     // name.value = ""
     // username.value = ""
@@ -36,8 +38,8 @@ const useUserStore = defineStore('user', () => {
     // localStorage.removeItem('isLoggedIn')
   }
 
-  async function login(username, password){
-    try{
+  async function login(username, password) {
+    try {
       await axios.post(`${apiUrl}/auth/login`, {
         username, password
       }, {
@@ -46,26 +48,27 @@ const useUserStore = defineStore('user', () => {
       // console.log(response.data)
       await fetchUser()
       return true
-    }catch(error){
-      console.log("Login error", error)
+    } catch (error) {
+      // console.log("Login error", error.response.data.message)
 
+      message.value = error?.response?.data?.message || 'Login failed'
       if (error.response) {
-            // Server responded with error status
-            console.error('Response data:', error.response.data)
-            console.error('Response status:', error.response.status)
-            console.error('Response headers:', error.response.headers)
-          } else if (error.request) {
-            // Request was made but no response
-            console.error('No response received:', error.request)
-          } else {
-            // Something else happened
-            console.error('Error message:', error.message)
-          }
+        // Server responded with error status
+        // console.error('Response data:', error.response.data)
+        // console.error('Response status:', error.response.status)
+        // console.error('Response headers:', error.response.headers)
+      } else if (error.request) {
+        // Request was made but no response
+        console.error('No response received:', error.request)
+      } else {
+        // Something else happened
+        console.error('Error message:', error.message)
+      }
       return false
     }
   }
 
-  async function logout(){
+  async function logout() {
     // name.value = ""
     // username.value = ""
     // role.value = ""
@@ -75,8 +78,10 @@ const useUserStore = defineStore('user', () => {
     clearUser()
   }
 
-  async function fetchUser(){
-    try{
+  async function fetchUser() {
+    if (authChecked.value) return //Dont retry
+
+    try {
       const response = await axios.get(`${apiUrl}/auth/getme`, {
         withCredentials: true
       })
@@ -84,16 +89,17 @@ const useUserStore = defineStore('user', () => {
       if (!response.data) throw new Error()
       setUser(response.data)
       // return true
-    }catch{
+    } catch {
       // console.log(error)
       clearUser()
       // return false
-    }finally{
+    } finally {
       loading.value = false
+      authChecked.value = true
     }
   }
 
-  return { setUser, clearUser, loading, user, login, logout, isLoggedIn, fetchUser }
+  return { message, setUser, clearUser, loading, user, login, logout, isLoggedIn, fetchUser, authChecked }
 })
 
 export default useUserStore

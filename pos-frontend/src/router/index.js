@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, useRoute } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import SalesView from '@/views/SalesView.vue'
@@ -57,11 +57,12 @@ const router = createRouter({
 
 router.beforeEach(async(to, from, next) => {
   const userStore = useUserStore()
+  // console.log(to.path)
 
-  console.log('isLoggedIn:', userStore.isLoggedIn)
+  // console.log('isLoggedIn:', userStore.isLoggedIn)
   console.log('going to:', to.path)
 
-  if (userStore.loading) {
+  if (!userStore.authChecked) {
     await userStore.fetchUser()
   }
 

@@ -2,6 +2,7 @@
 import useUserStore from '@/stores/userStore';
 import { ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -9,6 +10,7 @@ const userStore = useUserStore()
 const username = ref("")
 const password = ref("")
 const loading = ref(false)
+const showPassword = ref(false)
 
 async function handleLogin() {
   loading.value = true
@@ -17,10 +19,22 @@ async function handleLogin() {
   if(success) {
     router.push('/')
   } else {
-    alert('login failed')
+    Swal.fire({
+      title: 'Gagal masuk!',
+      text: `${userStore.message}`,
+      color: 'red',
+      icon: 'error',
+      confirmButtonText: 'Coba lagi',
+      confirmButtonColor: 'red'
+    })
   }
   loading.value = false
 }
+
+function togglePassword(){
+  showPassword.value = !showPassword.value
+}
+
 </script>
 
 <template>
@@ -74,13 +88,13 @@ async function handleLogin() {
             <form class="flex flex-col gap-6" @submit.prevent="handleLogin">
               <label class="flex flex-col gap-2">
                 <span class="text-text-main dark:text-gray-200 text-sm font-semibold"
-                  >Email Address</span
+                  >Username</span
                 >
                 <div class="relative group">
                   <div
                     class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-muted"
                   >
-                    <span class="material-symbols-outlined text-[20px]">mail</span>
+                    <span class="material-symbols-outlined text-[20px]">person</span>
                   </div>
                   <input
                     class="w-full h-12 rounded-lg bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-main dark:text-white placeholder:text-text-muted/70 pl-11 pr-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
@@ -104,17 +118,20 @@ async function handleLogin() {
                     class="w-full h-12 rounded-lg bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-main dark:text-white placeholder:text-text-muted/70 pl-11 pr-12 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
                     v-model="password"
                     placeholder="Enter your password"
-                    type="password"
+                    :type="showPassword ? 'text' : 'password'"
                   />
                   <button
+                    @click="togglePassword"
                     class="absolute inset-y-0 right-0 pr-4 flex items-center text-text-muted hover:text-text-main dark:hover:text-white cursor-pointer transition-colors"
                     type="button"
                   >
-                    <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                    <span class="material-symbols-outlined text-[20px]">
+                      {{ showPassword ? 'visibility' : 'visibility_off' }}
+                    </span>
                   </button>
                 </div>
               </label>
-              <div class="flex items-center justify-between mt-1">
+              <!-- <div class="flex items-center justify-between mt-1">
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input
                     class="w-4 h-4 text-primary bg-white dark:bg-surface-dark border-gray-300 dark:border-border-dark rounded focus:ring-primary focus:ring-offset-0"
@@ -127,7 +144,7 @@ async function handleLogin() {
                   href="#"
                   >Forgot password?</a
                 >
-              </div>
+              </div> -->
               <button
                 class="w-full h-12 mt-2 bg-primary hover:bg-primary/90 text-text-main font-bold text-base rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2"
                 :disable="loading"
