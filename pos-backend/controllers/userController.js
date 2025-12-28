@@ -10,7 +10,9 @@ class UserController {
       // console.log(req.body)
 
       if (!username || !password) {
-        throw { name: "BadRequest", message: "Username and password are required" }
+        return res.status(400).json({
+          message: "Username and password are required"
+        })
       }
 
       let user = await User.findOne({
@@ -20,7 +22,9 @@ class UserController {
       })
 
       if(!user || !comparePassword(password, user.password)) {
-        throw { name: "Unauthorized", message: "Invalid username or password"}
+        return res.status(401).json({
+          message: "Invalid username or password"
+        })
       }
 
       const token = signToken({
