@@ -12,6 +12,7 @@ const useUserStore = defineStore('user', () => {
   const authChecked = ref(false)
   const message = ref("")
   const apiUrl = import.meta.env.VITE_API_URL
+  console.log(apiUrl)
   const isLoggedIn = computed(() => user.value !== null)
 
   function setUser(userData) {
