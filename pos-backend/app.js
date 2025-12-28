@@ -10,7 +10,7 @@ const cookieParser = require('cookie-parser')
 
 app.use(cors({
   // origin: '*',
-  origin: process.env.NODE_ENV !== 'production' ? process.env.FRONTEND_URL_DEV : process.env.FRONTEND_URL,
+  origin: process.env.NODE_ENV && process.env.NODE_ENV !== 'production' ? process.env.FRONTEND_URL_DEV : process.env.FRONTEND_URL,
   credentials: true
 }));
 app.use(cookieParser())
