@@ -96,7 +96,7 @@ const useUserStore = defineStore('user', () => {
       const response = await axios.get(`${apiUrl}/auth/getme`, {
         withCredentials: true,
       })
-      console.log(response.data)
+      // console.log(response.data)
       if (!response.data) throw new Error()
       setUser(response.data)
       // return true

@@ -11,14 +11,14 @@ const useProductStore = defineStore('product', () => {
       const response = await axios.get(`${apiUrl}/product/list`, {
         withCredentials: true,
       })
-      console.log(response.data)
-      setProduct(response.data)
+      // console.log(response.data.data)
+      setProduct(response.data.data)
     } catch (error) {
       console.log(error)
     }
   }
 
-  async function setProduct(productData) {
+  function setProduct(productData) {
     product.value = productData
   }
 
