@@ -103,9 +103,10 @@ class UserController {
       if(!id) throw { name: "NotFound" }
 
       const user = await User.findByPk(id, {
-        attributes: ['id', 'name', 'username', 'role']
+        attributes: ['id', 'name', 'username', 'role', 'image', 'status']
       })
       if(!user) throw { name: "NotFound" }
+      console.log(user)
 
       res.status(200).json(user)
     }catch(error){
