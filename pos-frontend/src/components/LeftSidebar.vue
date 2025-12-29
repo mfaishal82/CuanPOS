@@ -1,7 +1,7 @@
 <script setup>
-import useUserStore from '@/stores/userStore';
-import { computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import useUserStore from '@/stores/userStore'
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 // console.log(route, '<<< route saat ini')
@@ -16,14 +16,13 @@ const route = useRoute()
 // LeftSidebar.vue?t=1766444753733:28 Params: {}
 // LeftSidebar.vue?t=1766444753733:29 Query: {}
 const userStore = useUserStore()
-const user = computed(()=> userStore.user)
+const user = computed(() => userStore.user)
 const router = useRouter()
 
-async function handleLogout(){
+async function handleLogout() {
   await userStore.logout()
-  router.push("/login")
+  router.push('/login')
 }
-
 </script>
 
 <template>
@@ -45,7 +44,7 @@ async function handleLogout(){
         <div
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-dark dark:text-primary font-medium group transition-all duration-200"
           :class="route.path === '/' ? 'bg-primary/10' : 'hover:ml-2  hover:bg-slate-50'"
-          >
+        >
           <span class="material-symbols-outlined filled">dashboard</span>
           <span>Dashboard</span>
         </div>
@@ -55,7 +54,7 @@ async function handleLogout(){
         <div
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
           :class="route.path === '/sales' ? 'bg-primary/10' : 'hover:ml-2 hover:bg-slate-50'"
-          >
+        >
           <span class="material-symbols-outlined">receipt_long</span>
           <span>Transaksi</span>
         </div>
@@ -63,7 +62,7 @@ async function handleLogout(){
 
       <RouterLink to="/product">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400  dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
           :class="route.path === '/product' ? 'bg-primary/10' : 'hover:ml-2 hover:bg-slate-50'"
         >
           <span class="material-symbols-outlined">inventory_2</span>
@@ -106,20 +105,19 @@ async function handleLogout(){
       <div
         class="flex items-center gap-3 p-2 rounded-lg cursor-default bg-slate-50 hover:bg-slate-200 transition-all duration-300 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50"
       >
-        <div
-          class="size-9 rounded-full bg-cover bg-center"
-          data-alt="User avatar placeholder"
-          style="
-            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDssDmUsy4XenPY6svQ35wXxbcgw_UBcyM9PsIdTRNu3lO-QgdwSYphRG9USTteN7DhTFUv8t5ZpcBXBsVA-KrLuZGo4gbH5OUJGznwnWHdPKOH_vv27IAVPPORIOUAmmC49Mt1gT6KgAJ-s-e67ZApgr2JpgwrPPVAPDxfirUxAyU7VRFz2sIi8NRW6IVWTuyp9XkoyuA4VMzXjFxVi0ytDD6_AnF5JdukXoUwk8-1nb4cegqygwTpOzh42toiwgx1jB430CvRq1X2');
-          "
-        ></div>
+        <img
+          :src="userStore.user.image"
+          :alt="`${userStore.user?.name} avatar`"
+          class="size-9 rounded-full object-cover border-2 border-primary/20"
+        />
         <div class="flex-1 min-w-0">
           <p class="text-sm font-medium truncate">{{ user.name }}</p>
-          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ user.role }} Toko</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ user.role.toUpperCase() }} Toko</p>
         </div>
         <button
-          @click=(handleLogout)
-          class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+          @click="handleLogout"
+          class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+        >
           <span class="material-symbols-outlined text-[20px]">logout</span>
         </button>
       </div>

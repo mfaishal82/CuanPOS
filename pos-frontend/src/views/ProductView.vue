@@ -1,11 +1,10 @@
 <script setup>
-import useProductStore from '@/stores/productStore';
-import { onMounted } from 'vue';
-
+import useProductStore from '@/stores/productStore'
+import { onMounted } from 'vue'
 
 const productStore = useProductStore()
 
-onMounted(()=>{
+onMounted(() => {
   productStore.fetchProduct()
 })
 </script>

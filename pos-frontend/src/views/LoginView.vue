@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import useUserStore from '@/stores/userStore';
-import { ref } from 'vue';
+import useUserStore from '@/stores/userStore'
+import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 
 const router = useRouter()
 const userStore = useUserStore()
 
-const username = ref("")
-const password = ref("")
+const username = ref('')
+const password = ref('')
 const loading = ref(false)
 const showPassword = ref(false)
 
@@ -16,7 +16,7 @@ async function handleLogin() {
   loading.value = true
   // console.log(`username: ${username.value} || password: ${password.value}`)
   const success = await userStore.login(username.value, password.value)
-  if(success) {
+  if (success) {
     router.push('/')
   } else {
     Swal.fire({
@@ -25,16 +25,15 @@ async function handleLogin() {
       color: 'red',
       icon: 'error',
       confirmButtonText: 'Coba lagi',
-      confirmButtonColor: 'red'
+      confirmButtonColor: 'red',
     })
   }
   loading.value = false
 }
 
-function togglePassword(){
+function togglePassword() {
   showPassword.value = !showPassword.value
 }
-
 </script>
 
 <template>

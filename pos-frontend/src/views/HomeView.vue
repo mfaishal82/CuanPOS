@@ -1,13 +1,12 @@
 <script setup>
-import useUserStore from '@/stores/userStore';
-import { computed } from 'vue';
+import useUserStore from '@/stores/userStore'
+import { computed } from 'vue'
 
 // import { RouterLink } from 'vue-router'
 // import TheWelcome from '../components/TheWelcome.vue'
 //
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
-
 </script>
 
 <template>
@@ -16,7 +15,7 @@ const user = computed(() => userStore.user)
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-             Halo, {{ user.name }} 👋
+            Halo, {{ user.name }} 👋
           </h1>
           <p class="text-slate-500 dark:text-slate-400 mt-1">
             Berikut adalah ringkasan performa bisnismu hari ini.
@@ -27,7 +26,7 @@ const user = computed(() => userStore.user)
             class="flex items-center gap-2 px-4 py-2 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
             <span class="material-symbols-outlined text-[18px]">calendar_today</span>
-            23 Okt 2023
+            {{ new Date().toDateString() }}
           </button>
           <button
             class="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-slate-900 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-primary/20"

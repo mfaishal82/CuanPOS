@@ -1,6 +1,6 @@
-import axios from "axios";
-import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import axios from 'axios'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
 
 const useUserStore = defineStore('user', () => {
   // const name = ref(localStorage.getItem('userName') || "Muhammad Faisal")
@@ -10,9 +10,9 @@ const useUserStore = defineStore('user', () => {
   const user = ref(null)
   const loading = ref(false)
   const authChecked = ref(false)
-  const message = ref("")
+  const message = ref('')
   const apiUrl = import.meta.env.VITE_API_URL
-  console.log(apiUrl)
+  // console.log(apiUrl)
   const isLoggedIn = computed(() => user.value !== null)
 
   function setUser(userData) {
@@ -41,12 +41,18 @@ const useUserStore = defineStore('user', () => {
 
   async function login(username, password) {
     try {
-      await axios.post(`${apiUrl}/auth/login`, {
-        username, password
-      }, {
-        withCredentials: true
-      })
+      await axios.post(
+        `${apiUrl}/auth/login`,
+        {
+          username,
+          password,
+        },
+        {
+          withCredentials: true,
+        },
+      )
       // console.log(response.data)
+      authChecked.value = false
       await fetchUser()
       return true
     } catch (error) {
@@ -73,9 +79,13 @@ const useUserStore = defineStore('user', () => {
     // name.value = ""
     // username.value = ""
     // role.value = ""
-    await axios.post(`${apiUrl}/auth/logout`, {}, {
-      withCredentials: true
-    })
+    await axios.post(
+      `${apiUrl}/auth/logout`,
+      {},
+      {
+        withCredentials: true,
+      },
+    )
     clearUser()
   }
 
@@ -84,9 +94,9 @@ const useUserStore = defineStore('user', () => {
 
     try {
       const response = await axios.get(`${apiUrl}/auth/getme`, {
-        withCredentials: true
+        withCredentials: true,
       })
-      // console.log(response.data)
+      console.log(response.data)
       if (!response.data) throw new Error()
       setUser(response.data)
       // return true
@@ -100,7 +110,18 @@ const useUserStore = defineStore('user', () => {
     }
   }
 
-  return { message, setUser, clearUser, loading, user, login, logout, isLoggedIn, fetchUser, authChecked }
+  return {
+    message,
+    setUser,
+    clearUser,
+    loading,
+    user,
+    login,
+    logout,
+    isLoggedIn,
+    fetchUser,
+    authChecked,
+  }
 })
 
 export default useUserStore

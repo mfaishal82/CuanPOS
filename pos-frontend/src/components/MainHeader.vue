@@ -1,5 +1,7 @@
 <script setup>
+import { useRoute } from 'vue-router';
 
+const route = useRoute()
 </script>
 
 <template>
@@ -12,7 +14,7 @@
       >
         <span class="material-symbols-outlined">menu</span>
       </button>
-      <h2 class="text-lg font-semibold hidden sm:block">Dashboard Overview</h2>
+      <h2 class="text-lg font-semibold hidden sm:block">{{ route.name }} Overview</h2>
     </div>
     <div class="flex items-center gap-4">
       <div class="hidden sm:flex relative group">

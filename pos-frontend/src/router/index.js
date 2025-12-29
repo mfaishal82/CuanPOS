@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, useRoute } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import SalesView from '@/views/SalesView.vue'
@@ -14,7 +14,7 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
-      meta: { guestOnly: true }
+      meta: { guestOnly: true },
     },
     {
       path: '/',
@@ -23,22 +23,22 @@ const router = createRouter({
       children: [
         {
           path: '',
-          name: 'home',
+          name: 'Dashboard',
           component: HomeView,
         },
         {
           path: 'sales',
-          name: 'sales',
+          name: 'Sales',
           component: SalesView,
         },
         {
           path: 'inventory',
-          name: 'inventory',
+          name: 'Inventory',
           component: InventoryView,
         },
         {
           path: 'product',
-          name: 'product',
+          name: 'Product',
           component: ProductView,
         },
       ],
@@ -55,7 +55,7 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach(async(to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
   // console.log(to.path)
 
