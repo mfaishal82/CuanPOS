@@ -7,12 +7,12 @@ const { Op } = require('sequelize')
 class ProductController {
   static async getProducts(req, res, next) {
     try{
-      let { page, limit, searchProduct, order, sort } = req.query
+      let { page, limit, searchProduct, order, sort, category } = req.query
       page = parseInt(page) || 1
       limit = parseInt(limit) || 10
-      const offset = (page - 1) * limit // example: page 1 - 1 = 0 x 10 = 0 <-- offset / batas bawah
+      const offset = (page - 1) * limit // contoh: page 1 - 1 = 0 x 10 = 0 <-- offset / batas bawah
 
-      const cacheKey = `products:${page}:${limit}:${searchProduct || 'all'}:${order || 'updatedAt'}:${sort || 'DESC'}`
+      const cacheKey = `products:${page}:${limit}:${searchProduct || 'all'}:${order || 'updatedAt'}:${sort || 'DESC'}:${category || 'all'}`
       const cacheData = await redis.get(cacheKey)
       if(cacheData) {
         // console.log("lewat")
@@ -21,21 +21,32 @@ class ProductController {
       // console.log(cacheKey, '(<=== ini cache key')
       // console.log(cacheData, '(<=== ini cache data')
 
-      const option = searchProduct && searchProduct !== 'all' ? {
+      const option = {}
+      if(searchProduct && searchProduct !== 'all') {
+        option.name = {
+          [Op.iLike]: `%${searchProduct}%`
+        }
+      }
+
+      const includeClause = {
+        model: Category,
+        attributes: ['name']
+      }
+      if(category && category !== 'all') {
+        includeClause.where = {
           name: {
-            [Op.iLike] : `%${searchProduct}%`
+            [Op.iLike]: `%${category}%`
           }
-      } : {}
+        }
+        includeClause.required = true
+      }
 
       // doc sequelize:
       // https://sequelize.org/docs/v6/core-concepts/model-querying-finders/#findandcountall
 
       const { count, rows } = await Product.findAndCountAll({
         where: option,
-        include: {
-          model: Category,
-          attributes: ['name']
-        },
+        include: includeClause,
         order: [[`${order ? order : 'updatedAt'}`, `${sort ? sort.toUpperCase() : 'DESC'}`]],
         offset,
         limit
