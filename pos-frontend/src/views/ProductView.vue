@@ -1,15 +1,36 @@
 <script setup>
 import useProductStore from '@/stores/productStore'
-import { onMounted, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const productStore = useProductStore()
+const searcQuery = ref('')
+const currentPage = ref(1)
+const limitItem = ref(10)
+const selectedCategory = ref('')
+// const sortBy = ref('updatedAt')
 
 onMounted(async () => {
-  // ✅ Bisa pakai await (optional)
-  await productStore.fetchProduct()
-
-  console.log('Data in component:', productStore.product)
+  await handleFetch()
+  // await productStore.fetchCategory()
 })
+
+const handleFetch = (async()=>{
+  await productStore.fetchProduct({
+    search: searcQuery.value,
+    page: currentPage.value,
+    limit: limitItem.value
+  })
+
+  await productStore.fetchCategory({
+    search: selectedCategory.value
+  })
+})
+
+const handleSearch = (async()=> {
+  currentPage.value = 1
+  await handleFetch()
+})
+
 </script>
 
 <template>
@@ -45,7 +66,10 @@ onMounted(async () => {
                   >search</span
                 >
               </div>
+              <!-- Search Input -->
               <input
+                v-model="searcQuery"
+                @keyup.enter="handleSearch"
                 class="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-lg leading-5 bg-background-light dark:bg-background-dark text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all sm:text-sm"
                 placeholder="Cari nama produk, SKU, atau kategori..."
                 type="text"
@@ -54,12 +78,14 @@ onMounted(async () => {
             <div class="flex flex-wrap gap-3">
               <div class="relative">
                 <select
+                  v-model="selectedCategory"
+                  @change="filterByCategory"
                   class="appearance-none bg-background-light dark:bg-background-dark border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 py-3 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary cursor-pointer text-sm font-medium"
                 >
-                  <option>Semua Kategori</option>
-                  <option>Minuman</option>
-                  <option>Makanan</option>
-                  <option>Snack</option>
+                  <option value="">Semua Kategori</option>
+                  <option v-for="item in productStore.category" :key="item.id">
+                    {{ item.name }}
+                  </option>
                 </select>
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500"

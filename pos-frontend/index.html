@@ -1,46 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html class="light" lang="en">
-    <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>CuanPOS</title>
-    <link href="https://fonts.googleapis.com" rel="preconnect"/>
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
-            tailwind.config = {
-                darkMode: "class",
-                theme: {
-                    extend: {
-                        colors: {
-                            "primary": "#13ec80",
-                            "background-light": "#f8fcfa",
-                            "background-dark": "#102219",
-                            "surface-light": "#ffffff",
-                            "surface-dark": "#1a3326",
-                            "text-main": "#0d1b14",
-                            "text-muted": "#4c9a73",
-                            "border-light": "#e7f3ed",
-                            "border-dark": "#2a4a3b",
-                        },
-                        fontFamily: {
-                            "display": ["Inter", "sans-serif"],
-                            "body": ["Inter", "sans-serif"]
-                        },
-                        borderRadius: {
-                            "DEFAULT": "0.25rem",
-                            "lg": "0.5rem",
-                            "xl": "0.75rem",
-                            "full": "9999px"
-                        },
-                    },
-                },
-            }
-        </script>
-    </head>
-    <body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white antialiased selection:bg-primary selection:text-text-main transition-colors duration-200">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#13ec80',
+              'background-light': '#f8fcfa',
+              'background-dark': '#102219',
+              'surface-light': '#ffffff',
+              'surface-dark': '#1a3326',
+              'text-main': '#0d1b14',
+              'text-muted': '#4c9a73',
+              'border-light': '#e7f3ed',
+              'border-dark': '#2a4a3b',
+            },
+            fontFamily: {
+              display: ['Inter', 'sans-serif'],
+              body: ['Inter', 'sans-serif'],
+            },
+            borderRadius: {
+              DEFAULT: '0.25rem',
+              lg: '0.5rem',
+              xl: '0.75rem',
+              full: '9999px',
+            },
+          },
+        },
+      }
+    </script>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white antialiased selection:bg-primary selection:text-text-main transition-colors duration-200"
+  >
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

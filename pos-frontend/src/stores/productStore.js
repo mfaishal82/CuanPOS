@@ -4,11 +4,20 @@ import { ref } from 'vue'
 
 const useProductStore = defineStore('product', () => {
   const product = ref([])
+  const category = ref([])
   const apiUrl = import.meta.env.VITE_API_URL
 
-  async function fetchProduct() {
+  async function fetchProduct(options = {} ) {
+    const { search, page, limit} = options
+
     try {
-      const response = await axios.get(`${apiUrl}/product/list`, {
+      const params = new URLSearchParams({
+        searchProduct: search,
+        page,
+        limit
+      })
+
+      const response = await axios.get(`${apiUrl}/product/list?${params}`, {
         withCredentials: true,
       })
       // console.log(response.data.data)
@@ -18,11 +27,30 @@ const useProductStore = defineStore('product', () => {
     }
   }
 
+  async function fetchCategory(options = {} ) {
+    const { search } = options
+    const params = new URLSearchParams({
+      searchCategory: search
+    })
+    try{
+      const response = await axios.get(`${apiUrl}/category/list?${params}`, {
+        withCredentials: true
+      })
+      setCategory(response.data)
+    }catch(error){
+      console.log(error)
+    }
+  }
+
   function setProduct(productData) {
     product.value = productData
   }
 
-  return { fetchProduct, product }
+  function setCategory(categoryData) {
+    category.value = categoryData
+  }
+
+  return { fetchProduct, product, category, fetchCategory }
 })
 
 export default useProductStore
