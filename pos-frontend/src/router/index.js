@@ -6,6 +6,7 @@ import InventoryView from '@/views/InventoryView.vue'
 import ProductView from '@/views/ProductView.vue'
 import MainLayout from '@/layouts/MainLayout.vue'
 import useUserStore from '@/stores/userStore'
+import AddProductView from '@/views/AddProductView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,6 +42,11 @@ const router = createRouter({
           name: 'Product',
           component: ProductView,
         },
+        {
+          path: '/product/add-product',
+          name: 'Add New Product',
+          component: AddProductView
+        }
       ],
     },
 

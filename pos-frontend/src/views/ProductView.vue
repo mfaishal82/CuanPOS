@@ -27,7 +27,7 @@ const handleFetch = async () => {
     limit: limitItem.value,
     category: selectedCategory.value,
     sort: sortBy.value,
-    order: orderBy.value
+    order: orderBy.value,
   })
 
   await productStore.fetchCategory({
@@ -40,7 +40,7 @@ const handleFetch = async () => {
 const handleSort = async (event) => {
   const value = event.target.value
 
-  switch(value) {
+  switch (value) {
     case 'terbaru':
       orderBy.value = 'updatedAt'
       sortBy.value = 'DESC'

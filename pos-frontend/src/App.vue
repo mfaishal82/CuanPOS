@@ -1,7 +1,7 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import useUserStore from './stores/userStore'
-import LoadingScreen from './components/LoadingScreen.vue';
+import LoadingScreen from './components/LoadingScreen.vue'
 // import HelloWorld from './components/HelloWorld.vue'
 // import '@tailwindcss/vite'
 const userStore = useUserStore()

@@ -1,3 +1,140 @@
-<templat>
-
-</templat>
+<template>
+<div class="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth">
+<div class="max-w-6xl mx-auto space-y-6">
+<!-- Page Heading -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h2 class="text-2xl lg:text-3xl font-bold text-text-main dark:text-white tracking-tight">Tambah Produk Baru</h2>
+<p class="text-text-secondary mt-1">Lengkapi formulir di bawah untuk menambahkan item ke inventaris.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-transparent text-text-main dark:text-gray-300 font-medium text-sm hover:bg-gray-50 dark:hover:bg-border-dark transition-colors">
+                                Batal
+                            </button>
+<button class="px-6 py-2 rounded-lg bg-primary text-text-main font-bold text-sm shadow-sm hover:bg-primary-hover transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                                Simpan Produk
+                            </button>
+</div>
+</div>
+<!-- Main Form Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Left Column: Primary Info -->
+<div class="lg:col-span-2 space-y-6">
+<!-- Basic Information Card -->
+<section class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6">
+<h3 class="text-lg font-bold text-text-main dark:text-white mb-6 border-b border-border-light dark:border-border-dark pb-4">Informasi Dasar</h3>
+<div class="space-y-5">
+<div>
+<label class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2" for="product_name">Nama Produk</label>
+<input class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm" id="product_name" placeholder="Contoh: Kopi Susu Gula Aren 500ml" type="text"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div>
+<label class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2" for="sku">SKU (Stock Keeping Unit)</label>
+<div class="relative">
+<input class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm pr-10" id="sku" placeholder="PROD-00001" type="text"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 text-text-secondary hover:text-primary" title="Generate SKU">
+<span class="material-symbols-outlined text-lg">autorenew</span>
+</button>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2" for="barcode">Barcode (Opsional)</label>
+<div class="relative">
+<input class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm pr-10" id="barcode" placeholder="Scan barcode..." type="text"/>
+<span class="absolute right-2 top-1/2 -translate-y-1/2 text-text-secondary">
+<span class="material-symbols-outlined text-lg">qr_code_scanner</span>
+</span>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2" for="description">Deskripsi Produk</label>
+<textarea class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-3 text-sm" id="description" placeholder="Jelaskan detail produk, bahan, ukuran, dll..." rows="4"></textarea>
+</div>
+</div>
+</section>
+<!-- Pricing Card -->
+<section class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6">
+<h3 class="text-lg font-bold text-text-main dark:text-white mb-6 border-b border-border-light dark:border-border-dark pb-4">Harga &amp; Modal</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div>
+<label class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2" for="cost_price">Harga Modal (HPP)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary font-medium text-sm">Rp</span>
+<input class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 pl-10 text-sm" id="cost_price" placeholder="0" type="number"/>
+</div>
+<p class="text-xs text-text-secondary mt-1">Tidak ditampilkan ke pelanggan.</p>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2" for="selling_price">Harga Jual</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary font-medium text-sm">Rp</span>
+<input class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 pl-10 text-sm" id="selling_price" placeholder="0" type="number"/>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Media & Org -->
+<div class="space-y-6">
+<!-- Media Upload Card -->
+<section class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6">
+<h3 class="text-lg font-bold text-text-main dark:text-white mb-4">Gambar Produk</h3>
+<div class="relative w-full aspect-square bg-background-light dark:bg-background-dark rounded-xl border-2 border-dashed border-border-light dark:border-border-dark hover:border-primary transition-colors flex flex-col items-center justify-center p-6 text-center group cursor-pointer">
+<div class="size-16 rounded-full bg-border-light/50 dark:bg-border-dark/50 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary text-3xl">cloud_upload</span>
+</div>
+<p class="text-sm font-medium text-text-main dark:text-white mb-1">Klik untuk upload</p>
+<p class="text-xs text-text-secondary">atau drag &amp; drop gambar disini</p>
+<p class="text-[10px] text-text-secondary mt-4">JPG, PNG max 2MB</p>
+</div>
+</section>
+<!-- Organization Card -->
+<section class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6">
+<h3 class="text-lg font-bold text-text-main dark:text-white mb-6 border-b border-border-light dark:border-border-dark pb-4">Pengelompokan</h3>
+<div class="space-y-5">
+<div>
+<label class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2" for="category">Kategori</label>
+<select class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm" id="category">
+<option disabled="" selected="" value="">Pilih Kategori</option>
+<option value="makanan">Makanan</option>
+<option value="minuman">Minuman</option>
+<option value="snack">Snack</option>
+<option value="merchandise">Merchandise</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2" for="brand">Merek / Brand</label>
+<select class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm" id="brand">
+<option disabled="" selected="" value="">Pilih Merek</option>
+<option value="internal">Produksi Sendiri</option>
+<option value="supplier_a">Supplier A</option>
+</select>
+</div>
+<div class="pt-4 border-t border-border-light dark:border-border-dark">
+<label class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2" for="stock">Stok Awal</label>
+<input class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm" id="stock" placeholder="0" type="number"/>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm font-medium text-text-main dark:text-gray-300">Lacak Stok</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Additional Action Area (Mobile Friendly) -->
+<div class="block lg:hidden pt-6 pb-20">
+<button class="w-full py-3 rounded-lg bg-primary text-text-main font-bold text-sm shadow-md hover:bg-primary-hover transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">save</span>
+                            Simpan Produk
+                        </button>
+</div>
+</div>
+</div>
+</template>

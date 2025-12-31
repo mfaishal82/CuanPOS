@@ -8,8 +8,8 @@ const useProductStore = defineStore('product', () => {
   const pagination = ref({})
   const apiUrl = import.meta.env.VITE_API_URL
 
-  async function fetchProduct(options = {} ) {
-    const { search, page, limit, category, order, sort} = options
+  async function fetchProduct(options = {}) {
+    const { search, page, limit, category, order, sort } = options
 
     try {
       const params = new URLSearchParams({
@@ -18,7 +18,7 @@ const useProductStore = defineStore('product', () => {
         page,
         limit,
         order,
-        sort
+        sort,
       })
 
       const response = await axios.get(`${apiUrl}/product/list?${params}`, {
@@ -31,17 +31,17 @@ const useProductStore = defineStore('product', () => {
     }
   }
 
-  async function fetchCategory(options = {} ) {
+  async function fetchCategory(options = {}) {
     const { search } = options
     const params = new URLSearchParams({
-      searchCategory: search
+      searchCategory: search,
     })
-    try{
+    try {
       const response = await axios.get(`${apiUrl}/category/list?${params}`, {
-        withCredentials: true
+        withCredentials: true,
       })
       setCategory(response.data)
-    }catch(error){
+    } catch (error) {
       console.log(error)
     }
   }
