@@ -1,36 +1,113 @@
 <script setup>
 import useProductStore from '@/stores/productStore'
-import { onMounted, ref } from 'vue'
+import { es2024 } from 'globals'
+import { computed, onMounted, ref } from 'vue'
 
 const productStore = useProductStore()
 const searcQuery = ref('')
 const currentPage = ref(1)
 const limitItem = ref(10)
 const selectedCategory = ref('')
-// const sortBy = ref('updatedAt')
+const loading = ref(true)
+const orderBy = ref('updatedAt')
+const sortBy = ref('DESC')
 
 onMounted(async () => {
-  await handleFetch()
   // await productStore.fetchCategory()
+  await handleFetch()
+  // console.log(await productStore.pagination)
 })
 
-const handleFetch = (async()=>{
+const handleFetch = async () => {
+  // console.log(selectedCategory.value)
+  loading.value = true
   await productStore.fetchProduct({
     search: searcQuery.value,
     page: currentPage.value,
-    limit: limitItem.value
+    limit: limitItem.value,
+    category: selectedCategory.value,
+    sort: sortBy.value,
+    order: orderBy.value
   })
 
   await productStore.fetchCategory({
-    search: selectedCategory.value
+    search: '',
   })
-})
 
-const handleSearch = (async()=> {
+  loading.value = false
+}
+
+const handleSort = async (event) => {
+  const value = event.target.value
+
+  switch(value) {
+    case 'terbaru':
+      orderBy.value = 'updatedAt'
+      sortBy.value = 'DESC'
+      break
+    case 'price-low':
+      orderBy.value = 'price'
+      sortBy.value = 'ASC'
+      break
+    case 'price-high':
+      orderBy.value = 'price'
+      sortBy.value = 'DESC'
+      break
+    case 'stock-low':
+      orderBy.value = 'stock'
+      sortBy.value = 'ASC'
+      break
+    default:
+      orderBy.value = 'updatedAt'
+      sortBy.value = 'DESC'
+  }
+
   currentPage.value = 1
   await handleFetch()
+}
+
+const handleSearch = async () => {
+  currentPage.value = 1
+  await handleFetch()
+}
+
+const filterByCategory = async () => {
+  currentPage.value = 1
+  await handleFetch()
+}
+
+const goToPage = async (page) => {
+  currentPage.value = page
+  await handleFetch()
+}
+
+const startItem = computed(() => {
+  return (currentPage.value - 1) * limitItem.value + 1
 })
 
+const endItem = computed(() => {
+  return Math.min(currentPage.value * limitItem.value, productStore.pagination.total || 0)
+})
+
+const pageNumbers = computed(() => {
+  const total = productStore.pagination.totalPages || 1
+  const current = currentPage.value
+  const pages = []
+
+  //nunjukin maks 5 nomor hlm
+  let start = Math.max(1, current - 2)
+  let end = Math.min(total, start + 4)
+
+  if (end - start < 4) {
+    start = Math.max(1, end - es2024)
+  }
+
+  for (let x = start; x <= end; x++) {
+    pages.push(x)
+  }
+
+  return pages
+})
 </script>
 
 <template>
@@ -83,7 +160,7 @@ const handleSearch = (async()=> {
                   class="appearance-none bg-background-light dark:bg-background-dark border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 py-3 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary cursor-pointer text-sm font-medium"
                 >
                   <option value="">Semua Kategori</option>
-                  <option v-for="item in productStore.category" :key="item.id">
+                  <option v-for="item in productStore.category" :key="item.id" :value="item.name">
                     {{ item.name }}
                   </option>
                 </select>
@@ -94,13 +171,15 @@ const handleSearch = (async()=> {
                 </div>
               </div>
               <div class="relative">
+                <!-- Sort & Order data -->
                 <select
+                  @change="handleSort"
                   class="appearance-none bg-background-light dark:bg-background-dark border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 py-3 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary cursor-pointer text-sm font-medium"
                 >
-                  <option>Urutkan: Terbaru</option>
-                  <option>Harga: Rendah ke Tinggi</option>
-                  <option>Harga: Tinggi ke Rendah</option>
-                  <option>Stok: Sedikit</option>
+                  <option value="terbaru">Urutkan: Terbaru</option>
+                  <option value="price-low">Harga: Rendah ke Tinggi</option>
+                  <option value="price-high">Harga: Tinggi ke Rendah</option>
+                  <option value="stock-low">Stok: Sedikit</option>
                 </select>
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500"
@@ -158,67 +237,81 @@ const handleSearch = (async()=> {
                 class="bg-surface-light dark:bg-surface-dark divide-y divide-slate-200 dark:divide-slate-800"
               >
                 <!-- Looping pake v-for -->
-                <tr v-for="item in productStore.product" :key="item.id" class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="flex items-center">
-                        <div class="h-12 w-12 flex-shrink-0">
-                          <img
-                            :alt="item.name"
-                            class="h-12 w-12 rounded-lg object-cover border border-slate-200 dark:border-slate-700"
-                            :src="item.image"
-                          />
+                <tr
+                  v-for="item in productStore.product"
+                  :key="item.id"
+                  class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                >
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="h-12 w-12 flex-shrink-0">
+                        <img
+                          :alt="item.name"
+                          class="h-12 w-12 rounded-lg object-cover border border-slate-200 dark:border-slate-700"
+                          :src="item.image"
+                        />
+                      </div>
+                      <div class="ml-4">
+                        <div class="text-sm font-bold text-slate-900 dark:text-white">
+                          {{ item.name }}
                         </div>
-                        <div class="ml-4">
-                          <div class="text-sm font-bold text-slate-900 dark:text-white">
-                            {{ item.name }}
-                          </div>
-                          <div class="text-xs font-mono text-slate-500 dark:text-slate-400">
-                            SKU: {{ item.sku }}
-                          </div>
+                        <div class="text-xs font-mono text-slate-500 dark:text-slate-400">
+                          SKU: {{ item.sku }}
                         </div>
                       </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                        {{ item.Category?.name || 'Uncategorized' }}
-                      </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="text-sm font-semibold text-slate-900 dark:text-white">
-                        Rp {{ item.price?.toLocaleString('id-ID') || 0 }}
-                      </div>
-                      <div class="text-xs text-slate-400 dark:text-slate-500">
-                        HPP: Rp {{ item.cost_price?.toLocaleString('id-ID') || 0 }}
-                      </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="text-sm text-slate-900 dark:text-white font-medium">
-                        {{ item.stock || 0 }}
-                      </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <span
-                        :class="[
-                          'px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
-                          item.stock > 0
-                            ? 'bg-primary/10 text-emerald-700 dark:text-primary border border-primary/20'
-                            : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200'
-                        ]"
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                    >
+                      {{ item.Category?.name || 'Uncategorized' }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-semibold text-slate-900 dark:text-white">
+                      Rp {{ item.price?.toLocaleString('id-ID') || 0 }}
+                    </div>
+                    <div class="text-xs text-slate-400 dark:text-slate-500">
+                      HPP: Rp {{ item.cost_price?.toLocaleString('id-ID') || 0 }}
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-slate-900 dark:text-white font-medium">
+                      {{ item.stock || 0 }}
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      :class="[
+                        'px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full',
+                        item.stock > 0
+                          ? 'bg-primary/10 text-emerald-700 dark:text-primary border border-primary/20'
+                          : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200',
+                      ]"
+                    >
+                      {{ item.stock > 0 ? 'Tersedia' : 'Habis' }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div
+                      class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <button
+                        class="text-slate-400 hover:text-primary transition-colors p-1"
+                        title="Edit"
                       >
-                        {{ item.stock > 0 ? 'Tersedia' : 'Habis' }}
-                      </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="text-slate-400 hover:text-primary transition-colors p-1" title="Edit">
-                          <span class="material-symbols-outlined text-[20px]">edit</span>
-                        </button>
-                        <button class="text-slate-400 hover:text-red-500 transition-colors p-1" title="Delete">
-                          <span class="material-symbols-outlined text-[20px]">delete</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                      </button>
+                      <button
+                        class="text-slate-400 hover:text-red-500 transition-colors p-1"
+                        title="Delete"
+                      >
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
               </tbody>
             </table>
             <!-- End Product table -->
@@ -227,61 +320,71 @@ const handleSearch = (async()=> {
             class="bg-surface-light dark:bg-surface-dark px-4 py-3 flex items-center justify-between border-t border-slate-200 dark:border-slate-800 sm:px-6"
           >
             <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <!-- info banyaknya data dari pagination -->
               <div>
                 <p class="text-sm text-slate-700 dark:text-slate-400">
-                  Menampilkan <span class="font-medium">1</span> sampai
-                  <span class="font-medium">4</span> dari <span class="font-medium">120</span> hasil
+                  Menampilkan <span class="font-medium">{{ startItem }}</span> sampai
+                  <span class="font-medium">{{ endItem }}</span> dari
+                  <span class="font-medium">{{ productStore.pagination.total || 0 }}</span> hasil
                 </p>
               </div>
-              <div>
+              <!-- bagian tombol pagination -->
+              <div v-if="productStore.pagination.totalPages > 0">
                 <nav
                   aria-label="Pagination"
                   class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
                 >
-                  <a
-                    class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 dark:border-slate-700 bg-surface-light dark:bg-surface-dark text-sm font-medium text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800"
-                    href="#"
+                  <!-- Previous Button -->
+                  <button
+                    @click="goToPage(currentPage - 1)"
+                    :disabled="currentPage === 1"
+                    class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 dark:border-slate-700 bg-surface-light dark:bg-surface-dark text-sm font-medium text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span class="sr-only">Previous</span>
                     <span class="material-symbols-outlined text-[20px]">chevron_left</span>
-                  </a>
-                  <a
-                    aria-current="page"
-                    class="z-10 bg-primary/20 border-primary text-emerald-900 dark:text-primary relative inline-flex items-center px-4 py-2 border text-sm font-bold"
-                    href="#"
+                  </button>
+
+                  <!-- Page Numbers -->
+                  <button
+                    v-for="page in pageNumbers"
+                    :key="page"
+                    @click="goToPage(page)"
+                    :class="[
+                      'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                      page === currentPage
+                        ? 'z-10 bg-primary/20 border-primary text-emerald-900 dark:text-primary'
+                        : 'bg-surface-light dark:bg-surface-dark border-slate-300 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800',
+                    ]"
                   >
-                    1
-                  </a>
-                  <a
-                    class="bg-surface-light dark:bg-surface-dark border-slate-300 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
-                    href="#"
-                  >
-                    2
-                  </a>
-                  <a
-                    class="bg-surface-light dark:bg-surface-dark border-slate-300 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium"
-                    href="#"
-                  >
-                    3
-                  </a>
+                    {{ page }}
+                  </button>
+
+                  <!-- Ellipsis (jika ada page yang tidak ditampilkan) -->
                   <span
+                    v-if="pageNumbers[pageNumbers.length - 1] < productStore.pagination.totalPages"
                     class="relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-700 bg-surface-light dark:bg-surface-dark text-sm font-medium text-slate-700"
                   >
                     ...
                   </span>
-                  <a
+
+                  <!-- Last Page (jika tidak dalam range) -->
+                  <button
+                    v-if="pageNumbers[pageNumbers.length - 1] < productStore.pagination.totalPages"
+                    @click="goToPage(productStore.pagination.totalPages)"
                     class="bg-surface-light dark:bg-surface-dark border-slate-300 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium"
-                    href="#"
                   >
-                    10
-                  </a>
-                  <a
-                    class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 dark:border-slate-700 bg-surface-light dark:bg-surface-dark text-sm font-medium text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800"
-                    href="#"
+                    {{ productStore.pagination.totalPages }}
+                  </button>
+
+                  <!-- Next Button -->
+                  <button
+                    @click="goToPage(currentPage + 1)"
+                    :disabled="currentPage === productStore.pagination.totalPages"
+                    class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 dark:border-slate-700 bg-surface-light dark:bg-surface-dark text-sm font-medium text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span class="sr-only">Next</span>
                     <span class="material-symbols-outlined text-[20px]">chevron_right</span>
-                  </a>
+                  </button>
                 </nav>
               </div>
             </div>
