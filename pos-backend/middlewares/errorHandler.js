@@ -3,6 +3,8 @@ async function errorHandler(error, req, res, next) {
   let status = error.status || 500
   let message = error.message || "Internal Server Error"
 
+  // console.log("Error name:", error.name)
+  // console.log("Error object:", error)
   switch(error.name) {
     case "SequelizeUniqueConstraintError":
     case "SequelizeValidationError":
@@ -28,7 +30,7 @@ async function errorHandler(error, req, res, next) {
       break
     case "BadRequest":
       status = 400
-      message = "Only PNG, JPG, JPEG, WEBP are allowed"
+      message = "Only PNG, JPG, JPEG, WEBP are allowed. Check your upload file"
   }
 
   res.status(status).json({ message })

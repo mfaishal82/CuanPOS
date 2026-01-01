@@ -91,9 +91,14 @@ class ProductController {
   static async createProduct(req, res, next){
     try{
       const { name, price, cost_price, stock, category_id, barcode } = req.body
+      console.log(req.file)
+
+      if (!req.file) {
+        throw { name: "BadRequest" }
+      }
+
       let checkType = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp']
 
-      console.log(req.file)
       if(!checkType.includes(req.file.mimetype)) {
         throw { name: "BadRequest" }
       }
