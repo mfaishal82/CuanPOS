@@ -2,6 +2,7 @@
 import useProductStore from '@/stores/productStore'
 import { es2024 } from 'globals'
 import { computed, onMounted, ref } from 'vue'
+import { RouterLink } from 'vue-router'
 
 const productStore = useProductStore()
 const searcQuery = ref('')
@@ -71,6 +72,12 @@ const handleSearch = async () => {
   await handleFetch()
 }
 
+const handleDelete = async (id) => {
+  // console.log(id)
+  await productStore.deleteProduct(id)
+  await handleFetch()
+}
+
 const filterByCategory = async () => {
   currentPage.value = 1
   await handleFetch()
@@ -125,12 +132,12 @@ const pageNumbers = computed(() => {
               Kelola katalog, stok, dan harga produk toko Anda.
             </p>
           </div>
-          <button
+          <RouterLink to="/product/add-product"
             class="flex items-center gap-2 bg-primary hover:bg-emerald-400 text-background-dark font-bold px-5 py-3 rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-95"
           >
             <span class="material-symbols-outlined text-[20px]">add</span>
             Tambah Produk
-          </button>
+          </RouterLink>
         </div>
         <div
           class="bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 p-4 mb-6 shadow-sm"
@@ -304,6 +311,7 @@ const pageNumbers = computed(() => {
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                       </button>
                       <button
+                        @click="()=> handleDelete(item.id)"
                         class="text-slate-400 hover:text-red-500 transition-colors p-1"
                         title="Delete"
                       >
