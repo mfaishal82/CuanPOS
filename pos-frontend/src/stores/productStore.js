@@ -55,7 +55,41 @@ const useProductStore = defineStore('product', () => {
     category.value = categoryData
   }
 
-  return { fetchProduct, product, category, fetchCategory, pagination }
+  async function addProduct(options = {}) {
+    const { name, price, cost_price, stock, category_id, image, barcode } = options
+    try {
+      await axios.post(`${apiUrl}/product/add`, {
+        name,
+        price,
+        cost_price,
+        stock,
+        category_id,
+        image,
+        barcode
+      }, {
+        withCredentials: true,
+      })
+      return true
+    } catch (error) {
+      console.log(error)
+      return false
+    }
+  }
+
+  async function deleteProduct(productId) {
+    try{
+      if(!productId){
+        console.log('Id tidak ada')
+      }
+      await axios.delete(`${apiUrl}/product/${productId}`, {
+        withCredentials: true
+      })
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  return { fetchProduct, product, category, fetchCategory, pagination, addProduct, deleteProduct }
 })
 
 export default useProductStore
