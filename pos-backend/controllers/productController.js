@@ -90,7 +90,7 @@ class ProductController {
 
   static async createProduct(req, res, next){
     try{
-      const { name, price, cost_price, stock, category_id } = req.body
+      const { name, price, cost_price, stock, category_id, barcode } = req.body
       let checkType = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp']
 
       console.log(req.file)
@@ -110,7 +110,7 @@ class ProductController {
 
       console.log(response);
 
-      await Product.create({name, price, cost_price, image: response.url, imageId: response.fileId, stock, category_id})
+      await Product.create({name, price, cost_price, barcode, image: response.url, imageId: response.fileId, stock, category_id})
 
       const keys = await redis.keys('products:*')
       if(keys.length > 0) {

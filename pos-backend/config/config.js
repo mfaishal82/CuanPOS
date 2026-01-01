@@ -9,12 +9,12 @@ module.exports = {
     port: 5432,
     dialect: 'postgres',
     logging: false,
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    }
+    // dialectOptions: {
+    //   ssl: {
+    //     require: true,
+    //     rejectUnauthorized: false
+    //   }
+    // }
   },
   test: {
     username: process.env.DB_USERNAME || 'postgres',
