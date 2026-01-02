@@ -6,6 +6,7 @@ const useProductStore = defineStore('product', () => {
   const product = ref([])
   const category = ref([])
   const pagination = ref({})
+  const errorMessage = ref('')
   const apiUrl = import.meta.env.VITE_API_URL
 
   async function fetchProduct(options = {}) {
@@ -68,10 +69,14 @@ const useProductStore = defineStore('product', () => {
         barcode
       }, {
         withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       })
       return true
     } catch (error) {
-      console.log(error)
+      // console.log(error.response.data.message)
+      errorMessage.value = error.response.data.message
       return false
     }
   }
@@ -89,7 +94,7 @@ const useProductStore = defineStore('product', () => {
     }
   }
 
-  return { fetchProduct, product, category, fetchCategory, pagination, addProduct, deleteProduct }
+  return { fetchProduct, product, category, fetchCategory, pagination, addProduct, deleteProduct, errorMessage }
 })
 
 export default useProductStore

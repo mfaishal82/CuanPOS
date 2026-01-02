@@ -18,12 +18,13 @@
     "@tailwindcss/vite": "^4.1.18",
     "axios": "^1.13.2",
     "epic-spinners": "^2.0.0",
+    "html5-qrcode": "^2.3.8",
     "pinia": "^3.0.4",
-    "react-barcode-scanner": "^4.0.0",
     "sweetalert2": "^11.26.17",
     "tailwindcss": "^4.1.18",
     "vue": "^3.5.25",
-    "vue-router": "^4.6.3"
+    "vue-router": "^4.6.3",
+    "vue3-toastify": "^0.2.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
