@@ -14,14 +14,18 @@ const orderBy = ref('updatedAt')
 const sortBy = ref('DESC')
 
 onMounted(async () => {
-  // await productStore.fetchCategory()
+  loading.value = true
+
+  await productStore.fetchCategory({
+    search: '',
+  })
   await handleFetch()
-  // console.log(await productStore.pagination)
+
+  loading.value = false
 })
 
 const handleFetch = async () => {
   // console.log(selectedCategory.value)
-  loading.value = true
   await productStore.fetchProduct({
     search: searcQuery.value,
     page: currentPage.value,
@@ -30,12 +34,6 @@ const handleFetch = async () => {
     sort: sortBy.value,
     order: orderBy.value,
   })
-
-  await productStore.fetchCategory({
-    search: '',
-  })
-
-  loading.value = false
 }
 
 const handleSort = async (event) => {
