@@ -34,6 +34,12 @@ class CategoryController {
     try{
       const { name } = req.body
 
+      const category = await Category.findAll()
+
+      if(category.some(item => item.name.toLowerCase() === name.toLowerCase())) {
+        throw new Error("Category name already exist")
+      }
+
       await Category.create({
         name
       })
