@@ -7,8 +7,8 @@ import Swal from 'sweetalert2'
 const router = useRouter()
 const userStore = useUserStore()
 
-const username = ref('')
-const password = ref('')
+const username = ref('mfaisal')
+const password = ref('12345678')
 const loading = ref(false)
 const showPassword = ref(false)
 
