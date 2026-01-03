@@ -1,8 +1,8 @@
 <script setup>
 import useProductStore from '@/stores/productStore';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
-import Swal from 'sweetalert2'
+import { toast } from "vue3-toastify";
 
 const productName = ref('')
 const imageFile = ref(null)
@@ -13,32 +13,48 @@ const stock = ref(0)
 const barcode = ref('')
 const loading = ref(false)
 const fileInput = ref(null)
+const selectedCategory = ref('')
 const productStore = useProductStore()
 
 const router = useRouter()
 
+onMounted(async()=>{
+  await productStore.fetchCategory({
+    search: '',
+  })
+})
+
+// console.log(selectedCategory.value)
+
 async function handleForm() {
   loading.value = true
-  const success = await productStore.addProduct({
+
+  const productSuccess = await productStore.addProduct({
     name: productName.value,
     price: price.value,
     cost_price: costPrice.value,
     image: imageFile.value,
     stock: stock.value,
-    barcode: barcode.value
+    barcode: barcode.value,
+    category_id: selectedCategory.value
   })
 
-  if(success) {
+  const categoryName = selectedCategory.value === productStore.category.id
+  // console.log(selectedCategory, '<<< selectedCategory')
+  // console.log(productStore.category.id, '<<<< category.id')
+  // console.log(categoryName)
+
+  const categorySuccess = await productStore.addCategory({
+    name: categoryName
+  })
+
+  if( categorySuccess && productSuccess) {
     router.push('/product')
   }else{
     // console.log(productStore.errorMessage)
-    Swal.fire({
-      title: 'Gagal simpan!',
-      text: `${productStore.errorMessage}`,
-      color: 'red',
-      icon: 'error',
-      confirmButtonText: 'Coba lagi',
-      confirmButtonColor: 'red',
+    toast(`${productStore.errorMessage}`, {
+      "type": "error",
+      "dangerouslyHTMLString": true
     })
   }
 
@@ -137,6 +153,31 @@ function handleImageChange(event) {
                     />
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="pt-4 border-t border-border-light dark:border-border-dark">
+                      <label
+                        class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
+                        for="stock"
+                        >Stok Awal</label
+                      >
+                      <input
+                        v-model="stock"
+                        class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm"
+                        id="stock"
+                        placeholder="0"
+                        type="number"
+                      />
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-sm font-medium text-text-main dark:text-gray-300"
+                        >Lacak Stok</span
+                      >
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input checked="" class="sr-only peer" type="checkbox" value="" />
+                        <div
+                          class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"
+                        ></div>
+                      </label>
+                    </div>
                     <!-- <div>
                       <label
                         class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
@@ -326,17 +367,38 @@ function handleImageChange(event) {
                       >Kategori</label
                     >
                     <select
-                      class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm"
+                      v-model="selectedCategory"
+                      class="w-full cursor-pointer rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm"
                       id="category"
                     >
                       <option disabled="" selected="" value="">Pilih Kategori</option>
-                      <option value="makanan">Makanan</option>
-                      <option value="minuman">Minuman</option>
-                      <option value="snack">Snack</option>
-                      <option value="merchandise">Merchandise</option>
+                      <option v-for="item in productStore.category" :key="item.id" :value="item.id">
+                        {{ item.name }}
+                      </option>
                     </select>
+                    <div>
+                      <form>
+                        <label
+                          class="block text-sm font-medium text-text-main dark:text-gray-300 mb-1 mt-1"
+                          for="kategori"
+                          >Atau buat kategori baru</label
+                        >
+                        <div class="relative">
+                          <input
+                            v-model="selectedCategory"
+                            class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm pr-10"
+                            id="barcode"
+                            placeholder="Buat kategori baru..."
+                            type="text"
+                          />
+                          <span class="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 text-text-secondary">
+                            <span class="material-symbols-outlined text-lg">add</span>
+                          </span>
+                        </div>
+                      </form>
+                    </div>
                   </div>
-                  <div>
+                  <!-- <div>
                     <label
                       class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
                       for="brand"
@@ -350,8 +412,8 @@ function handleImageChange(event) {
                       <option value="internal">Produksi Sendiri</option>
                       <option value="supplier_a">Supplier A</option>
                     </select>
-                  </div>
-                  <div class="pt-4 border-t border-border-light dark:border-border-dark">
+                  </div> -->
+                  <!-- <div class="pt-4 border-t border-border-light dark:border-border-dark">
                     <label
                       class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
                       for="stock"
@@ -375,7 +437,7 @@ function handleImageChange(event) {
                         class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"
                       ></div>
                     </label>
-                  </div>
+                  </div> -->
                 </div>
               </section>
             </div>

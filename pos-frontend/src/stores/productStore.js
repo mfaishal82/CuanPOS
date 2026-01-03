@@ -41,7 +41,9 @@ const useProductStore = defineStore('product', () => {
       const response = await axios.get(`${apiUrl}/category/list?${params}`, {
         withCredentials: true,
       })
-      setCategory(response.data)
+      // console.log(response)
+      setCategory(response.data.data || response.data)
+      return true
     } catch (error) {
       console.log(error)
     }
@@ -94,7 +96,43 @@ const useProductStore = defineStore('product', () => {
     }
   }
 
-  return { fetchProduct, product, category, fetchCategory, pagination, addProduct, deleteProduct, errorMessage }
+  async function addCategory(options = {}) {
+    const { name } = options
+    try{
+      await axios.post(`${apiUrl}/category/add`, {
+        name
+      }, {
+        withCredentials: true
+      })
+    }catch(error){
+      console.log(error)
+      errorMessage.value = error
+    }
+  }
+
+  async function deleteCategory(id) {
+    try{
+      await axios.delete(`${apiUrl}/category/${id}`, {
+        withCredentials: true
+      })
+    }catch(error){
+      console.log(error)
+      errorMessage.value = error
+    }
+  }
+
+  return {
+    fetchProduct,
+    product,
+    category,
+    fetchCategory,
+    pagination,
+    addProduct,
+    deleteProduct,
+    errorMessage,
+    addCategory,
+    deleteCategory
+  }
 })
 
 export default useProductStore
