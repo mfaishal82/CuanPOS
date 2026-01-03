@@ -5,6 +5,7 @@ import { RouterLink, useRouter } from 'vue-router';
 import { toast } from "vue3-toastify";
 
 const productName = ref('')
+const categoryName = ref('')
 const imageFile = ref(null)
 const imagePreview = ref('')
 const costPrice = ref(0)
@@ -29,7 +30,7 @@ onMounted(async()=>{
 async function handleForm() {
   loading.value = true
 
-  const productSuccess = await productStore.addProduct({
+  const success = await productStore.addProduct({
     name: productName.value,
     price: price.value,
     cost_price: costPrice.value,
@@ -39,16 +40,7 @@ async function handleForm() {
     category_id: selectedCategory.value
   })
 
-  const categoryName = selectedCategory.value === productStore.category.id
-  // console.log(selectedCategory, '<<< selectedCategory')
-  // console.log(productStore.category.id, '<<<< category.id')
-  // console.log(categoryName)
-
-  const categorySuccess = await productStore.addCategory({
-    name: categoryName
-  })
-
-  if( categorySuccess && productSuccess) {
+  if(success) {
     router.push('/product')
   }else{
     // console.log(productStore.errorMessage)
@@ -59,6 +51,18 @@ async function handleForm() {
   }
 
   loading.value = false
+}
+
+async function createNewCategory() {
+  await productStore.addCategory({
+    name: categoryName.value
+  })
+
+  categoryName.value = ""
+
+  await productStore.fetchCategory({
+    search: '',
+  })
 }
 
 function handleImageClick() {
@@ -377,7 +381,7 @@ function handleImageChange(event) {
                       </option>
                     </select>
                     <div>
-                      <form>
+                      <div>
                         <label
                           class="block text-sm font-medium text-text-main dark:text-gray-300 mb-1 mt-1"
                           for="kategori"
@@ -385,17 +389,17 @@ function handleImageChange(event) {
                         >
                         <div class="relative">
                           <input
-                            v-model="selectedCategory"
+                            v-model="categoryName"
                             class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm pr-10"
                             id="barcode"
                             placeholder="Buat kategori baru..."
                             type="text"
                           />
                           <span class="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 text-text-secondary">
-                            <span class="material-symbols-outlined text-lg">add</span>
+                            <button type="button" @click=createNewCategory class="material-symbols-outlined text-lg">add</button>
                           </span>
                         </div>
-                      </form>
+                      </div>
                     </div>
                   </div>
                   <!-- <div>
