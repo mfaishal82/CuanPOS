@@ -41,6 +41,7 @@ const useUserStore = defineStore('user', () => {
 
   async function login(username, password) {
     try {
+      loading.value = false
       await axios.post(
         `${apiUrl}/auth/login`,
         {
@@ -52,6 +53,7 @@ const useUserStore = defineStore('user', () => {
         },
       )
       // console.log(response.data)
+      loading.value = true
       authChecked.value = false
       await fetchUser()
       return true
