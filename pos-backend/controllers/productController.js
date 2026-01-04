@@ -91,7 +91,7 @@ class ProductController {
   static async createProduct(req, res, next){
     try{
       const { name, price, cost_price, stock, category_id, barcode } = req.body
-      console.log(req.file)
+      // console.log(req.file)
 
       if (!req.file) {
         throw { name: "BadRequest" }
@@ -113,7 +113,7 @@ class ProductController {
         folder: '/products'
       });
 
-      console.log(response);
+      // console.log(response);
 
       await Product.create({name, price, cost_price, barcode, image: response.url, imageId: response.fileId, stock, category_id})
 
