@@ -1,5 +1,6 @@
 <script setup>
 import useProductStore from '@/stores/productStore'
+import toastAsync from '@/utils/toast'
 import { es2024 } from 'globals'
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
@@ -26,14 +27,21 @@ onMounted(async () => {
 
 const handleFetch = async () => {
   // console.log(selectedCategory.value)
-  await productStore.fetchProduct({
-    search: searcQuery.value,
-    page: currentPage.value,
-    limit: limitItem.value,
-    category: selectedCategory.value,
-    sort: sortBy.value,
-    order: orderBy.value,
-  })
+  await toastAsync(
+    productStore.fetchProduct({
+      search: searcQuery.value,
+      page: currentPage.value,
+      limit: limitItem.value,
+      category: selectedCategory.value,
+      sort: sortBy.value,
+      order: orderBy.value,
+    }),
+    {
+      pending: 'Sedang mendapatkan data...',
+      success: 'Data berhasil didapat',
+      error: productStore.errorMessage
+    }
+  )
 }
 
 const handleSort = async (event) => {
@@ -72,7 +80,14 @@ const handleSearch = async () => {
 
 const handleDelete = async (id) => {
   // console.log(id)
-  await productStore.deleteProduct(id)
+  await toastAsync(
+    productStore.deleteProduct(id),
+    {
+      pending: "Sedang menghapus...",
+      success: "Berhasil dihapus",
+      error: productStore.errorMessage
+    }
+  )
   await handleFetch()
 }
 
