@@ -1,5 +1,8 @@
 <script setup>
+import useResponsiveStore from '@/stores/responsiveStore'
 import useUserStore from '@/stores/userStore'
+import { onClickOutside } from '@vueuse/core'
+import { ref } from 'vue'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -16,19 +19,31 @@ const route = useRoute()
 // LeftSidebar.vue?t=1766444753733:28 Params: {}
 // LeftSidebar.vue?t=1766444753733:29 Query: {}
 const userStore = useUserStore()
+const responsiveStore = useResponsiveStore()
 const user = computed(() => userStore.user)
 const router = useRouter()
+const sidebarReff = ref(null)
 
 async function handleLogout() {
   await userStore.logout()
   router.push('/login')
 }
+
+onClickOutside(sidebarReff, ()=> {
+  responsiveStore.closeMobileMenu()
+})
+
+const sidebarClasses = computed(() => [
+  'w-64 max-md:absolute flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-surface-dark flex flex-col transition-all duration-500 md:relative md:block',
+  responsiveStore.isMobile ? 'left-0 top-0 h-screen z-50' : 'hidden md:flex'
+])
+
 </script>
 
 <template>
   <aside
-    class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-surface-dark hidden md:flex flex-col z-20"
-  >
+    ref="sidebarReff"
+    :class="sidebarClasses">
     <div class="h-16 flex items-center px-6 border-b border-slate-100 dark:border-slate-800/50">
       <RouterLink to="/">
         <div class="flex items-center gap-3">
@@ -42,8 +57,8 @@ async function handleLogout() {
     <div class="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-1.5">
       <RouterLink to="/">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-dark dark:text-primary font-medium group transition-all duration-200"
-          :class="route.path === '/' ? 'bg-primary/10' : 'hover:ml-2  hover:bg-slate-50'"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg group transition-all duration-200"
+          :class="route.path === '/' ? 'bg-primary/10 text-primary-dark dark:text-primary font-medium' : 'hover:ml-2 hover:bg-slate-50 text-slate-600 dark:text-slate-400'"
         >
           <span class="material-symbols-outlined filled">dashboard</span>
           <span>Dashboard</span>
@@ -52,8 +67,8 @@ async function handleLogout() {
 
       <RouterLink to="/sales">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          :class="route.path === '/sales' ? 'bg-primary/10' : 'hover:ml-2 hover:bg-slate-50'"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
+          :class="route.path === '/sales' ? 'bg-primary/10 text-primary-dark dark:text-primary font-medium' : 'hover:ml-2 hover:bg-slate-50 text-slate-600 dark:text-slate-400'"
         >
           <span class="material-symbols-outlined">receipt_long</span>
           <span>Transaksi</span>
@@ -62,8 +77,8 @@ async function handleLogout() {
 
       <RouterLink to="/product">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          :class="route.path === '/product' ? 'bg-primary/10' : 'hover:ml-2 hover:bg-slate-50'"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
+          :class="route.path === '/product' ? 'bg-primary/10 text-primary-dark dark:text-primary font-medium' : 'hover:ml-2 hover:bg-slate-50 text-slate-600 dark:text-slate-400'"
         >
           <span class="material-symbols-outlined">inventory_2</span>
           <span>Produk</span>
@@ -72,8 +87,8 @@ async function handleLogout() {
 
       <RouterLink to="/inventory">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          :class="route.path === '/inventory' ? 'bg-primary/10' : 'hover:ml-2 hover:bg-slate-50'"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
+          :class="route.path === '/inventory' ? 'bg-primary/10 text-primary-dark dark:text-primary font-medium' : 'hover:ml-2 hover:bg-slate-50 text-slate-600 dark:text-slate-400'"
         >
           <span class="material-symbols-outlined">package_2</span>
           <span>Inventaris</span>
@@ -82,7 +97,7 @@ async function handleLogout() {
 
       <RouterLink to="#">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
           href="#"
         >
           <span class="material-symbols-outlined">group</span>
@@ -92,7 +107,7 @@ async function handleLogout() {
 
       <RouterLink to="#">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
           href="#"
         >
           <span class="material-symbols-outlined">settings</span>

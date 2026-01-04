@@ -1,5 +1,8 @@
 <script setup>
+import useResponsiveStore from '@/stores/responsiveStore';
 import { useRoute } from 'vue-router'
+
+const responsiveStore = useResponsiveStore()
 
 const route = useRoute()
 </script>
@@ -10,6 +13,7 @@ const route = useRoute()
   >
     <div class="flex items-center gap-4">
       <button
+        @click="responsiveStore.toggleMobileMenu()"
         class="md:hidden p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
       >
         <span class="material-symbols-outlined">menu</span>
