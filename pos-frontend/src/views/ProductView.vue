@@ -128,6 +128,7 @@ const pageNumbers = computed(() => {
 
   return pages
 })
+
 </script>
 
 <template>
@@ -317,12 +318,12 @@ const pageNumbers = computed(() => {
                     <div
                       class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      <button
+                      <RouterLink :to="{ name: 'Edit Product', params: { id: item.id } }"
                         class="text-slate-400 hover:text-primary transition-colors p-1"
                         title="Edit"
                       >
                         <span class="material-symbols-outlined text-[20px]">edit</span>
-                      </button>
+                      </RouterLink>
                       <button
                         @click="()=> handleDelete(item.id)"
                         class="text-slate-400 hover:text-red-500 transition-colors p-1"

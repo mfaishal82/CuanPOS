@@ -7,6 +7,7 @@ import ProductView from '@/views/ProductView.vue'
 import MainLayout from '@/layouts/MainLayout.vue'
 import useUserStore from '@/stores/userStore'
 import AddProductView from '@/views/AddProductView.vue'
+import EditProductView from '@/views/EditProductView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,6 +47,11 @@ const router = createRouter({
           path: '/product/add-product',
           name: 'Add New Product',
           component: AddProductView
+        },
+        {
+          path: '/product/edit-product/:id',
+          name: 'Edit Product',
+          component: EditProductView
         }
       ],
     },

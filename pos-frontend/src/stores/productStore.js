@@ -4,11 +4,14 @@ import { ref } from 'vue'
 
 const useProductStore = defineStore('product', () => {
   const product = ref([])
+  const getIdProduct = ref('')
+  const productById = ref({})
   const category = ref([])
   const pagination = ref({})
   const errorMessage = ref('')
   const apiUrl = import.meta.env.VITE_API_URL
 
+  console.log(getIdProduct)
   async function fetchProduct(options = {}) {
     const { search, page, limit, category, order, sort } = options
 
@@ -83,6 +86,18 @@ const useProductStore = defineStore('product', () => {
     }
   }
 
+  async function getProductById(id) {
+    try{
+      if(!id) {
+        errorMessage.value = "Tidak ada product yg dipilih!"
+      }
+      await axios.get(`${apiUrl}/product/${id}`)
+    }catch(error){
+      console.log(error)
+      // errorMessage.value =
+    }
+  }
+
   async function deleteProduct(productId) {
     try{
       if(!productId){
@@ -131,7 +146,10 @@ const useProductStore = defineStore('product', () => {
     deleteProduct,
     errorMessage,
     addCategory,
-    deleteCategory
+    deleteCategory,
+    getIdProduct,
+    productById,
+    getProductById
   }
 })
 
