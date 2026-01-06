@@ -87,6 +87,7 @@ const useProductStore = defineStore('product', () => {
 
   async function getProductById(id) {
     try{
+      // console.log(id)
       if(!id) {
         errorMessage.value = "Tidak ada product yg dipilih!"
       }
@@ -95,6 +96,7 @@ const useProductStore = defineStore('product', () => {
       })
 
        productById.value = response.data
+       return productById.value
     }catch(error){
       // console.log(error)
       errorMessage.value = error.response.data.message
@@ -127,6 +129,7 @@ const useProductStore = defineStore('product', () => {
   }
 
   async function deleteProduct(productId) {
+    // console.log(productId, "<<< dari store")
     try{
       if(!productId){
         console.log('Id tidak ada')

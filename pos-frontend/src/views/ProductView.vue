@@ -45,6 +45,7 @@ const handleFetch = async () => {
 }
 
 const handleSort = async (event) => {
+  console.log(event)
   const value = event.target.value
 
   switch (value) {
@@ -79,7 +80,7 @@ const handleSearch = async () => {
 }
 
 const handleDelete = async (id) => {
-  // console.log(id)
+  console.log(id)
   await toastAsync(
     productStore.deleteProduct(id),
     {

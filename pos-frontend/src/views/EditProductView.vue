@@ -15,6 +15,7 @@ const barcode = ref('')
 const loading = ref(false)
 const fileInput = ref(null)
 const selectedCategory = ref('')
+const currentProduct = ref(null)
 const productStore = useProductStore()
 const route = useRoute()
 const router = useRouter()
@@ -22,24 +23,21 @@ const router = useRouter()
 const productId = route.params.id
 
 onMounted(async()=>{
-  const product = productStore.productById
-
-  productStore.getIdProduct = productId
-
-  await productStore.getProductById(productId)
+  currentProduct.value = await productStore.getProductById(productId)
+  // console.log('Fetched product:', currentProduct.value)
 
   await productStore.fetchCategory({
     search: '',
   })
 
-  if(product) {
-    productName.value = product.name
-    price.value = product.price
-    costPrice.value = product.cost_price
-    stock.value = product.stock
-    barcode.value = product.barcode
-    selectedCategory.value = product.category_id
-    imagePreview.value = product.image
+  if (currentProduct.value) {
+    productName.value = currentProduct.value.name
+    price.value = currentProduct.value.price
+    costPrice.value = currentProduct.value.cost_price
+    stock.value = currentProduct.value.stock
+    barcode.value = currentProduct.value.barcode
+    selectedCategory.value = currentProduct.value.category_id || currentProduct.value.category?.id || ''
+    imagePreview.value = currentProduct.value.image
   }
 })
 

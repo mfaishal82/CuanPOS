@@ -75,13 +75,9 @@ function handleImageChange(event) {
   if(!file) return
 
   if(file.size > 2 * 1024 * 1024) {
-    Swal.fire({
-      title: 'Peringatan!',
-      text: `Gambar tidak boleh lebih dari 2MB`,
-      color: 'red',
-      icon: 'error',
-      confirmButtonText: 'Coba lagi',
-      confirmButtonColor: 'red',
+    toast("Gambar tidak boleh lebih dari 2MB!", {
+      "type": "error",
+      "dangerouslyHTMLString": true
     })
   }
 
