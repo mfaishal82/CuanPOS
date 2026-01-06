@@ -1,44 +1,44 @@
-const { randomUUID } = require("crypto")
-const imageKit = require("../helpers/imagekit")
-const redis = require("../helpers/redis")
-const { Product, User, Category } = require("../models")
-const { Op } = require('sequelize')
+const { randomUUID } = require("crypto");
+const imageKit = require("../helpers/imagekit");
+const redis = require("../helpers/redis");
+const { Product, User, Category } = require("../models");
+const { Op } = require("sequelize");
 
 class ProductController {
   static async getProducts(req, res, next) {
-    try{
-      let { page, limit, searchProduct, order, sort, category } = req.query
-      page = parseInt(page) || 1
-      limit = parseInt(limit) || 10
-      const offset = (page - 1) * limit // contoh: page 1 - 1 = 0 x 10 = 0 <-- offset / batas bawah
+    try {
+      let { page, limit, searchProduct, order, sort, category } = req.query;
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 10;
+      const offset = (page - 1) * limit; // contoh: page 1 - 1 = 0 x 10 = 0 <-- offset / batas bawah
 
-      const cacheKey = `products:${page}:${limit}:${searchProduct || 'all'}:${order || 'updatedAt'}:${sort || 'DESC'}:${category || 'all'}`
-      const cacheData = await redis.get(cacheKey)
-      if(cacheData) {
+      const cacheKey = `products:${page}:${limit}:${searchProduct || "all"}:${order || "updatedAt"}:${sort || "DESC"}:${category || "all"}`;
+      const cacheData = await redis.get(cacheKey);
+      if (cacheData) {
         // console.log("lewat")
-        return res.status(200).json(JSON.parse(cacheData))
+        return res.status(200).json(JSON.parse(cacheData));
       }
       // console.log(cacheKey, '(<=== ini cache key')
       // console.log(cacheData, '(<=== ini cache data')
 
-      const option = {}
-      if(searchProduct && searchProduct !== 'all') {
+      const option = {};
+      if (searchProduct && searchProduct !== "all") {
         option.name = {
-          [Op.iLike]: `%${searchProduct}%`
-        }
+          [Op.iLike]: `%${searchProduct}%`,
+        };
       }
 
       const includeClause = {
         model: Category,
-        attributes: ['name']
-      }
-      if(category && category !== 'all') {
+        attributes: ["name"],
+      };
+      if (category && category !== "all") {
         includeClause.where = {
           name: {
-            [Op.iLike]: `%${category}%`
-          }
-        }
-        includeClause.required = true
+            [Op.iLike]: `%${category}%`,
+          },
+        };
+        includeClause.required = true;
       }
 
       // doc sequelize:
@@ -47,60 +47,65 @@ class ProductController {
       const { count, rows } = await Product.findAndCountAll({
         where: option,
         include: includeClause,
-        order: [[`${order ? order : 'updatedAt'}`, `${sort ? sort.toUpperCase() : 'DESC'}`]],
+        order: [
+          [
+            `${order ? order : "updatedAt"}`,
+            `${sort ? sort.toUpperCase() : "DESC"}`,
+          ],
+        ],
         offset,
-        limit
-      })
+        limit,
+      });
 
       // const cekredis = await redis.get('products')
       // console.log(cekredis)
 
       const response = {
-        message: `${searchProduct ? 'Success get product name: ' + searchProduct : 'Success get all products'}`,
+        message: `${searchProduct ? "Success get product name: " + searchProduct : "Success get all products"}`,
         pagination: {
           page,
           limit,
           total: count,
-          totalPages: Math.ceil(count / limit)
+          totalPages: Math.ceil(count / limit),
         },
-        data: rows
-      }
+        data: rows,
+      };
 
-      await redis.set(cacheKey, JSON.stringify(response))
+      await redis.set(cacheKey, JSON.stringify(response));
 
-      res.status(200).json(response)
-    } catch(error){
-      next(error)
+      res.status(200).json(response);
+    } catch (error) {
+      next(error);
     }
   }
 
-  static async getProductById(req, res, next){
-    try{
-      const id = req.params.id
+  static async getProductById(req, res, next) {
+    try {
+      const id = req.params.id;
 
-      const product = await Product.findByPk(id)
+      const product = await Product.findByPk(id);
 
-      if(!product) throw { name: "NotFound" }
+      if (!product) throw { name: "NotFound" };
 
-      res.status(200).json(product)
-    } catch(error){
-      next(error)
+      res.status(200).json(product);
+    } catch (error) {
+      next(error);
     }
   }
 
-  static async createProduct(req, res, next){
-    try{
-      const { name, price, cost_price, stock, category_id, barcode } = req.body
+  static async createProduct(req, res, next) {
+    try {
+      const { name, price, cost_price, stock, category_id, barcode } = req.body;
       // console.log(req.file)
 
       if (!req.file) {
-        throw { name: "BadRequest" }
+        throw { name: "BadRequest" };
       }
 
-      let checkType = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp']
+      let checkType = ["image/png", "image/jpg", "image/jpeg", "image/webp"];
 
-      if(!checkType.includes(req.file.mimetype)) {
-        throw { name: "BadRequest" }
+      if (!checkType.includes(req.file.mimetype)) {
+        throw { name: "BadRequest" };
       }
 
       // https://github.com/imagekit-developer/imagekit-nodejs
@@ -108,100 +113,124 @@ class ProductController {
       // console.log(req.file)
 
       const response = await imageKit.files.upload({
-        file: req.file.buffer.toString('base64'),
+        file: req.file.buffer.toString("base64"),
         fileName: `${name}-${randomUUID()}.png`,
-        folder: '/products'
+        folder: "/products",
       });
 
       // console.log(response);
 
-      await Product.create({name, price, cost_price, barcode, image: response.url, imageId: response.fileId, stock, category_id})
+      await Product.create({
+        name,
+        price,
+        cost_price,
+        barcode,
+        image: response.url,
+        imageId: response.fileId,
+        stock,
+        category_id,
+      });
 
-      const keys = await redis.keys('products:*')
-      if(keys.length > 0) {
-        await redis.del(keys)
+      const keys = await redis.keys("products:*");
+      if (keys.length > 0) {
+        await redis.del(keys);
       }
 
       res.status(201).json({
-        message: "Success"
-      })
-    }catch(error){
+        message: "Success",
+      });
+    } catch (error) {
       // console.log('Error name:', error.name)
       // console.log('Error message:', error.message)
       // console.log('Error response:', error.response)  // ← ImageKit error detail
       // console.log('Full error:', error)
-      next(error)
+      next(error);
     }
   }
 
-  static async editProduct(req, res, next){
-    try{
-      const id = req.params.id
-      const { name, price, cost_price, stock, category_id } = req.body
+  static async editProduct(req, res, next) {
+    try {
+      const id = req.params.id;
+      const { name, price, cost_price, stock, category_id } = req.body;
 
-      const product = await Product.findByPk(id)
-      if(!product) {
-        throw { name: "NotFound" }
+      const product = await Product.findByPk(id);
+      if (!product) {
+        throw { name: "NotFound" };
       }
 
-      let fileId = product.imageId
+      let fileId = product.imageId;
+      // console.log("req.file:", req.file);
+      let checkType = ["image/png", "image/jpg", "image/jpeg", "image/webp"];
 
-      let checkImage = await imageKit.files.get(fileId)
+      if (!checkType.includes(req.file.mimetype)) {
+        throw { name: "BadRequest" };
+      }
+
+      // let checkImage = await imageKit.files.get(fileId);
       // console.log(checkImage, "<<< checkImage")
 
-      if(!checkImage) {
-        throw { name: "NotFound" }
+      if (fileId) {
+        try {
+          await imageKit.files.delete(fileId);
+          console.log("Old image deleted");
+        } catch (err) {
+          console.log("Old image not found or error deleting:", err.message);
+        }
       }
 
-      await imageKit.files.delete(fileId)
+      let updateData = { name, price, cost_price, stock, category_id };
 
-      const response = await imageKit.files.upload({
-        file: req.file.buffer.toString('base64'),
-        fileName: `${product.name}-${randomUUID()}.png`,
-        folder: '/products'
-      })
-      // console.log("masuk")
-      // console.log(response)
+      if (req.file) {
+        const response = await imageKit.files.upload({
+          file: req.file.buffer.toString("base64"),
+          fileName: `${product.name}-${randomUUID()}.png`,
+          folder: "/products",
+        });
+        // console.log("New image uploaded:", response);
 
-      await product.update({ name, price, cost_price, stock, image:response.url, imageId:response.fileId, category_id })
+        updateData.image = response.url || "";
+        updateData.imageId = response.fileId || "";
+      }
 
-      const keys = await redis.keys('products:*')
-      if(keys.length > 0) {
-        await redis.del(keys)
+      await product.update(updateData);
+
+      const keys = await redis.keys("products:*");
+      if (keys.length > 0) {
+        await redis.del(keys);
       }
 
       res.status(200).json({
-        message: "Update success"
-      })
-    }catch(error){
-      next(error)
+        message: "Update success",
+      });
+    } catch (error) {
+      next(error);
     }
   }
 
-  static async deleteProductById(req, res, next){
-    try{
-      const id = req.params.id
+  static async deleteProductById(req, res, next) {
+    try {
+      const id = req.params.id;
 
-      const product = await Product.findByPk(id)
-      if(!product) {
-        throw { name: "NotFound" }
+      const product = await Product.findByPk(id);
+      if (!product) {
+        throw { name: "NotFound" };
       }
 
-      const fileId = product.imageId
+      const fileId = product.imageId;
 
-      await product.destroy()
-      await imageKit.files.delete(fileId)
+      await product.destroy();
+      await imageKit.files.delete(fileId);
 
-      const keys = await redis.keys('products:*')
-      if(keys.length > 0) {
-        await redis.del(keys)
+      const keys = await redis.keys("products:*");
+      if (keys.length > 0) {
+        await redis.del(keys);
       }
 
       res.status(200).json({
-        message: "Delete Success"
-      })
-    }catch(error){
-      next(error)
+        message: "Delete Success",
+      });
+    } catch (error) {
+      next(error);
     }
   }
 }
