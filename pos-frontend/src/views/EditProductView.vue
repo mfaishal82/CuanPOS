@@ -20,13 +20,27 @@ const route = useRoute()
 const router = useRouter()
 
 const productId = route.params.id
-console.log(productId)
+
 onMounted(async()=>{
+  const product = productStore.productById
+
+  productStore.getIdProduct = productId
+
   await productStore.getProductById(productId)
-  // await productStore.getIdProduct(productId)
+
   await productStore.fetchCategory({
     search: '',
   })
+
+  if(product) {
+    productName.value = product.name
+    price.value = product.price
+    costPrice.value = product.cost_price
+    stock.value = product.stock
+    barcode.value = product.barcode
+    selectedCategory.value = product.category_id
+    imagePreview.value = product.image
+  }
 })
 
 // console.log(selectedCategory.value)
@@ -34,7 +48,9 @@ onMounted(async()=>{
 async function handleForm() {
   loading.value = true
 
-  const success = await productStore.addProduct({
+  // console.log(imageFile.value)
+
+  const success = await productStore.updateProduct({
     name: productName.value,
     price: price.value,
     cost_price: costPrice.value,

@@ -11,7 +11,6 @@ const useProductStore = defineStore('product', () => {
   const errorMessage = ref('')
   const apiUrl = import.meta.env.VITE_API_URL
 
-  console.log(getIdProduct)
   async function fetchProduct(options = {}) {
     const { search, page, limit, category, order, sort } = options
 
@@ -91,10 +90,39 @@ const useProductStore = defineStore('product', () => {
       if(!id) {
         errorMessage.value = "Tidak ada product yg dipilih!"
       }
-      await axios.get(`${apiUrl}/product/${id}`)
+      const response = await axios.get(`${apiUrl}/product/${id}`, {
+        withCredentials: true
+      })
+
+       productById.value = response.data
     }catch(error){
-      console.log(error)
-      // errorMessage.value =
+      // console.log(error)
+      errorMessage.value = error.response.data.message
+    }
+  }
+
+  async function updateProduct(options = {}) {
+    const id = getIdProduct.value
+    const { name, price, cost_price, stock, category_id, image, barcode } = options
+    try{
+      if (!id) {
+        errorMessage.value = "ID produk tidak ada"
+        return false
+      }
+      const response = await axios.put(`${apiUrl}/product/${id}`, {
+        name, price, cost_price, stock, category_id, image, barcode
+      },{
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      // console.log(response.data)
+      return true
+    }catch(error){
+      // console.log(error)
+      errorMessage.value = error.response.data.message
+      return false
     }
   }
 
@@ -149,7 +177,8 @@ const useProductStore = defineStore('product', () => {
     deleteCategory,
     getIdProduct,
     productById,
-    getProductById
+    getProductById,
+    updateProduct
   }
 })
 
