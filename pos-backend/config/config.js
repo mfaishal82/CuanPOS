@@ -1,4 +1,4 @@
-// require('dotenv').config()
+require('dotenv').config()
 
 module.exports = {
   development: {
@@ -39,11 +39,11 @@ module.exports = {
     port: 5432,
     dialect: 'postgres',
     logging: false,
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    }
+    // dialectOptions: {
+    //   ssl: {
+    //     require: true,
+    //     rejectUnauthorized: false
+    //   }
+    // }
   }
 }

@@ -167,7 +167,7 @@ class ProductController {
       if (fileId) {
         try {
           await imageKit.files.delete(fileId);
-          console.log("Old image deleted");
+          // console.log("Old image deleted");
         } catch (err) {
           console.log("Old image not found or error deleting:", err.message);
         }
