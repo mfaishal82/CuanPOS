@@ -160,11 +160,6 @@ class ProductController {
 
       let fileId = product.imageId;
       // console.log("req.file:", req.file);
-      let checkType = ["image/png", "image/jpg", "image/jpeg", "image/webp"];
-
-      if (!checkType.includes(req.file.mimetype)) {
-        throw { name: "BadRequest" };
-      }
 
       // let checkImage = await imageKit.files.get(fileId);
       // console.log(checkImage, "<<< checkImage")
@@ -181,6 +176,13 @@ class ProductController {
       let updateData = { name, price, cost_price, stock, category_id };
 
       if (req.file) {
+        let checkType = ["image/png", "image/jpg", "image/jpeg", "image/webp"];
+
+        console.log(req.file)
+        if (!checkType.includes(req.file.mimetype)) {
+          throw { name: "BadRequest" };
+        }
+
         const response = await imageKit.files.upload({
           file: req.file.buffer.toString("base64"),
           fileName: `${product.name}-${randomUUID()}.png`,
