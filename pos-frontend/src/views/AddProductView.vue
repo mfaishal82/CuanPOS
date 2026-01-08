@@ -152,7 +152,7 @@ function handleImageChange(event) {
                       type="text"
                     />
                   </div>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                   <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div class="pt-4 border-t border-border-light dark:border-border-dark">
                       <label
                         class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
@@ -178,27 +178,6 @@ function handleImageChange(event) {
                         ></div>
                       </label>
                     </div>
-                    <!-- <div>
-                      <label
-                        class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
-                        for="sku"
-                        >SKU (Stock Keeping Unit)</label
-                      >
-                      <div class="relative">
-                        <input
-                          class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm pr-10"
-                          id="sku"
-                          placeholder="PROD-00001"
-                          type="text"
-                        />
-                        <button
-                          class="absolute right-2 top-1/2 -translate-y-1/2 text-text-secondary hover:text-primary"
-                          title="Generate SKU"
-                        >
-                          <span class="material-symbols-outlined text-lg">autorenew</span>
-                        </button>
-                      </div>
-                    </div> -->
                     <div>
                       <label
                         class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
@@ -219,19 +198,6 @@ function handleImageChange(event) {
                       </div>
                     </div>
                   </div>
-                  <!-- <div>
-                    <label
-                      class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
-                      for="description"
-                      >Deskripsi Produk</label
-                    >
-                    <textarea
-                      class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-3 text-sm"
-                      id="description"
-                      placeholder="Jelaskan detail produk, bahan, ukuran, dll..."
-                      rows="4"
-                    ></textarea>
-                  </div> -->
                 </div>
               </section>
               <!-- Pricing Card -->

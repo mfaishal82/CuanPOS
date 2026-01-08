@@ -81,13 +81,16 @@ const toggleQuickAdd = ()=> {
         </div>
       </div>
 
+      <!-- Quick add purchase form -->
       <div
-        class="w-full bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl p-6 md:p-8"
+        :class="!showQuickAdd ? 'md:p-3' : 'md:p-8' "
+        class="w-full bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl p-6"
       >
         <div
           type="button"
           @click="toggleQuickAdd"
-          class="flex cursor-pointer items-center gap-2 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800"
+          :class="!showQuickAdd ? 'mb-1 pb-1' : 'mb-6 pb-4' "
+          class="flex cursor-pointer items-center gap-2 border-b border-slate-100 dark:border-slate-800"
         >
           <span class="material-symbols-outlined text-primary text-2xl">
             {{ showQuickAdd ? 'remove_circle' : 'add_circle' }}
@@ -301,6 +304,7 @@ const toggleQuickAdd = ()=> {
           </TransitionChild>
         </TransitionRoot>
       </div>
+      <!-- End form -->
 
       <div
         class="bg-surface-light dark:bg-surface-dark rounded-t-xl border border-slate-200 dark:border-slate-800 border-b-0 p-3 flex flex-wrap items-center gap-2 shadow-sm relative z-10"
