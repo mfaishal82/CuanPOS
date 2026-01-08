@@ -1,7 +1,13 @@
 const { randomUUID } = require("crypto");
 const imageKit = require("../helpers/imagekit");
 const redis = require("../helpers/redis");
-const { Product, User, Category } = require("../models");
+const {
+  Product,
+  User,
+  Category,
+  Purchase,
+  PurchaseItem,
+} = require("../models");
 const { Op } = require("sequelize");
 
 class ProductController {
@@ -178,7 +184,7 @@ class ProductController {
       if (req.file) {
         let checkType = ["image/png", "image/jpg", "image/jpeg", "image/webp"];
 
-        console.log(req.file)
+        console.log(req.file);
         if (!checkType.includes(req.file.mimetype)) {
           throw { name: "BadRequest" };
         }
@@ -233,6 +239,81 @@ class ProductController {
       });
     } catch (error) {
       next(error);
+    }
+  }
+
+  // Tambahan dari AI
+  static async addProductWithInitialPurchase(req, res, next) {
+    const t = await sequelize.transaction();
+    try {
+      const {
+        name,
+        selling_price,
+        cost_price,
+        stock,
+        category_id,
+        supplier_id,
+        invoice_number,
+        purchase_date,
+      } = req.body;
+
+      // 1️⃣ Create product (stok awal 0)
+      const product = await Product.create(
+        {
+          name,
+          selling_price,
+          cost_price,
+          stock: 0,
+          category_id,
+        },
+        { transaction: t },
+      );
+
+      // 2️⃣ Jika ada stok awal → purchase
+      if (Number(stock) > 0) {
+        const totalCost = stock * cost_price;
+
+        const purchase = await Purchase.create(
+          {
+            user_id: req.user.id,
+            supplier_id,
+            invoice_number,
+            purchase_date,
+            total_cost: totalCost,
+            status: "completed",
+          },
+          { transaction: t },
+        );
+
+        await PurchaseItem.create(
+          {
+            purchase_id: purchase.id,
+            product_id: product.id,
+            quantity: stock,
+            cost_price,
+            subtotal: totalCost,
+            status: "completed",
+          },
+          { transaction: t },
+        );
+
+        await product.update(
+          {
+            stock,
+          },
+          { transaction: t },
+        );
+      }
+
+      await t.commit();
+
+      res.status(201).json({
+        message: "Product and initial purchase created successfully",
+        product_id: product.id,
+      });
+    } catch (err) {
+      await t.rollback();
+      next(err);
     }
   }
 }
