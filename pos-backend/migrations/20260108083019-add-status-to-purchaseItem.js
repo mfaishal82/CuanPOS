@@ -12,7 +12,7 @@ module.exports = {
     await queryInterface.addColumn("PurchaseItems", "status", {
       type: Sequelize.ENUM("draft", "completed", "canceled"),
       allowNull: false,
-      defaultValue: "pending",
+      defaultValue: "draft",
     });
   },
 

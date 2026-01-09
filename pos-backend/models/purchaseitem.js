@@ -25,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     cost_price: DataTypes.INTEGER,
-    subtotal: DataTypes.INTEGER
+    subtotal: DataTypes.INTEGER,
+    status: DataTypes.ENUM('draft', 'completed', 'canceled'),
   }, {
     sequelize,
     modelName: 'PurchaseItem',

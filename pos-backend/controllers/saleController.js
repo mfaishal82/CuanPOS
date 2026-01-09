@@ -1,5 +1,6 @@
 const { invoiceGenerator } = require("../helpers/invoiceGenerator")
 const { Sale, SaleItem, Product, sequelize } = require("../models")
+const { Op } = require("sequelize")
 
 class SaleController {
   static async getAllSales(req, res, next){
@@ -112,6 +113,45 @@ class SaleController {
       res.status(201).json({ message: "Success add sale item" })
     }catch(error){
       await t.rollback()
+      next(error)
+    }
+  }
+
+  static async getSalesSummary(req, res, next) {
+    try {
+      const startOfToday = new Date()
+      startOfToday.setHours(0, 0, 0, 0)
+
+      const totalRevenue = await Sale.sum('total')
+
+      const totalTransactions = await Sale.count()
+
+      const totalProductsSold = await SaleItem.sum('quantity')
+
+      const todayRevenue = await Sale.sum('total', {
+        where: {
+          createdAt: {
+            [Op.gte]: startOfToday
+          }
+        }
+      })
+
+      const todayTransactions = await Sale.count({
+        where: {
+          createdAt: {
+            [Op.gte]: startOfToday
+          }
+        }
+      })
+
+      return res.status(200).json({
+        total_revenue: totalRevenue || 0,
+        total_transactions: totalTransactions || 0,
+        total_products_sold: totalProductsSold || 0,
+        today_revenue: todayRevenue || 0,
+        today_transactions: todayTransactions || 0
+      })
+    } catch (error) {
       next(error)
     }
   }
