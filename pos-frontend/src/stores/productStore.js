@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 const useProductStore = defineStore('product', () => {
+  const loading = ref(false)
   const product = ref([])
   const getIdProduct = ref('')
   const productById = ref({})
@@ -15,6 +16,7 @@ const useProductStore = defineStore('product', () => {
     const { search, page, limit, category, order, sort } = options
 
     try {
+      loading.value = true
       const params = new URLSearchParams({
         searchProduct: search,
         category,
@@ -29,8 +31,12 @@ const useProductStore = defineStore('product', () => {
       })
       // console.log(response.data.data)
       setProduct(response.data)
+      loading.value = false
+      return true
     } catch (error) {
       console.log(error)
+    } finally {
+      loading.value = false
     }
   }
 
@@ -40,11 +46,13 @@ const useProductStore = defineStore('product', () => {
       searchCategory: search,
     })
     try {
+      loading.value = true
       const response = await axios.get(`${apiUrl}/category/list?${params}`, {
         withCredentials: true,
       })
       // console.log(response)
       setCategory(response.data.data || response.data)
+      loading.value = false
       return true
     } catch (error) {
       console.log(error)
@@ -63,20 +71,24 @@ const useProductStore = defineStore('product', () => {
   async function addProduct(options = {}) {
     const { name, price, cost_price, stock, category_id, image, barcode } = options
     try {
-      await axios.post(`${apiUrl}/product/add`, {
-        name,
-        price,
-        cost_price,
-        stock,
-        category_id,
-        image,
-        barcode
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
+      await axios.post(
+        `${apiUrl}/product/add`,
+        {
+          name,
+          price,
+          cost_price,
+          stock,
+          category_id,
+          image,
+          barcode,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      )
       return true
     } catch (error) {
       // console.log(error.response.data.message)
@@ -86,42 +98,52 @@ const useProductStore = defineStore('product', () => {
   }
 
   async function getProductById(id) {
-    try{
+    try {
       // console.log(id)
-      if(!id) {
-        errorMessage.value = "Tidak ada product yg dipilih!"
+      if (!id) {
+        errorMessage.value = 'Tidak ada product yg dipilih!'
       }
       const response = await axios.get(`${apiUrl}/product/${id}`, {
-        withCredentials: true
+        withCredentials: true,
       })
 
-       productById.value = response.data
-       return productById.value
-    }catch(error){
+      productById.value = response.data
+      return productById.value
+    } catch (error) {
       // console.log(error)
       errorMessage.value = error.response.data.message
     }
   }
 
   async function updateProduct(options = {}) {
-    const id = getIdProduct.value
-    const { name, price, cost_price, stock, category_id, image, barcode } = options
-    try{
+    // const id = getIdProduct.value
+    const { id, name, price, cost_price, stock, category_id, image, barcode } = options
+    try {
       if (!id) {
-        errorMessage.value = "ID produk tidak ada"
+        errorMessage.value = 'ID produk tidak ada'
         return false
       }
-      const response = await axios.put(`${apiUrl}/product/${id}`, {
-        name, price, cost_price, stock, category_id, image, barcode
-      },{
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
+      const response = await axios.put(
+        `${apiUrl}/product/${id}`,
+        {
+          name,
+          price,
+          cost_price,
+          stock,
+          category_id,
+          image,
+          barcode,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      )
       // console.log(response.data)
       return true
-    }catch(error){
+    } catch (error) {
       // console.log(error)
       errorMessage.value = error.response.data.message
       return false
@@ -130,38 +152,42 @@ const useProductStore = defineStore('product', () => {
 
   async function deleteProduct(productId) {
     // console.log(productId, "<<< dari store")
-    try{
-      if(!productId){
+    try {
+      if (!productId) {
         console.log('Id tidak ada')
       }
       await axios.delete(`${apiUrl}/product/${productId}`, {
-        withCredentials: true
+        withCredentials: true,
       })
-    }catch(error){
+    } catch (error) {
       console.log(error)
     }
   }
 
   async function addCategory(options = {}) {
     const { name } = options
-    try{
-      await axios.post(`${apiUrl}/category/add`, {
-        name
-      }, {
-        withCredentials: true
-      })
-    }catch(error){
+    try {
+      await axios.post(
+        `${apiUrl}/category/add`,
+        {
+          name,
+        },
+        {
+          withCredentials: true,
+        },
+      )
+    } catch (error) {
       console.log(error)
       errorMessage.value = error
     }
   }
 
   async function deleteCategory(id) {
-    try{
+    try {
       await axios.delete(`${apiUrl}/category/${id}`, {
-        withCredentials: true
+        withCredentials: true,
       })
-    }catch(error){
+    } catch (error) {
       console.log(error)
       errorMessage.value = error
     }
@@ -181,7 +207,8 @@ const useProductStore = defineStore('product', () => {
     getIdProduct,
     productById,
     getProductById,
-    updateProduct
+    updateProduct,
+    loading,
   }
 })
 

@@ -1,4 +1,5 @@
 <script setup>
+import LoadingScreen from '@/components/LoadingScreen.vue'
 import useProductStore from '@/stores/productStore'
 import toastAsync from '@/utils/toast'
 import { es2024 } from 'globals'
@@ -10,38 +11,26 @@ const searcQuery = ref('')
 const currentPage = ref(1)
 const limitItem = ref(10)
 const selectedCategory = ref('')
-const loading = ref(true)
 const orderBy = ref('updatedAt')
 const sortBy = ref('DESC')
 
 onMounted(async () => {
-  loading.value = true
-
   await productStore.fetchCategory({
     search: '',
   })
   await handleFetch()
-
-  loading.value = false
 })
 
 const handleFetch = async () => {
   // console.log(selectedCategory.value)
-  await toastAsync(
-    productStore.fetchProduct({
-      search: searcQuery.value,
-      page: currentPage.value,
-      limit: limitItem.value,
-      category: selectedCategory.value,
-      sort: sortBy.value,
-      order: orderBy.value,
-    }),
-    {
-      pending: 'Sedang mendapatkan data...',
-      success: 'Data berhasil didapat',
-      error: productStore.errorMessage
-    }
-  )
+  productStore.fetchProduct({
+    search: searcQuery.value,
+    page: currentPage.value,
+    limit: limitItem.value,
+    category: selectedCategory.value,
+    sort: sortBy.value,
+    order: orderBy.value,
+  })
 }
 
 const handleSort = async (event) => {
@@ -81,14 +70,11 @@ const handleSearch = async () => {
 
 const handleDelete = async (id) => {
   console.log(id)
-  await toastAsync(
-    productStore.deleteProduct(id),
-    {
-      pending: "Sedang menghapus...",
-      success: "Berhasil dihapus",
-      error: productStore.errorMessage
-    }
-  )
+  await toastAsync(productStore.deleteProduct(id), {
+    pending: 'Sedang menghapus...',
+    success: 'Berhasil dihapus',
+    error: productStore.errorMessage,
+  })
   await handleFetch()
 }
 
@@ -129,7 +115,6 @@ const pageNumbers = computed(() => {
 
   return pages
 })
-
 </script>
 
 <template>
@@ -147,7 +132,8 @@ const pageNumbers = computed(() => {
               Kelola katalog, stok, dan harga produk toko Anda.
             </p>
           </div>
-          <RouterLink to="/product/add-product"
+          <RouterLink
+            to="/product/add-product"
             class="flex items-center gap-2 bg-primary hover:bg-emerald-400 text-background-dark font-bold px-5 py-3 rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-95"
           >
             <span class="material-symbols-outlined text-[20px]">add</span>
@@ -213,8 +199,9 @@ const pageNumbers = computed(() => {
           </div>
         </div>
         <div
-          class="bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden"
+          class="bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden relative"
         >
+          <LoadingScreen v-if="productStore.loading"></LoadingScreen>
           <div class="overflow-x-auto">
             <!-- Table Product -->
             <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
@@ -319,14 +306,15 @@ const pageNumbers = computed(() => {
                     <div
                       class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      <RouterLink :to="{ name: 'Edit Product', params: { id: item.id } }"
+                      <RouterLink
+                        :to="{ name: 'Edit Product', params: { id: item.id } }"
                         class="text-slate-400 hover:text-primary transition-colors p-1"
                         title="Edit"
                       >
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                       </RouterLink>
                       <button
-                        @click="()=> handleDelete(item.id)"
+                        @click="() => handleDelete(item.id)"
                         class="text-slate-400 hover:text-red-500 transition-colors p-1"
                         title="Delete"
                       >
