@@ -124,9 +124,6 @@ class SaleController {
       let whereSale = {}
       let meta = {}
 
-      // =============================
-      // FILTER TANGGAL
-      // =============================
       if (date) {
         const start = new Date(date)
         start.setHours(0, 0, 0, 0)
@@ -138,28 +135,39 @@ class SaleController {
           [Op.between]: [start, end]
         }
 
-        meta.date = date
+        meta.filter = {
+          type: 'date',
+          value: date
+        }
       }
 
       // =============================
-      // QUERY
+      // SEMUA WAKTU
       // =============================
       const [
-        totalRevenue,
-        totalTransactions,
-        totalProductsSold
+        allRevenue,
+        allTransactions,
+        allProductsSold
       ] = await Promise.all([
-        // 1. TOTAL PENDAPATAN
+        Sale.sum('total'),
+        Sale.count(),
+        SaleItem.sum('quantity')
+      ])
+
+      // =============================
+      // BERDASARKAN FILTER
+      // =============================
+      const [
+        filteredRevenue,
+        filteredTransactions,
+        filteredProductsSold
+      ] = await Promise.all([
         Sale.sum('total', { where: whereSale }),
-
-        // 2. TOTAL TRANSAKSI
         Sale.count({ where: whereSale }),
-
-        // 3. TOTAL PRODUK TERJUAL
         SaleItem.sum('quantity', {
           include: [{
             model: Sale,
-            required: true, // PENTING
+            required: true,
             attributes: [],
             where: whereSale
           }]
@@ -169,9 +177,16 @@ class SaleController {
       res.json({
         message: 'Success get sales summary',
         data: {
-          total_revenue: totalRevenue || 0,
-          total_transactions: totalTransactions || 0,
-          total_products_sold: totalProductsSold || 0
+          all: {
+            total_revenue: allRevenue || 0,
+            total_transactions: allTransactions || 0,
+            total_products_sold: allProductsSold || 0
+          },
+          filtered: {
+            total_revenue: filteredRevenue || 0,
+            total_transactions: filteredTransactions || 0,
+            total_products_sold: filteredProductsSold || 0
+          }
         },
         meta
       })

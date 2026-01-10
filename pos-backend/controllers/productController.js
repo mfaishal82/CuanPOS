@@ -184,7 +184,7 @@ class ProductController {
       if (req.file) {
         let checkType = ["image/png", "image/jpg", "image/jpeg", "image/webp"];
 
-        console.log(req.file);
+        // console.log(req.file);
         if (!checkType.includes(req.file.mimetype)) {
           throw { name: "BadRequest" };
         }
