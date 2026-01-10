@@ -122,7 +122,11 @@ class SaleController {
       const { date } = req.query
 
       let whereSale = {}
+      let meta = {}
 
+      // =============================
+      // FILTER TANGGAL
+      // =============================
       if (date) {
         const start = new Date(date)
         start.setHours(0, 0, 0, 0)
@@ -133,34 +137,46 @@ class SaleController {
         whereSale.createdAt = {
           [Op.between]: [start, end]
         }
+
+        meta.date = date
       }
 
-      // 1. TOTAL REVENUE
-      const totalRevenue = await Sale.sum('total', {
-        where: whereSale
-      })
+      // =============================
+      // QUERY
+      // =============================
+      const [
+        totalRevenue,
+        totalTransactions,
+        totalProductsSold
+      ] = await Promise.all([
+        // 1. TOTAL PENDAPATAN
+        Sale.sum('total', { where: whereSale }),
 
-      // 2. TOTAL TRANSAKSI
-      const totalTransactions = await Sale.count({
-        where: whereSale
-      })
+        // 2. TOTAL TRANSAKSI
+        Sale.count({ where: whereSale }),
 
-      // 3. TOTAL PRODUK TERJUAL (JOIN manual)
-      const totalProductsSold = await SaleItem.sum('quantity', {
-        include: [{
-          model: Sale,
-          attributes: [],
-          where: whereSale
-        }]
-      })
+        // 3. TOTAL PRODUK TERJUAL
+        SaleItem.sum('quantity', {
+          include: [{
+            model: Sale,
+            required: true, // PENTING
+            attributes: [],
+            where: whereSale
+          }]
+        })
+      ])
 
       res.json({
-        total_revenue: totalRevenue || 0,
-        total_transactions: totalTransactions || 0,
-        total_products_sold: totalProductsSold || 0
+        message: 'Success get sales summary',
+        data: {
+          total_revenue: totalRevenue || 0,
+          total_transactions: totalTransactions || 0,
+          total_products_sold: totalProductsSold || 0
+        },
+        meta
       })
-    } catch (err) {
-      next(err)
+    } catch (error) {
+      next(error)
     }
   }
 }
