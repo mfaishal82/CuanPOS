@@ -1,12 +1,25 @@
 <script setup>
+import useSaleStore from '@/stores/saleStore'
 import useUserStore from '@/stores/userStore'
-import { computed } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 // import { RouterLink } from 'vue-router'
 // import TheWelcome from '../components/TheWelcome.vue'
-//
+const selectedDate = ref(null)
 const userStore = useUserStore()
+const saleStore = useSaleStore()
 const user = computed(() => userStore.user)
+
+onMounted(() => {
+  saleStore.fetchSummary()
+})
+
+watch(selectedDate, (value)=> {
+  saleStore.fetchSummary(value ? { date: value } : {})
+})
+
+const stats = computed(() => saleStore.summary)
+const loading = computed(() => saleStore.loading)
 </script>
 
 <template>
@@ -25,8 +38,11 @@ const user = computed(() => userStore.user)
           <button
             class="flex items-center gap-2 px-4 py-2 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
-            <span class="material-symbols-outlined text-[18px]">calendar_today</span>
-            {{ new Date().toDateString() }}
+            <input type="date"
+              v-model="selectedDate"
+              class="bg-transparent outline-none"/>
+            <!-- <span class="material-symbols-outlined text-[18px]">calendar_today</span>
+            {{ new Date().toDateString() }} -->
           </button>
           <button
             class="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-slate-900 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-primary/20"
@@ -54,7 +70,10 @@ const user = computed(() => userStore.user)
             </span>
           </div>
           <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Pendapatan</p>
-          <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">Rp 45.250.000</h3>
+          <h3 v-if="!loading" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+            Rp {{ stats?.all.total_revenue?.toLocaleString('id-ID') || 0 }}
+          </h3>
+          <div v-else class="animate-pulse h-6 bg-slate-200 rounded"></div>
         </div>
         <div
           class="p-5 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
@@ -73,7 +92,10 @@ const user = computed(() => userStore.user)
             </span>
           </div>
           <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Penjualan Harian</p>
-          <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">Rp 3.500.000</h3>
+          <h3 v-if="!loading" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+              Rp {{ stats?.filtered.total_revenue || 0 }}
+          </h3>
+          <div v-else class="animate-pulse h-6 bg-slate-200 rounded"></div>
         </div>
         <div
           class="p-5 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
@@ -92,7 +114,10 @@ const user = computed(() => userStore.user)
             </span>
           </div>
           <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Transaksi</p>
-          <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">142</h3>
+          <h3 v-if="!loading" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+              {{ stats?.all.total_transactions || 0 }}
+          </h3>
+          <div v-else class="animate-pulse h-6 bg-slate-200 rounded"></div>
         </div>
         <div
           class="p-5 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
@@ -111,7 +136,10 @@ const user = computed(() => userStore.user)
             </span>
           </div>
           <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Produk Terjual</p>
-          <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">890</h3>
+          <h3 v-if="!loading" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+            {{ stats?.all.total_products_sold || 0 }}
+          </h3>
+          <div v-else class="animate-pulse h-6 bg-slate-200 rounded"></div>
         </div>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
