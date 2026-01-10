@@ -119,40 +119,48 @@ class SaleController {
 
   static async getSalesSummary(req, res, next) {
     try {
-      const startOfToday = new Date()
-      startOfToday.setHours(0, 0, 0, 0)
+      const { date } = req.query
 
-      const totalRevenue = await Sale.sum('total')
+      let whereSale = {}
 
-      const totalTransactions = await Sale.count()
+      if (date) {
+        const start = new Date(date)
+        start.setHours(0, 0, 0, 0)
 
-      const totalProductsSold = await SaleItem.sum('quantity')
+        const end = new Date(date)
+        end.setHours(23, 59, 59, 999)
 
-      const todayRevenue = await Sale.sum('total', {
-        where: {
-          createdAt: {
-            [Op.gte]: startOfToday
-          }
+        whereSale.createdAt = {
+          [Op.between]: [start, end]
         }
+      }
+
+      // 1. TOTAL REVENUE
+      const totalRevenue = await Sale.sum('total', {
+        where: whereSale
       })
 
-      const todayTransactions = await Sale.count({
-        where: {
-          createdAt: {
-            [Op.gte]: startOfToday
-          }
-        }
+      // 2. TOTAL TRANSAKSI
+      const totalTransactions = await Sale.count({
+        where: whereSale
       })
 
-      return res.status(200).json({
+      // 3. TOTAL PRODUK TERJUAL (JOIN manual)
+      const totalProductsSold = await SaleItem.sum('quantity', {
+        include: [{
+          model: Sale,
+          attributes: [],
+          where: whereSale
+        }]
+      })
+
+      res.json({
         total_revenue: totalRevenue || 0,
         total_transactions: totalTransactions || 0,
-        total_products_sold: totalProductsSold || 0,
-        today_revenue: todayRevenue || 0,
-        today_transactions: todayTransactions || 0
+        total_products_sold: totalProductsSold || 0
       })
-    } catch (error) {
-      next(error)
+    } catch (err) {
+      next(err)
     }
   }
 }

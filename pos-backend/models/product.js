@@ -66,7 +66,7 @@ module.exports = (sequelize, DataTypes) => {
         min: 0
       }
     },
-    category_id: DataTypes.STRING
+    category_id: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Product',
