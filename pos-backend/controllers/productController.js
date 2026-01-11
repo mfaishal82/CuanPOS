@@ -103,6 +103,7 @@ class ProductController {
     try {
       const { name, price, cost_price, stock, category_id, barcode } = req.body;
       // console.log(req.file)
+      const category = category_id === "" ? null : category_id;
 
       if (!req.file) {
         throw { name: "BadRequest" };
@@ -134,7 +135,7 @@ class ProductController {
         image: response.url,
         imageId: response.fileId,
         stock,
-        category_id,
+        category,
       });
 
       const keys = await redis.keys("products:*");

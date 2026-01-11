@@ -58,6 +58,10 @@ module.exports = (sequelize, DataTypes) => {
     imageId: {
       type: DataTypes.STRING,
     },
+    barcode: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
     stock: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
@@ -66,7 +70,15 @@ module.exports = (sequelize, DataTypes) => {
         min: 0
       }
     },
-    category_id: DataTypes.INTEGER
+    category_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Categories',
+        key: 'id'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL'
+    }
   }, {
     sequelize,
     modelName: 'Product',
