@@ -157,7 +157,7 @@ class ProductController {
   static async editProduct(req, res, next) {
     try {
       const id = req.params.id;
-      const { name, price, cost_price, stock, category_id } = req.body;
+      const { name, price, cost_price, barcode, stock, category_id } = req.body;
 
       const product = await Product.findByPk(id);
       if (!product) {
@@ -179,7 +179,7 @@ class ProductController {
         }
       }
 
-      let updateData = { name, price, cost_price, stock, category_id };
+      let updateData = { name, price, cost_price, barcode, stock, category_id };
 
       if (req.file) {
         let checkType = ["image/png", "image/jpg", "image/jpeg", "image/webp"];

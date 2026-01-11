@@ -6,8 +6,13 @@ const app = express();
 const port = process.env.PORT || 3838;
 const cors = require('cors');
 const router = require('./routes');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const { default: rateLimit } = require('express-rate-limit');
 
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 500
+})
 app.use(cors({
   // origin: '*',
   origin: process.env.FRONTEND_URL,
@@ -16,6 +21,7 @@ app.use(cors({
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(globalLimiter)
 app.use(router)
 
 app.listen(port, () => {
