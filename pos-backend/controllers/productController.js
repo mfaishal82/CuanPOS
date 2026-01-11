@@ -166,7 +166,6 @@ class ProductController {
       }
 
       let fileId = product.imageId;
-      // console.log("req.file:", req.file);
 
       // let checkImage = await imageKit.files.get(fileId);
       // console.log(checkImage, "<<< checkImage")
