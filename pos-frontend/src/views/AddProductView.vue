@@ -3,6 +3,7 @@ import useProductStore from '@/stores/productStore'
 import { onMounted, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
+import { Html5Qrcode } from 'html5-qrcode'
 
 const productName = ref('')
 const categoryName = ref('')
@@ -14,8 +15,10 @@ const stock = ref(0)
 const barcode = ref('')
 const loading = ref(false)
 const fileInput = ref(null)
+const openCam = ref(false)
 const selectedCategory = ref('')
 const productStore = useProductStore()
+let html5QrCode = null
 
 const router = useRouter()
 
@@ -28,6 +31,7 @@ onMounted(async () => {
 // console.log(selectedCategory.value)
 
 async function handleForm() {
+  stopScan()
   loading.value = true
 
   const success = await productStore.addProduct({
@@ -54,6 +58,7 @@ async function handleForm() {
 }
 
 async function createNewCategory() {
+  console.log(categoryName.value)
   await productStore.addCategory({
     name: categoryName.value,
   })
@@ -90,6 +95,37 @@ function handleImageChange(event) {
     imagePreview.value = e.target?.result
   }
   reader.readAsDataURL(file)
+}
+
+function startScan() {
+  openCam.value = !openCam.value
+  html5QrCode = new Html5Qrcode("qr-reader")
+
+  html5QrCode.start(
+    { facingMode: "environment" }, // kamera belakang (HP)
+    {
+      fps: 10,
+      qrbox: { width: 500, height: 500 }
+    },
+    (decodedText) => {
+      // hasil scan
+      barcode.value = decodedText
+
+      stopScan()
+    },
+    (errorMessage) => {
+      // error scan (abaikan saja)
+    }
+  )
+}
+
+function stopScan() {
+  if (html5QrCode) {
+    html5QrCode.stop().then(() => {
+      html5QrCode.clear()
+    })
+  }
+  openCam.value = false
 }
 </script>
 
@@ -193,7 +229,7 @@ function handleImageChange(event) {
                         placeholder="Scan barcode..."
                         type="text"
                       />
-                      <span class="absolute right-2 top-1/2 -translate-y-1/2 text-text-secondary">
+                      <span @click="startScan" class="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 text-text-secondary">
                         <span class="material-symbols-outlined text-lg">qr_code_scanner</span>
                       </span>
                     </div>
@@ -262,6 +298,10 @@ function handleImageChange(event) {
             <section
               class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6"
             >
+              <div v-show="openCam" class="mb-4">
+                <div class="text-lg font-bold text-text-main dark:text-white mb-2"> Scan Barcode </div>
+                <div id="qr-reader" class="w-full h-full"></div>
+              </div>
               <h3 class="text-lg font-bold text-text-main dark:text-white mb-4">Gambar Produk</h3>
               <div
                 @click="handleImageClick"

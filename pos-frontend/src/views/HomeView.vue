@@ -9,6 +9,8 @@ const selectedDate = ref(null)
 const userStore = useUserStore()
 const saleStore = useSaleStore()
 const user = computed(() => userStore.user)
+const stats = computed(() => saleStore.summary)
+const loading = computed(() => saleStore.loading)
 
 onMounted(() => {
   saleStore.fetchSummary()
@@ -18,8 +20,7 @@ watch(selectedDate, (value)=> {
   saleStore.fetchSummary(value ? { date: value } : {})
 })
 
-const stats = computed(() => saleStore.summary)
-const loading = computed(() => saleStore.loading)
+
 </script>
 
 <template>

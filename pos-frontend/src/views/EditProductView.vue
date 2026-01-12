@@ -5,6 +5,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import Swal from 'sweetalert2'
 import toastAsync from '@/utils/toast'
+import { Html5Qrcode } from 'html5-qrcode'
 
 const productName = ref('')
 const categoryName = ref('')
@@ -18,9 +19,11 @@ const loading = ref(false)
 const fileInput = ref(null)
 const selectedCategory = ref('')
 const currentProduct = ref(null)
+const openCam = ref(false)
 const productStore = useProductStore()
 const route = useRoute()
 const router = useRouter()
+let html5QrCode = null
 
 const productId = route.params.id
 
@@ -38,8 +41,7 @@ onMounted(async () => {
     costPrice.value = currentProduct.value.cost_price
     stock.value = currentProduct.value.stock
     barcode.value = currentProduct.value.barcode
-    selectedCategory.value =
-      currentProduct.value.category_id || currentProduct.value.category?.id || ''
+    selectedCategory.value = currentProduct.value.category_id || currentProduct.value.category?.id || ''
     imagePreview.value = currentProduct.value.image
   }
 })
@@ -49,7 +51,7 @@ onMounted(async () => {
 async function handleForm() {
   loading.value = true
 
-  // console.log(imageFile.value)
+  console.log(barcode.value)
 
   const success = await toastAsync (productStore.updateProduct({
     id: productId,
@@ -63,7 +65,7 @@ async function handleForm() {
   }), {
     pending: 'Menyimpan perubahan produk...',
     success: 'Produk berhasil diperbarui!',
-    error: 'Gagal memperbarui produk.',
+    error: `${productStore.errorMessage}`,
   })
 
   if (success) {
@@ -120,6 +122,37 @@ function handleImageChange(event) {
     imagePreview.value = e.target?.result
   }
   reader.readAsDataURL(file)
+}
+
+function startScan() {
+  openCam.value = !openCam.value
+  html5QrCode = new Html5Qrcode("qr-reader")
+
+  html5QrCode.start(
+    { facingMode: "environment" }, // kamera belakang (HP)
+    {
+      fps: 30,
+      qrbox: { width: 500, height: 500 }
+    },
+    (decodedText) => {
+      // hasil scan
+      barcode.value = decodedText
+
+      stopScan()
+    },
+    (errorMessage) => {
+      // error scan (abaikan saja)
+    }
+  )
+}
+
+function stopScan() {
+  if (html5QrCode) {
+    html5QrCode.stop().then(() => {
+      html5QrCode.clear()
+    })
+  }
+  openCam.value = false
 }
 </script>
 
@@ -209,27 +242,6 @@ function handleImageChange(event) {
                       ></div>
                     </label>
                   </div>
-                  <!-- <div>
-                      <label
-                        class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
-                        for="sku"
-                        >SKU (Stock Keeping Unit)</label
-                      >
-                      <div class="relative">
-                        <input
-                          class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm pr-10"
-                          id="sku"
-                          placeholder="PROD-00001"
-                          type="text"
-                        />
-                        <button
-                          class="absolute right-2 top-1/2 -translate-y-1/2 text-text-secondary hover:text-primary"
-                          title="Generate SKU"
-                        >
-                          <span class="material-symbols-outlined text-lg">autorenew</span>
-                        </button>
-                      </div>
-                    </div> -->
                   <div>
                     <label
                       class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
@@ -244,25 +256,13 @@ function handleImageChange(event) {
                         placeholder="Scan barcode..."
                         type="text"
                       />
-                      <span class="absolute right-2 top-1/2 -translate-y-1/2 text-text-secondary">
+                      <span @click="startScan" class="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 text-text-secondary">
                         <span class="material-symbols-outlined text-lg">qr_code_scanner</span>
                       </span>
                     </div>
                   </div>
+                  <!-- <div id="qr-reader" class="w-full max-w-sm"></div> -->
                 </div>
-                <!-- <div>
-                    <label
-                      class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
-                      for="description"
-                      >Deskripsi Produk</label
-                    >
-                    <textarea
-                      class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-3 text-sm"
-                      id="description"
-                      placeholder="Jelaskan detail produk, bahan, ukuran, dll..."
-                      rows="4"
-                    ></textarea>
-                  </div> -->
               </div>
             </section>
             <!-- Pricing Card -->
@@ -326,6 +326,10 @@ function handleImageChange(event) {
             <section
               class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6"
             >
+              <div v-show="openCam" class="mb-4">
+                <div class="text-lg font-bold text-text-main dark:text-white mb-2"> Scan Barcode </div>
+                <div id="qr-reader" class="w-full h-full"></div>
+              </div>
               <h3 class="text-lg font-bold text-text-main dark:text-white mb-4">Gambar Produk</h3>
               <div
                 @click="handleImageClick"

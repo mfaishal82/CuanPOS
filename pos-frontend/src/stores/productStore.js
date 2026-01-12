@@ -118,6 +118,7 @@ const useProductStore = defineStore('product', () => {
   async function updateProduct(options = {}) {
     // const id = getIdProduct.value
     const { id, name, price, cost_price, stock, category_id, image, barcode } = options
+    // console.log(barcode, "<< dari store update")
     try {
       if (!id) {
         errorMessage.value = 'ID produk tidak ada'
