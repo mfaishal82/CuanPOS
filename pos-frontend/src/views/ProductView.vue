@@ -30,6 +30,8 @@ const handleFetch = async () => {
     category: selectedCategory.value,
     sort: sortBy.value,
     order: orderBy.value,
+    barcode: 'all',
+    sku: 'all'
   })
 }
 
