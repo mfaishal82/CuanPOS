@@ -19,6 +19,7 @@ module.exports = {
       username: 'mfaisal',
       password: hashPassword('12345678'),
       role: 'admin',
+      image: 'https://ik.imagekit.io/myfiles/default-image-1.jpg?updatedAt=1766536256955',
       createdAt: new Date(),
       updatedAt: new Date()
     }])
