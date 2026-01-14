@@ -18,8 +18,20 @@ module.exports = (sequelize, DataTypes) => {
   Sale.init({
     invoice_number: DataTypes.STRING,
     total: DataTypes.INTEGER,
-    payment_amount: DataTypes.INTEGER,
+    payment_amount: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        min: 0
+      }
+    },
     change_amount: DataTypes.INTEGER,
+    payment_method: {
+      type: DataTypes.ENUM("Cash", "QRIS", "Transfer"),
+      allowNull: false,
+      defaultValue: "Cash"
+    },
     user_id: DataTypes.INTEGER
   }, {
     sequelize,

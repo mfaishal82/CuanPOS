@@ -55,7 +55,7 @@ class SaleController {
   static async addSaleItem(req, res, next){
     const t = await sequelize.transaction()
     try{
-      const { sale_id, product_id, quantity } = req.body
+      const { sale_id, product_id, quantity, payment_amount, change_amount, payment_method } = req.body
       let sale = await Sale.findByPk(sale_id, { transaction: t })
 
       if(!sale) {
@@ -63,9 +63,9 @@ class SaleController {
           user_id: req.user.id,
           invoice_number: '',
           total: 0,
-          payment_amount: 0,
-          change_amount: 0,
-          payment_method: 'Cash'
+          payment_amount,
+          change_amount,
+          payment_method
         }, { transaction: t })
       }
 

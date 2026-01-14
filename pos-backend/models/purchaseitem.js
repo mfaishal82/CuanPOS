@@ -21,11 +21,24 @@ module.exports = (sequelize, DataTypes) => {
     quantity: {
       type: DataTypes.INTEGER,
       validate: {
-        isInt: true
+        isInt: true,
+        min: 1
       }
     },
-    cost_price: DataTypes.INTEGER,
-    subtotal: DataTypes.INTEGER,
+    cost_price: {
+      type: DataTypes.INTEGER,
+      validate: {
+        isInt: true,
+        min: 0
+      }
+    },
+    subtotal: {
+      type: DataTypes.INTEGER,
+      validate: {
+        isInt: true,
+        min: 0
+      }
+    },
     status: DataTypes.ENUM('draft', 'completed', 'canceled'),
   }, {
     sequelize,
