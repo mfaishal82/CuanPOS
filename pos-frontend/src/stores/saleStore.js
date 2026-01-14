@@ -8,6 +8,27 @@ const useSaleStore = defineStore('sale', () => {
   const summary = ref(null)
   const apiUrl = import.meta.env.VITE_API_URL
 
+  const createSale = async (options = {}) => {
+    const { sale_id, product_id, quantity, payment_method, payment_amount, change_amount  } = options
+    try {
+      const response = await axios.post(`${apiUrl}/sale/add-item`, {
+        sale_id,
+        product_id,
+        quantity,
+        payment_method,
+        payment_amount,
+        change_amount
+      }, {
+        withCredentials: true,
+      })
+
+      return true
+    } catch (error) {
+      console.log(error)
+      return false
+    }
+  }
+
   const fetchSummary = async (option = {}) => {
     loading.value = true
     errorMessage.value = null
@@ -34,7 +55,8 @@ const useSaleStore = defineStore('sale', () => {
     loading,
     errorMessage,
     summary,
-    fetchSummary
+    fetchSummary,
+    createSale
   })
 })
 

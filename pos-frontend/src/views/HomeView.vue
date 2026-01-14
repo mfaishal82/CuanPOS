@@ -2,6 +2,7 @@
 import useSaleStore from '@/stores/saleStore'
 import useUserStore from '@/stores/userStore'
 import { computed, onMounted, ref, watch } from 'vue'
+import { RouterLink } from 'vue-router'
 
 // import { RouterLink } from 'vue-router'
 // import TheWelcome from '../components/TheWelcome.vue'
@@ -45,12 +46,12 @@ watch(selectedDate, (value)=> {
             <!-- <span class="material-symbols-outlined text-[18px]">calendar_today</span>
             {{ new Date().toDateString() }} -->
           </button>
-          <button
+          <RouterLink to="/sales"
             class="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-slate-900 rounded-lg text-sm font-semibold transition-colors shadow-lg shadow-primary/20"
           >
             <span class="material-symbols-outlined text-[20px]">add</span>
             Transaksi Baru
-          </button>
+          </RouterLink>
         </div>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
