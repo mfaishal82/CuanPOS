@@ -3,6 +3,8 @@ import LoadingScreen from '@/components/LoadingScreen.vue';
 import useProductStore from '@/stores/productStore';
 import useSaleStore from '@/stores/saleStore';
 import { computed, onMounted, ref } from 'vue';
+import { Html5Qrcode } from 'html5-qrcode'
+import { showToast } from '@/utils/toast';
 
 const loading = ref(false)
 const searcQuery = ref('')
@@ -11,10 +13,21 @@ const limitItem = ref(20)
 const selectedCategory = ref('')
 const orderBy = ref('updatedAt')
 const sortBy = ref('DESC')
+const barcode = ref('all')
+const payment_method = ref('cash')
+const payment_amount = ref(0)
+const change_amount = ref(0)
 const showCart = ref(false)
 const showScanner = ref(false)
 const productCart = ref([])
 const productStore = useProductStore()
+const saleStore = useSaleStore()
+
+let html5QrCode = null
+let lastScannedBarcode = ''
+let scanTimeout = null
+
+// console.log(barcode.value)
 
 const cartSubtotal = computed(() => {
   let total = 0
@@ -27,13 +40,19 @@ const cartSubtotal = computed(() => {
   return total
 })
 
+const cartChangeAmount = computed(() => {
+  const change = payment_amount.value - cartSubtotal.value
+  // cartChangeAmount.value = change
+  return change >= 0 ? change : 0
+})
+
 onMounted(async () => {
   loading.value = true
   await productStore.fetchCategory({
     search: '',
   })
-  await handleFetch()
-  await useSaleStore().createSale()
+  console.log(await handleFetch())
+  // await useSaleStore().createSale()
   // console.log(productStore.product)
   // console.log(productStore.category)
   loading.value = false
@@ -47,6 +66,8 @@ const handleFetch = async () => {
     category: selectedCategory.value,
     sort: sortBy.value,
     order: orderBy.value,
+    sku: 'all',
+    barcode: barcode.value
   })
 }
 
@@ -61,7 +82,8 @@ const handleShowCart = () => {
 }
 
 const handleShowScanner = () => {
-  showScanner.value = !showScanner.value
+  // showScanner.value = !showScanner.value
+  showScanner.value ? stopScan() : startScan()
 }
 
 const handleInputCart = (product) => {
@@ -85,6 +107,67 @@ const handleInputCart = (product) => {
 
   showCart.value = true
 }
+
+function startScan() {
+  if (showScanner.value) {
+    stopScan()
+    return
+  }
+  showScanner.value = true
+
+  lastScannedBarcode = ''
+  html5QrCode = new Html5Qrcode("qr-reader")
+
+  html5QrCode.start(
+    { facingMode: "environment" }, // kamera belakang (HP)
+    {
+      fps: 10,
+      qrbox: { width: 500, height: 500 }
+    },
+    (decodedText) => {
+      if (decodedText === lastScannedBarcode) {
+        return
+      }
+      // hasil scan
+      lastScannedBarcode = decodedText
+      barcode.value = decodedText
+
+      const product = productStore.product.find((item) => item.barcode === decodedText)
+      if (product) {
+        handleInputCart(product)
+        showToast(`Produk "${product.name}" berhasil ditambahkan ke keranjang.`, 'success')
+
+        if(scanTimeout) {
+          clearTimeout(scanTimeout)
+        }
+
+        scanTimeout = setTimeout(() => {
+          lastScannedBarcode = ''
+        }, 3000)
+      } else {
+        // console.log('Produk dengan barcode tersebut tidak ditemukan.')
+        showToast(`Produk dengan barcode "${decodedText}" tidak ditemukan.`, 'error')
+      }
+      // stopScan()
+    },
+    (errorMessage) => {
+      // error scan (abaikan saja)
+    }
+  )
+}
+
+function stopScan() {
+  if (html5QrCode) {
+    html5QrCode.stop().then(() => {
+      html5QrCode.clear()
+    })
+  }
+  if(scanTimeout) {
+    clearTimeout(scanTimeout)
+  }
+  lastScannedBarcode = ''
+  showScanner.value = false
+}
 </script>
 
 <template>
@@ -106,7 +189,7 @@ const handleInputCart = (product) => {
             Semua
           </button>
           <button
-            v-for="cat in productStore.category"
+            v-for="cat in productStore.category.slice(0, 5)"
             :key="cat.id"
             @click="handleChangeCategory(cat.name)"
             class="flex items-center cursor-pointer gap-2 px-4 py-2 rounded-xl bg-surface-light dark:bg-surface-dark text-secondary dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold shadow-sm hover:shadow-md transition-all active:scale-95"
@@ -157,9 +240,9 @@ const handleInputCart = (product) => {
     <!-- Side bar Cart -->
     <aside
       v-show="showCart"
-      class="max-w-[353px] max-md:min-w-full overflow-y-scroll bg-surface-light dark:bg-surface-dark border-l border-border-light dark:border-border-dark flex flex-col z-30 shadow-xl shrink-0">
+      class="max-w-[353px] max-md:min-w-full overflow-y-scroll bg-surface-light dark:bg-surface-dark border-l border-border-light dark:border-border-dark flex justifu-center flex-col z-30 shadow-xl shrink-0 transition-all duration-300">
       <div
-        class="p-5 border-b border-border-light dark:border-border-dark flex justify-between items-start"
+        class="p-3 border-b border-border-light dark:border-border-dark flex justify-between items-start"
       >
         <div>
           <h2 class="text-lg font-bold text-secondary dark:text-white">Current Order</h2>
@@ -172,11 +255,19 @@ const handleInputCart = (product) => {
         </button>
       </div>
       <div class="p-2">
-        <button @click="handleShowScanner" class="cursor-pointer text-sm text-gray-500 dark:text-gray-400 m-1 hover:text-gray-600 transition-all duration-200 ">Klik untuk mulai scan >> </button>
-        <div v-show="showScanner" class="relative w-full min-h-20 m-2 rounded-xl border border-green-500 bg-black">
-          <p class="absolute right-40 top-6.5 z-10 text-md bold text-green-500">
-            [ Camera ]
+        <button @click="handleShowScanner" class="cursor-pointer flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 m-1 hover:text-gray-600 transition-all duration-200 ">
+          <span class="material-symbols-outlined text-[14px]">scan</span>
+          Klik untuk mulai scan >>
+        </button>
+        <div v-show="showScanner" class="relative w-full min-h-20 m-2 rounded-xl border border-spacing-5 border-green-500">
+           <p class="absolute right-24 top-6.5 z-10 font-thin text-md bold text-green-500 cursor-default select-none">
+            [ Scan barcode ]
           </p>
+          <p @click="stopScan()" class="absolute right-2 top-2 cursor-pointer z-10 text-md bold text-red-500">
+            <span class="material-symbols-outlined bold border rounded-lg text-[14px]">close</span>
+          </p>
+          <div id="qr-reader" class="w-full h-full"></div>
+           <p>Barcode: {{ barcode }}</p>
         </div>
       </div>
       <div v-for="item in productCart" :key="item.id" :class="item.quantity === 0 ? 'hidden' : ''" class="flex-1 p-4 space-y-1">
@@ -238,26 +329,35 @@ const handleInputCart = (product) => {
             <span class="text-2xl font-black text-secondary dark:text-white">Rp {{ cartSubtotal.toLocaleString('id-ID') }}</span>
           </div>
         </div>
+        <!-- Payment method -->
         <div class="grid grid-cols-3 gap-2">
           <button
-            class="flex flex-col items-center justify-center p-3 rounded-lg cursor-pointer border-2 border-primary bg-primary/10 text-primary font-bold text-sm transition-all shadow-sm"
+            @click="payment_method = 'cash'"
+            :class="payment_method === 'cash' ? 'border-2 border-primary text-primary bg-white dark:bg-surface-dark' : 'border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark text-gray-500 dark:text-gray-400 hover:border-primary hover:text-primary'"
+            class="flex flex-col items-center justify-center p-3 rounded-lg cursor-pointer border"
           >
             <span class="material-symbols-outlined mb-1">payments</span>
             Cash
           </button>
           <button
-            class="flex flex-col items-center justify-center p-3 rounded-lg cursor-pointer border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark text-gray-500 dark:text-gray-400 font-medium text-sm hover:border-primary hover:text-primary transition-all"
+            @click="payment_method = 'QRIS'"
+            :class="payment_method === 'QRIS' ? 'border-2 border-primary text-primary bg-white dark:bg-surface-dark' : 'border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark text-gray-500 dark:text-gray-400 hover:border-primary hover:text-primary'"
+            class="flex flex-col items-center justify-center p-3 rounded-lg cursor-pointer border"
           >
             <span class="material-symbols-outlined mb-1">qr_code_scanner</span>
             QRIS
           </button>
           <button
-            class="flex flex-col items-center justify-center p-3 rounded-lg cursor-pointer border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark text-gray-500 dark:text-gray-400 font-medium text-sm hover:border-primary hover:text-primary transition-all"
+            @click="payment_method = 'Transfer'"
+            :class="payment_method === 'Transfer' ? 'border-2 border-primary text-primary bg-white dark:bg-surface-dark' : 'border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark text-gray-500 dark:text-gray-400 hover:border-primary hover:text-primary'"
+            class="flex flex-col items-center justify-center p-3 rounded-lg cursor-pointer border"
           >
-            <span class="material-symbols-outlined mb-1">credit_card</span>
-            Card
+            <span class="material-symbols-outlined mb-1">send</span>
+            Transfer
           </button>
         </div>
+
+        <!-- Payment amount -->
         <div class="relative">
           <label class="text-xs font-semibold text-gray-500 uppercase mb-1 block"
             >Cash Amount Received</label
@@ -267,36 +367,43 @@ const handleInputCart = (product) => {
           >
             <span class="text-gray-500 font-semibold mr-2">Rp</span>
             <input
+              v-model="payment_amount"
               class="w-full bg-transparent border-none text-lg font-bold p-0 focus:ring-0 text-secondary dark:text-white placeholder:text-gray-300"
               placeholder="0"
               type="number"
-              value="60000"
+              value="0"
             />
           </div>
           <div class="flex gap-2 mt-2 overflow-x-auto pb-1">
             <button
+              @click="payment_amount = cartSubtotal"
               class="px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-primary/20 hover:text-primary whitespace-nowrap"
             >
               Exact
             </button>
             <button
+              @click="payment_amount = 50000"
               class="px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-primary/20 hover:text-primary whitespace-nowrap"
             >
-              60.000
+              50.000
             </button>
             <button
+              @click="payment_amount = 100000"
               class="px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-primary/20 hover:text-primary whitespace-nowrap"
             >
               100.000
             </button>
           </div>
         </div>
+
+        <!-- Change amount -->
         <div
           class="flex justify-between items-center bg-green-50 dark:bg-green-900/20 p-2 rounded-lg border border-green-100 dark:border-green-800/30"
         >
           <span class="text-sm text-green-700 dark:text-green-400 font-medium">Change Due:</span>
-          <span class="text-lg font-bold text-green-700 dark:text-green-400">Rp 4.000</span>
+          <span class="text-lg font-bold text-green-700 dark:text-green-400">Rp {{ cartChangeAmount }}</span>
         </div>
+
         <button
           class="cursor-pointer w-full bg-primary hover:bg-primary-dark text-secondary font-bold text-lg py-3.5 rounded-xl shadow-lg shadow-green-200 dark:shadow-none hover:shadow-green-300 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
         >
@@ -307,9 +414,9 @@ const handleInputCart = (product) => {
     </aside>
     <!-- Camera scan barcode button -->
     <div class="relative">
-      <div class="absolute bottom-10 right-10 flex items-center justify-center rounded-full shadow-lg w-14 h-14 bg-green-500 hover:bg-green-600 cursor-pointer transition-all duration-200">
-        <span class="material-symbols-outlined text-[20px] hover:text-white duration-200">camera</span>
-      </div>
+      <button @click="handleShowCart" class="absolute bottom-10 right-10 flex items-center justify-center rounded-full shadow-lg w-14 h-14 bg-green-500 hover:bg-green-600 cursor-pointer transition-all duration-200">
+        <span class="material-symbols-outlined text-[20px] hover:text-white duration-200">scan</span>
+      </button>
     </div>
   </div>
 </template>
