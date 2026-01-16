@@ -6,15 +6,20 @@ import { RouterLink } from 'vue-router'
 
 // import { RouterLink } from 'vue-router'
 // import TheWelcome from '../components/TheWelcome.vue'
-const selectedDate = ref(null)
+const selectedDate = ref(new Date().toLocaleDateString('en-GB').split('/').reverse().join('-'))
 const userStore = useUserStore()
 const saleStore = useSaleStore()
 const user = computed(() => userStore.user)
 const stats = computed(() => saleStore.summary)
 const loading = computed(() => saleStore.loading)
-
-onMounted(() => {
+onMounted(async () => {
   saleStore.fetchSummary()
+  await saleStore.fetchSaleItem({
+    order: 'quantity',
+    sort: 'DESC'
+  })
+
+  // console.log(saleStore.saleItem)
 })
 
 watch(selectedDate, (value)=> {
@@ -273,81 +278,24 @@ watch(selectedDate, (value)=> {
           class="lg:col-span-1 p-6 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col"
         >
           <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Produk Terlaris</h3>
-          <div class="flex flex-col gap-4 flex-1">
-            <div class="flex items-center gap-3">
-              <div
-                class="size-12 rounded-lg bg-cover bg-center bg-slate-100 flex-shrink-0"
-                data-alt="Cup of coffee latte"
-                style="
-                  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCUbODvPUTHAQ_8YXCP-JhlXCgKXpR4t-Pf99P-56GZgsWFivvjiXUP7CuB3SoIRVDv3JDGctv-p7ExjssAjVHVnjt4VDBu0aTKpCm-OO7r_IuqZup3js0055D2iLfKJ6R00mlIiOj4DHsubOzleUUkI8tYsn0TGMwr-AeeQqXxnUADQ2YBqyCw_jFTv2MZ0oS-XE8OVUgGhft9ZFWkr7smMkjQxPam4TjmnEvtf1d8YE0CAp2Or9W-ykCdxz8BDItXn7e_kQx1JD1D');
-                "
-              ></div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">
-                  Kopi Susu Gula Aren
-                </p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Minuman</p>
-              </div>
-              <div class="text-right">
-                <p class="text-sm font-bold text-slate-900 dark:text-white">342</p>
-                <p class="text-xs text-slate-500">Terjual</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-3">
-              <div
-                class="size-12 rounded-lg bg-cover bg-center bg-slate-100 flex-shrink-0"
-                data-alt="Butter croissant pastry"
-                style="
-                  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCHOercX-kyCO_vUcmgi5_GUXvFPvTrwwrH6UnaULEeA5Xzx4TPrsRfZpT_mSWLdxmCnmnP-KuhbVopY326xe0JiyfmIFSNyY52H385ermSTgo_qLMD2dcUhz1xm4kYlqtpJLA4xj7yG_NgcwgOliUjIVAZbd-CkJwNa6IldsZ02sVcy6pNFiLHxv7MNL65wd_71uaPQjiqKV2Y5pfWb9dn2slGoZokEgS5Kl4ZGu6eHqZRRW3CQj-pL8w5UsuNTwOXaTdMLygik9Kz');
-                "
-              ></div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">
-                  Croissant Butter
-                </p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Pastry</p>
-              </div>
-              <div class="text-right">
-                <p class="text-sm font-bold text-slate-900 dark:text-white">215</p>
-                <p class="text-xs text-slate-500">Terjual</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-3">
-              <div
-                class="size-12 rounded-lg bg-cover bg-center bg-slate-100 flex-shrink-0"
-                data-alt="Glass of iced lemon tea"
-                style="
-                  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCIOkNhlp8-5OETxecrnUXLh0jiK0TSgzAHAHR2jB6qd9YzCbOQxFaMzGtubYo6-RpWqtfs9DPqhA21NVwHBYRsDv85fwPllXEqKapnTNEsO7CCL0uolIJmCdIC2N7ugh3rt36pZ6KOfk8VxrESj0DoYxJIBW5tTr7p5oAfv8T1X_iQv18ra1lfiYODRfTlyIZqGpQHCgzNhKO62YFAWW93cEK0NvHRYYcTWaiZD_JxyC4tOqxBY0cog_LVk3vh3pUhkejb5UzOVI4T');
-                "
-              ></div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">
-                  Ice Lemon Tea
-                </p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Minuman</p>
-              </div>
-              <div class="text-right">
-                <p class="text-sm font-bold text-slate-900 dark:text-white">189</p>
-                <p class="text-xs text-slate-500">Terjual</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-3">
-              <div
-                class="size-12 rounded-lg bg-cover bg-center bg-slate-100 flex-shrink-0"
-                data-alt="Bowl of rice with chicken"
-                style="
-                  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDfvpf_zqsgC2fCRETsGmJjeIzWrJGsbRy77HUr0m-QcUAFyMt0V4ddJRNY_6MfDP2YDA4k4zM6n_fLdi1gQ6Dd5Xaqdba9ShwRX8WA11c_gKQtf0IVByFQjTKhp2GD8_X6jf6GNPBtStm1R4-xxep1W7HIho9OWk2XkNxI0X6RNFHPBhb8knaHugPrxtcj4ZW3S4YePl3jtJL7_ytUl239JxrL3sDKA-ydGV1VwjUK0O5pPZ21idX3JYyeT_o-RUcuQDFsfz66ii6l');
-                "
-              ></div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">
-                  Rice Bowl Teriyaki
-                </p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Makanan Berat</p>
-              </div>
-              <div class="text-right">
-                <p class="text-sm font-bold text-slate-900 dark:text-white">156</p>
-                <p class="text-xs text-slate-500">Terjual</p>
+          <div class="flex flex-col gap-1 flex-1">
+            <div v-for="item in saleStore.saleItem.slice(0, 4)" :key="item.id" class="lg:col-span-1 p-3 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+              <div class="flex items-center gap-3">
+                <img
+                  class="size-12 rounded-lg bg-cover bg-center bg-slate-100 flex-shrink-0"
+                  data-alt="Cup of coffee latte"
+                  :src="item.Product.image"
+                />
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                      {{ item.Product.name }}
+                  </p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400"> {{ item.Product.Category.name }} </p>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-bold text-slate-900 dark:text-white">{{ item.quantity }}</p>
+                  <p class="text-xs text-slate-500">Terjual</p>
+                </div>
               </div>
             </div>
           </div>

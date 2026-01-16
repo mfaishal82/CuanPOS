@@ -51,7 +51,7 @@ onMounted(async () => {
   await productStore.fetchCategory({
     search: '',
   })
-  console.log(await handleFetch())
+  await handleFetch()
   // await useSaleStore().createSale()
   // console.log(productStore.product)
   // console.log(productStore.category)

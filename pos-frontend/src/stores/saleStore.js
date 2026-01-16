@@ -6,6 +6,7 @@ const useSaleStore = defineStore('sale', () => {
   const loading = ref(false)
   const errorMessage = ref('')
   const summary = ref(null)
+  const saleItem = ref([])
   const apiUrl = import.meta.env.VITE_API_URL
 
   const createSale = async (options = {}) => {
@@ -26,6 +27,28 @@ const useSaleStore = defineStore('sale', () => {
     } catch (error) {
       console.log(error)
       return false
+    }
+  }
+
+  const fetchSaleItem = async (options = {}) => {
+    loading.value = true
+    const { order, sort } = options
+    try {
+      const params = new URLSearchParams({
+        order,
+        sort
+      })
+      const response = await axios.get(`${apiUrl}/sale/list-item?${params}`, {
+        withCredentials: true
+      })
+      saleItem.value = response.data.data.saleItems
+      console.log(saleItem.value)
+      return true
+    } catch (error) {
+      errorMessage.value = error.response.data.message
+      return false
+    } finally {
+      loading.value = false
     }
   }
 
@@ -56,7 +79,9 @@ const useSaleStore = defineStore('sale', () => {
     errorMessage,
     summary,
     fetchSummary,
-    createSale
+    createSale,
+    fetchSaleItem,
+    saleItem
   })
 })
 
