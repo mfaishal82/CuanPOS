@@ -27,6 +27,30 @@ class SaleController {
     }
   }
 
+  static async getAllSaleItems(req, res, next) {
+    try {
+      const { order, sort } = req.query
+      const saleItems = await SaleItem.findAll({
+        include: [{
+          model: Sale,
+          attributes: ['id', 'invoice_number', 'total', 'payment_amount', 'change_amount', 'payment_method', 'createdAt']
+        }, {
+          model: Product,
+          attributes: ['id', 'name', 'price']
+        }],
+        order: [[order || 'createdAt', sort || 'DESC']]
+      })
+      res.status(200).json({
+        message: "Success get all sale items",
+        data: {
+          saleItems
+        }
+      })
+    } catch(error) {
+      next(error)
+    }
+  }
+
   static async getSaleById(req, res, next){
     try{
       const id = req.params.id
