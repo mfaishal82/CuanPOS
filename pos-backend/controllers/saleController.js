@@ -1,5 +1,5 @@
 const { invoiceGenerator } = require("../helpers/invoiceGenerator")
-const { Sale, SaleItem, Product, sequelize } = require("../models")
+const { Sale, SaleItem, Product, Category, sequelize } = require("../models")
 const { Op } = require("sequelize")
 
 class SaleController {
@@ -36,7 +36,8 @@ class SaleController {
           attributes: ['id', 'invoice_number', 'total', 'payment_amount', 'change_amount', 'payment_method', 'createdAt']
         }, {
           model: Product,
-          attributes: ['id', 'name', 'price']
+          attributes: ['id', 'name', 'price', 'image'],
+          include: Category
         }],
         order: [[order || 'createdAt', sort || 'DESC']]
       })
@@ -133,6 +134,10 @@ class SaleController {
         stock: currentStock
       }, { transaction: t })
 
+      await product.increment('sold_count', { by: quantity }, { transaction: t })
+
+      await product.increment('sold_count', { by: quantity })
+
       await t.commit()
       res.status(201).json({ message: "Success add sale item" })
     }catch(error){
@@ -141,6 +146,7 @@ class SaleController {
     }
   }
 
+  // dari AI
   static async getSalesSummary(req, res, next) {
     try {
       const { date } = req.query

@@ -38,18 +38,6 @@ module.exports = {
           min: 0
         }
       },
-      image: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        defaultValue: 'https://ik.imagekit.io/myfiles/default-image-1.jpg?updatedAt=1766536256955',
-        validate: {
-          notNull: { msg: "Image product is required" },
-          notEmpty: { msg: "Image product is required" },
-        }
-      },
-      imageId: {
-        type: Sequelize.STRING,
-      },
       category_id: {
         type: Sequelize.INTEGER,
         references: {

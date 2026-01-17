@@ -13,7 +13,12 @@ module.exports = {
      */
     await queryInterface.addColumn('Products', 'image', {
       type: DataTypes.STRING,
-      defaultValue: 'https://ik.imagekit.io/myfiles/default-image-1.jpg?updatedAt=1766536256955'
+      allowNull: false,
+      defaultValue: 'https://ik.imagekit.io/myfiles/default-image-1.jpg?updatedAt=1766536256955',
+      validate: {
+        notNull: { msg: "Image product is required" },
+        notEmpty: { msg: "Image product is required" },
+      }
     })
   },
 

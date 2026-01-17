@@ -70,6 +70,14 @@ module.exports = (sequelize, DataTypes) => {
         min: 0
       }
     },
+    sold_count: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      validate: {
+        isInt: true,
+        min: 0
+      }
+    },
     category_id: {
       type: DataTypes.INTEGER,
       references: {
