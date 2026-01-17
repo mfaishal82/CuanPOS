@@ -1,6 +1,8 @@
 <script setup>
+import useProductStore from '@/stores/productStore'
 import useSaleStore from '@/stores/saleStore'
 import useUserStore from '@/stores/userStore'
+import { showToast } from '@/utils/toast'
 import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 
@@ -9,22 +11,41 @@ import { RouterLink } from 'vue-router'
 const selectedDate = ref(new Date().toLocaleDateString('en-GB').split('/').reverse().join('-'))
 const userStore = useUserStore()
 const saleStore = useSaleStore()
+const productStore = useProductStore()
 const user = computed(() => userStore.user)
 const stats = computed(() => saleStore.summary)
 const loading = computed(() => saleStore.loading)
 onMounted(async () => {
   saleStore.fetchSummary()
-  await saleStore.fetchSaleItem({
-    order: 'quantity',
-    sort: 'DESC'
-  })
 
+  // await saleStore.fetchSaleItem({
+  //   order: 'sold_count',
+  //   sort: 'DESC'
+  // })
+  await handleFetchProduct()
   // console.log(saleStore.saleItem)
 })
 
 watch(selectedDate, (value)=> {
   saleStore.fetchSummary(value ? { date: value } : {})
 })
+
+const handleFetchProduct = async () => {
+  try {
+    const response = await productStore.fetchProduct({
+      search: 'all',
+      page: 1,
+      limit: 10,
+      category: 'all',
+      sort: 'DESC',
+      order: 'sold_count',
+      barcode: 'all',
+      sku: 'all'
+    })
+  } catch (error) {
+    showToast(error, 'error')
+  }
+}
 
 
 </script>

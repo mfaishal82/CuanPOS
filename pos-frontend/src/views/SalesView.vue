@@ -19,6 +19,7 @@ const payment_amount = ref(0)
 const change_amount = ref(0)
 const showCart = ref(false)
 const showScanner = ref(false)
+// const cartQuantity = ref(0)
 const productCart = ref([])
 const productStore = useProductStore()
 const saleStore = useSaleStore()
@@ -37,6 +38,14 @@ const cartSubtotal = computed(() => {
     total += item.price * item.quantity
   }
 
+  return total
+})
+
+const cartQuantity = computed(() => {
+  let total = 0
+  for (const item of productCart.value) {
+    total += item.quantity
+  }
   return total
 })
 
@@ -87,12 +96,13 @@ const handleShowScanner = () => {
 }
 
 const handleInputCart = (product) => {
+  // cartQuantity.value++
   const existing = productCart.value.find(
     (item) => item.product_id === product.id
   )
-
   if (existing) {
     existing.quantity += 1
+    // cartQuantity.value = existing.quantity
     existing.subtotal = existing.quantity * existing.price
   } else {
     productCart.value.push({
@@ -105,8 +115,10 @@ const handleInputCart = (product) => {
     })
   }
 
-  showCart.value = true
+  // showCart.value = true
+  console.log(cartQuantity.value)
 }
+
 
 function startScan() {
   if (showScanner.value) {
@@ -415,7 +427,11 @@ function stopScan() {
     <!-- Camera scan barcode button -->
     <div class="relative">
       <button @click="handleShowCart" class="absolute bottom-10 right-10 flex items-center justify-center rounded-full shadow-lg w-14 h-14 bg-green-500 hover:bg-green-600 cursor-pointer transition-all duration-200">
-        <span class="material-symbols-outlined text-[20px] hover:text-white duration-200">scan</span>
+        <div v-show="cartQuantity" class="absolute -left-2 -top-2 rounded-full bg-red-600 h-6 w-6 text-white">
+          {{ cartQuantity }}
+        </div>
+        <span v-if="cartQuantity" class="material-symbols-outlined text-[20px] hover:text-white duration-200">shopping_cart</span>
+        <span v-else class="material-symbols-outlined text-[20px] hover:text-white duration-200">scan</span>
       </button>
     </div>
   </div>
