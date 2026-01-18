@@ -80,7 +80,7 @@ class SaleController {
   static async addSaleItem(req, res, next){
     const t = await sequelize.transaction()
     try{
-      const { sale_id, product_id, quantity, payment_amount, change_amount, payment_method } = req.body
+      const { items, sale_id, payment_amount, change_amount, payment_method } = req.body
       let sale = await Sale.findByPk(sale_id, { transaction: t })
 
       if(!sale) {
@@ -94,39 +94,51 @@ class SaleController {
         }, { transaction: t })
       }
 
-      const product = await Product.findByPk(product_id, { transaction: t })
-      if(!product) throw { name: "NotFound" }
-
-      let subtotal = quantity * product.price
-      let currentStock = product.stock
-
-      if(currentStock < quantity) {
-        throw { name: "InsufficientStock" }
-      } else {
-        currentStock = currentStock - quantity
+      // memastikan input yg diterima dalam bentuk array
+      if (!Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({
+          message: "Items must be a non-empty array"
+        })
       }
 
-      await SaleItem.create({
-        sale_id: sale.id,
-        product_id: product.id,
-        quantity,
-        price: product.price,
-        subtotal
-      }, { transaction: t })
+      let totalSaleAmount = 0
 
-      let saleItems = await SaleItem.findAll({
-        where:{
-          sale_id: sale.id
+      // setiap item diproses (karena berbentuk array)
+      for (const item of items) {
+        const { product_id, quantity } = item
+
+        if (!product_id || !quantity || quantity <= 0) {
+          throw { name: "ValidationError", message: "Invalid product_id or quantity" }
         }
-      }, { transaction: t })
 
-      let total = 0
-      for (let x = 0; x < saleItems.length; x++){
-        total = total + saleItems[x].subtotal
+        const product = await Product.findByPk(product_id, { transaction: t })
+        if (!product) throw { name: "NotFound"}
+
+        // Cek stok
+        if (product.stock < quantity) {
+          throw { name: "InsufficientStock"}
+        }
+
+        const subtotal = quantity * product.price
+        await SaleItem.create({
+          sale_id: sale.id,
+          product_id: product.id,
+          quantity,
+          price: product.price,
+          subtotal
+        }, { transaction: t })
+
+        await product.update({
+          stock: product.stock - quantity
+        }, { transaction: t })
+
+        await product.increment('sold_count', { by: quantity }, { transaction: t })
+
+        totalSaleAmount += subtotal
       }
 
       await sale.update({
-        total,
+        total: totalSaleAmount,
         invoice_number: invoiceGenerator(sale.id)
       }, { transaction: t })
 
@@ -135,8 +147,6 @@ class SaleController {
       }, { transaction: t })
 
       await product.increment('sold_count', { by: quantity }, { transaction: t })
-
-      await product.increment('sold_count', { by: quantity })
 
       await t.commit()
       res.status(201).json({ message: "Success add sale item" })
