@@ -1,4 +1,5 @@
 const { invoiceGenerator } = require("../helpers/invoiceGenerator")
+const redis = require("../helpers/redis")
 const { Sale, SaleItem, Product, Category, sequelize } = require("../models")
 const { Op } = require("sequelize")
 
@@ -157,6 +158,11 @@ class SaleController {
         total: totalSaleAmount,
         invoice_number: invoiceGenerator(sale.id)
       }, { transaction: t })
+
+      const keys = await redis.keys("products:*");
+      if (keys.length > 0) {
+        await redis.del(keys);
+      }
 
       await t.commit()
       res.status(201).json({
