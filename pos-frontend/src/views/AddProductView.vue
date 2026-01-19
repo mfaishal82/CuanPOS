@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import { Html5Qrcode } from 'html5-qrcode'
+import toastAsync from '@/utils/toast'
 
 const productName = ref('')
 const categoryName = ref('')
@@ -34,14 +35,17 @@ async function handleForm() {
   stopScan()
   loading.value = true
 
-  const success = await productStore.addProduct({
-    name: productName.value,
+  const success = await toastAsync(productStore.addProduct({  name: productName.value,
     price: price.value,
     cost_price: costPrice.value,
     image: imageFile.value,
     stock: stock.value,
     barcode: barcode.value,
     category_id: selectedCategory.value,
+  }), {
+    pending: "Menambah produk...",
+    success: "Produk berhasil disimpan ✓",
+    error: "Gagal menambah produk"
   })
 
   if (success) {
@@ -396,7 +400,7 @@ function stopScan() {
                         <input
                           v-model="categoryName"
                           class="w-full rounded-lg bg-background-light dark:bg-background-dark border-border-light dark:border-border-dark text-text-main dark:text-white placeholder-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-all p-2.5 text-sm pr-10"
-                          id="barcode"
+                          id="kategori"
                           placeholder="Buat kategori baru..."
                           type="text"
                         />
