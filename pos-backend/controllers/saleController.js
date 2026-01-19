@@ -77,49 +77,61 @@ class SaleController {
     }
   }
 
+  //Sebagian dari AI
   static async addSaleItem(req, res, next){
     const t = await sequelize.transaction()
     try{
-      const { items, sale_id, payment_amount, change_amount, payment_method } = req.body
-      let sale = await Sale.findByPk(sale_id, { transaction: t })
+      const { items, payment_amount, change_amount, payment_method } = req.body
 
-      if(!sale) {
-        sale = await Sale.create({
-          user_id: req.user.id,
-          invoice_number: '',
-          total: 0,
-          payment_amount,
-          change_amount,
-          payment_method
-        }, { transaction: t })
-      }
-
-      // memastikan input yg diterima dalam bentuk array
+      // Validasi items
       if (!Array.isArray(items) || items.length === 0) {
         return res.status(400).json({
           message: "Items must be a non-empty array"
         })
       }
 
-      let totalSaleAmount = 0
+      // Fetch semua products sekaligus (bukan per item dalam loop)
+      const productIds = items.map(item => item.product_id)
+      const products = await Product.findAll({
+        where: { id: productIds },
+        transaction: t
+      })
 
-      // setiap item diproses (karena berbentuk array)
+      const productMap = new Map(products.map(p => [p.id, p]))
+
+      const sale = await Sale.create({
+        user_id: req.user.id,
+        invoice_number: '',
+        total: 0,
+        payment_amount,
+        change_amount,
+        payment_method
+      }, { transaction: t })
+
+      let totalSaleAmount = 0
+      const productsToUpdate = [] // Batch update nanti
+
+      // Process setiap item (karena bentuk array)
       for (const item of items) {
         const { product_id, quantity } = item
 
         if (!product_id || !quantity || quantity <= 0) {
-          throw { name: "ValidationError", message: "Invalid product_id or quantity" }
+          return res.status(400).json({
+            message: "Invalid product_id or quantity"
+          })
         }
 
-        const product = await Product.findByPk(product_id, { transaction: t })
-        if (!product) throw { name: "NotFound"}
+        const product = productMap.get(product_id)
+        if (!product) {
+          throw { name: "NotFound", message: `Product ${product_id} not found` }
+        }
 
-        // Cek stok
         if (product.stock < quantity) {
-          throw { name: "InsufficientStock"}
+          throw { name: "InsufficientStock", message: `Insufficient stock for ${product.name}` }
         }
 
         const subtotal = quantity * product.price
+
         await SaleItem.create({
           sale_id: sale.id,
           product_id: product.id,
@@ -128,29 +140,34 @@ class SaleController {
           subtotal
         }, { transaction: t })
 
-        await product.update({
-          stock: product.stock - quantity
-        }, { transaction: t })
-
-        await product.increment('sold_count', { by: quantity }, { transaction: t })
+        product.stock -= quantity
+        product.sold_count = (product.sold_count || 0) + quantity
+        productsToUpdate.push(product)
 
         totalSaleAmount += subtotal
       }
 
+      // Batch update semua products sekaligus (bukan satu-satu)
+      for (const product of productsToUpdate) {
+        await product.save({ transaction: t })
+      }
+
+      // Update sale total
       await sale.update({
         total: totalSaleAmount,
         invoice_number: invoiceGenerator(sale.id)
       }, { transaction: t })
 
-      await product.update({
-        stock: currentStock
-      }, { transaction: t })
-
-      await product.increment('sold_count', { by: quantity }, { transaction: t })
-
       await t.commit()
-      res.status(201).json({ message: "Success add sale item" })
-    }catch(error){
+      res.status(201).json({
+        message: "Success add sale item",
+        data: {
+          sale_id: sale.id,
+          invoice_number: sale.invoice_number,
+          total: totalSaleAmount
+        }
+      })
+    } catch(error){
       await t.rollback()
       next(error)
     }
