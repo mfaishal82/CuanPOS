@@ -53,6 +53,7 @@ const handleFetchProduct = async () => {
 <template>
   <main class="flex-1 overflow-y-auto p-4 md:p-8">
     <div class="max-w-7xl mx-auto flex flex-col gap-8">
+      <!-- Bagian atas -->
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
@@ -80,6 +81,8 @@ const handleFetchProduct = async () => {
           </RouterLink>
         </div>
       </div>
+
+      <!-- Bagian 4 kotak laporan transaksi -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div
           class="p-5 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
@@ -121,7 +124,7 @@ const handleFetchProduct = async () => {
           </div>
           <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Penjualan Harian</p>
           <h3 v-if="!loading" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">
-              Rp {{ stats?.filtered.total_revenue || 0 }}
+              Rp {{ stats?.filtered.total_revenue.toLocaleString('id-ID') || 0 }}
           </h3>
           <div v-else class="animate-pulse h-6 bg-slate-200 rounded"></div>
         </div>
@@ -170,7 +173,10 @@ const handleFetchProduct = async () => {
           <div v-else class="animate-pulse h-6 bg-slate-200 rounded"></div>
         </div>
       </div>
+
+      <!-- Bagian analitik dan Produk terlaris -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- analitik -->
         <div
           class="lg:col-span-2 p-6 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm"
         >
@@ -295,26 +301,27 @@ const handleFetchProduct = async () => {
             <span>30 Okt</span>
           </div>
         </div>
+        <!-- produk terlalris -->
         <div
           class="lg:col-span-1 p-6 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col"
         >
           <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Produk Terlaris</h3>
           <div class="flex flex-col gap-1 flex-1">
-            <div v-for="item in saleStore.saleItem.slice(0, 4)" :key="item.id" class="lg:col-span-1 p-3 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+            <div v-for="item in productStore.product.slice(0, 4)" :key="item.id" class="lg:col-span-1 p-3 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
               <div class="flex items-center gap-3">
                 <img
                   class="size-12 rounded-lg bg-cover bg-center bg-slate-100 flex-shrink-0"
                   data-alt="Cup of coffee latte"
-                  :src="item.Product.image"
+                  :src="item.image"
                 />
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">
-                      {{ item.Product.name }}
+                      {{ item.name }}
                   </p>
-                  <p class="text-xs text-slate-500 dark:text-slate-400"> {{ item.Product.Category.name }} </p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400"> {{ item.Category.name }} </p>
                 </div>
                 <div class="text-right">
-                  <p class="text-sm font-bold text-slate-900 dark:text-white">{{ item.quantity }}</p>
+                  <p class="text-sm font-bold text-slate-900 dark:text-white">{{ item.sold_count }}</p>
                   <p class="text-xs text-slate-500">Terjual</p>
                 </div>
               </div>
@@ -327,6 +334,8 @@ const handleFetchProduct = async () => {
           </button>
         </div>
       </div>
+
+      <!-- Table transaksi terakhir -->
       <div
         class="w-full bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden"
       >
@@ -414,32 +423,32 @@ const handleFetchProduct = async () => {
 </template>
 
 <style>
-.material-symbols-outlined {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
-}
-.material-symbols-outlined.filled {
-  font-variation-settings:
-    'FILL' 1,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
-}
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
-}
-.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
-}
+  .material-symbols-outlined {
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+  }
+  .material-symbols-outlined.filled {
+    font-variation-settings:
+      'FILL' 1,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+  }
 </style>

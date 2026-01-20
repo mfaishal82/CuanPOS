@@ -9,13 +9,21 @@ const useSaleStore = defineStore('sale', () => {
   const saleItem = ref([])
   const apiUrl = import.meta.env.VITE_API_URL
 
-  const createSale = async (options = {}) => {
-    const { sale_id, product_id, quantity, payment_method, payment_amount, change_amount  } = options
+  const createSale = async (items = [], paymentInfo = {}) => {
+    if (!Array.isArray(items) || items.length === 0) {
+      console.error('❌ items must be a non-empty array')
+      errorMessage.value = 'Keranjang kosong!'
+      return false
+    }
+
+    const { payment_method, payment_amount, change_amount } = paymentInfo
+
+    loading.value = true
+    console.log('🔄 Creating sale with:', { items, payment_method, payment_amount, change_amount })
+
     try {
       const response = await axios.post(`${apiUrl}/sale/add-item`, {
-        sale_id,
-        product_id,
-        quantity,
+        items,
         payment_method,
         payment_amount,
         change_amount
@@ -23,16 +31,21 @@ const useSaleStore = defineStore('sale', () => {
         withCredentials: true,
       })
 
+      errorMessage.value = ''
       return true
     } catch (error) {
-      console.log(error)
+      console.error('❌ Create sale failed:', error.response?.data || error.message)
+      errorMessage.value = error.response?.data?.message || 'Failed to create sale'
       return false
+    } finally {
+      loading.value = false
     }
   }
 
   const fetchSaleItem = async (options = {}) => {
     loading.value = true
     const { order, sort } = options
+
     try {
       const params = new URLSearchParams({
         order,
@@ -42,10 +55,9 @@ const useSaleStore = defineStore('sale', () => {
         withCredentials: true
       })
       saleItem.value = response.data.data.saleItems
-      console.log(saleItem.value)
       return true
     } catch (error) {
-      errorMessage.value = error.response.data.message
+      errorMessage.value = error.response?.data?.message || 'Failed to fetch sales'
       return false
     } finally {
       loading.value = false
@@ -58,17 +70,15 @@ const useSaleStore = defineStore('sale', () => {
 
     try {
       const { date } = option
-      const params = date ? new URLSearchParams({
-        date
-      }) : null
+      const params = date ? new URLSearchParams({ date }) : null
       const response = await axios.get(`${apiUrl}/sale/summary?${params}`, {
         withCredentials: true
       })
-      // console.log(response)
-      // console.log(date)
       summary.value = response.data.data
+      return true
     } catch (error) {
-      errorMessage.value = error
+      errorMessage.value = error.message
+      return false
     } finally {
       loading.value = false
     }
