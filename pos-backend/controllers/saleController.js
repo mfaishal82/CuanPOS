@@ -98,7 +98,10 @@ class SaleController {
         transaction: t
       })
 
-      const productMap = new Map(products.map(p => [p.id, p]))
+      const productsById = {}
+      for (const product of products) {
+        productsById[product.id] = product
+      }
 
       const sale = await Sale.create({
         user_id: req.user.id,
@@ -122,7 +125,7 @@ class SaleController {
           })
         }
 
-        const product = productMap.get(product_id)
+        const product = productsById[product_id]
         if (!product) {
           throw { name: "NotFound", message: `Product ${product_id} not found` }
         }
