@@ -40,12 +40,14 @@ class CategoryController {
         throw new Error("Category name already exist")
       }
 
-      await Category.create({
+      const newCategory = await Category.create({
         name
       })
 
+      console.log(newCategory)
       res.status(201).json({
-        message: "Success"
+        message: "Success",
+        data: newCategory
       })
     }catch(error){
       next(error)
