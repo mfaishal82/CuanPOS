@@ -29,7 +29,7 @@ const productId = route.params.id
 
 onMounted(async () => {
   currentProduct.value = await productStore.getProductById(productId)
-  console.log('Fetched product:', currentProduct.value)
+  // console.log('Fetched product:', currentProduct.value)
 
   await productStore.fetchCategory({
     search: '',
@@ -51,7 +51,7 @@ onMounted(async () => {
 async function handleForm() {
   loading.value = true
 
-  console.log(barcode.value)
+  // console.log(barcode.value)
 
   const success = await toastAsync (productStore.updateProduct({
     id: productId,

@@ -63,7 +63,7 @@ onMounted(async () => {
   })
   await handleFetch()
   // await useSaleStore().createSale()
-  console.log(productStore.product)
+  // console.log(productStore.product)
   // console.log(productStore.category)
   // loading.value = false
 })

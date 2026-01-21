@@ -19,7 +19,7 @@ const useSaleStore = defineStore('sale', () => {
     const { payment_method, payment_amount, change_amount } = paymentInfo
 
     loading.value = true
-    console.log('🔄 Creating sale with:', { items, payment_method, payment_amount, change_amount })
+    // console.log('🔄 Creating sale with:', { items, payment_method, payment_amount, change_amount })
 
     try {
       const response = await axios.post(`${apiUrl}/sale/add-item`, {

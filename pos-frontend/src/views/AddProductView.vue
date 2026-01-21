@@ -62,10 +62,12 @@ async function handleForm() {
 }
 
 async function createNewCategory() {
-  console.log(categoryName.value)
+  // console.log(categoryName.value)
   await productStore.addCategory({
     name: categoryName.value,
   })
+  // console.log(selectedCategory.value, '<<< selectedCategory')
+  // console.log(categoryName.value, '<<< categoryName')
 
   categoryName.value = ''
 
