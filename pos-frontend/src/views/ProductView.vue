@@ -157,6 +157,7 @@ const pageNumbers = computed(() => {
               <input
                 v-model="searcQuery"
                 @keyup.enter="handleSearch"
+                @change="handleSearch"
                 class="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-lg leading-5 bg-background-light dark:bg-background-dark text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all sm:text-sm"
                 placeholder="Cari nama produk, SKU, atau kategori..."
                 type="text"
@@ -306,7 +307,7 @@ const pageNumbers = computed(() => {
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div
-                      class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      class="flex items-center justify-end gap-2"
                     >
                       <RouterLink
                         :to="{ name: 'Edit Product', params: { id: item.id } }"

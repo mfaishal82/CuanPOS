@@ -8,6 +8,9 @@ import { RouterLink } from 'vue-router'
 
 // import { RouterLink } from 'vue-router'
 // import TheWelcome from '../components/TheWelcome.vue'
+const sales = ref([])
+const seeAll = ref(false)
+const seeTopProduct = ref(false)
 const selectedDate = ref(new Date().toLocaleDateString('en-GB').split('/').reverse().join('-'))
 const userStore = useUserStore()
 const saleStore = useSaleStore()
@@ -16,12 +19,13 @@ const user = computed(() => userStore.user)
 const stats = computed(() => saleStore.summary)
 const loading = computed(() => saleStore.loading)
 onMounted(async () => {
-  saleStore.fetchSummary()
-
-  // await saleStore.fetchSaleItem({
-  //   order: 'sold_count',
-  //   sort: 'DESC'
-  // })
+  await saleStore.fetchSummary()
+  await saleStore.fetchSaleItem({
+    order: 'createdAt',
+    sort: 'DESC'
+  })
+  sales.value = saleStore.saleItem
+  console.log(sales.value)
   await handleFetchProduct()
   // console.log(saleStore.saleItem)
 })
@@ -47,6 +51,13 @@ const handleFetchProduct = async () => {
   }
 }
 
+const handleSeeAll = () => {
+  seeAll.value = !seeAll.value
+}
+
+const handleTopProducts = ()=> {
+  seeTopProduct.value = !seeTopProduct.value
+}
 
 </script>
 
@@ -303,11 +314,11 @@ const handleFetchProduct = async () => {
         </div>
         <!-- produk terlalris -->
         <div
-          class="lg:col-span-1 p-6 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col"
+          class="max-h-[454px] overflow-auto lg:col-span-1 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col"
         >
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Produk Terlaris</h3>
-          <div class="flex flex-col gap-1 flex-1">
-            <div v-for="item in productStore.product.slice(0, 4)" :key="item.id" class="lg:col-span-1 p-3 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+          <h3 class="sticky top-0 z-99 bg-white p-6 text-lg font-bold text-slate-900 dark:text-white">Produk Terlaris</h3>
+          <div class="flex flex-col p-6 gap-1 flex-1">
+            <div v-for="item in seeTopProduct ? productStore.product : productStore.product.slice(0, 3) " :key="item.id" class="lg:col-span-1 p-3 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col cursor-default hover:bg-gray-50">
               <div class="flex items-center gap-3">
                 <img
                   class="size-12 rounded-lg bg-cover bg-center bg-slate-100 flex-shrink-0"
@@ -328,9 +339,11 @@ const handleFetchProduct = async () => {
             </div>
           </div>
           <button
-            class="w-full mt-4 py-2 text-sm font-medium text-primary hover:text-primary-dark hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            type="button"
+            @click="handleTopProducts"
+            class="w-full cursor-pointer mt-4 py-2 text-sm font-medium text-primary hover:text-primary-dark hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
           >
-            Lihat Semua Produk
+            {{ seeTopProduct ? 'Sembunyikan' : 'Lihat Semua Produk' }}
           </button>
         </div>
       </div>
@@ -343,42 +356,42 @@ const handleFetchProduct = async () => {
           class="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center"
         >
           <h3 class="text-lg font-bold text-slate-900 dark:text-white">Transaksi Terakhir</h3>
-          <button class="text-sm text-primary font-medium hover:underline">Lihat Semua</button>
+          <button @click="handleSeeAll" type="button" class="text-sm text-primary cursor-pointer font-medium hover:underline">{{ seeAll ? 'Sembunyikan' : 'Lihat Semua' }}</button>
         </div>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto max-h-[597px] overflow-y-auto">
           <table class="w-full text-left border-collapse">
             <thead>
               <tr
-                class="bg-slate-50 dark:bg-slate-800/50 text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold"
+                class="sticky top-0 z-10 bg-slate-50 dark:bg-slate-800/50 text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold"
               >
                 <th class="px-6 py-4">ID Order</th>
-                <th class="px-6 py-4">Pelanggan</th>
+                <!-- <th class="px-6 py-4">Kasir</th> -->
                 <th class="px-6 py-4">Produk</th>
                 <th class="px-6 py-4">Total</th>
-                <th class="px-6 py-4">Status</th>
+                <!-- <th class="px-6 py-4">Status</th> -->
                 <th class="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
+            <tbody v-for="item in seeAll ? sales : sales.slice(0, 4)" :key="item.id" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
               <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">#TRX-001</td>
-                <td class="px-6 py-4 text-slate-600 dark:text-slate-300">Andi Saputra</td>
-                <td class="px-6 py-4 text-slate-600 dark:text-slate-300">2 Items</td>
-                <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">Rp 45.000</td>
-                <td class="px-6 py-4">
+                <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">#{{ item.Sale.invoice_number }}</td>
+                <!-- <td class="px-6 py-4 text-slate-600 dark:text-slate-300">Andi Saputra</td> -->
+                <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ item.quantity }} Items</td>
+                <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">Rp {{item.Sale.total.toLocaleString('id-ID')}}</td>
+                <!-- <td class="px-6 py-4">
                   <span
                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                   >
                     Sukses
                   </span>
-                </td>
+                </td> -->
                 <td class="px-6 py-4 text-right">
-                  <button class="text-slate-400 hover:text-primary transition-colors">
+                  <button type="button" class="text-slate-400 cursor-pointer hover:text-primary transition-colors">
                     <span class="material-symbols-outlined text-[20px]">visibility</span>
                   </button>
                 </td>
               </tr>
-              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+              <!-- <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
                 <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">#TRX-002</td>
                 <td class="px-6 py-4 text-slate-600 dark:text-slate-300">Siti Aminah</td>
                 <td class="px-6 py-4 text-slate-600 dark:text-slate-300">1 Item</td>
@@ -413,7 +426,7 @@ const handleFetchProduct = async () => {
                     <span class="material-symbols-outlined text-[20px]">visibility</span>
                   </button>
                 </td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
         </div>
