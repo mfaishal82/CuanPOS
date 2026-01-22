@@ -34,7 +34,7 @@ onClickOutside(sidebarReff, ()=> {
 })
 
 const sidebarClasses = computed(() => [
-  'w-64 max-md:absolute flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-surface-dark flex flex-col transition-all duration-500 md:relative md:block',
+  'w-64 max-md:absolute flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-gradient-to-br from-green-900 to-green-500 dark:bg-surface-dark flex flex-col transition-all duration-500 md:relative md:block',
   responsiveStore.isMobile ? 'left-0 top-0 h-screen z-50' : 'hidden md:flex'
 ])
 
@@ -50,15 +50,15 @@ const sidebarClasses = computed(() => [
           <div class="flex items-center justify-center size-8 rounded-lg bg-primary text-slate-900">
             <span class="material-symbols-outlined filled text-[20px]">storefront</span>
           </div>
-          <span class="text-lg font-bold tracking-tight">CuanPOS</span>
+          <span class="text-lg text-white font-bold tracking-tight">CuanPOS</span>
         </div>
       </RouterLink>
     </div>
     <div class="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-1.5">
       <RouterLink to="/">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg group transition-all duration-200"
-          :class="route.path === '/' ? 'bg-primary/10 text-primary-dark dark:text-primary font-medium' : 'hover:ml-2 hover:bg-slate-50 text-slate-600 dark:text-slate-400'"
+          class="flex items-center gap-3 px-3 py-2.5 dark:hover:bg-slate-800/50 dark:hover:text-slate-200 transition-all duration-200 group"
+          :class="route.path === '/' ? 'font-bold text-primary-dark dark:text-primary bg-slate-50' : 'hover:ml-2 hover:border-b hover:border-white text-white dark:text-slate-400'"
         >
           <span class="material-symbols-outlined filled">dashboard</span>
           <span>Dashboard</span>
@@ -67,8 +67,8 @@ const sidebarClasses = computed(() => [
 
       <RouterLink to="/sales">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          :class="route.path === '/sales' ? 'bg-primary/10 text-primary-dark dark:text-primary font-medium' : 'hover:ml-2 hover:bg-slate-50 text-slate-600 dark:text-slate-400'"
+          class="flex items-center gap-3 px-3 py-2.5 dark:hover:bg-slate-800/50 dark:hover:text-slate-200 transition-all duration-200 group"
+          :class="route.path === '/sales' ? 'font-bold text-primary-dark dark:text-primary bg-slate-50' : 'hover:ml-2 hover:border-b hover:border-white text-white dark:text-slate-400'"
         >
           <span class="material-symbols-outlined">receipt_long</span>
           <span>Transaksi</span>
@@ -77,8 +77,8 @@ const sidebarClasses = computed(() => [
 
       <RouterLink to="/product">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          :class="route.path === '/product' ? 'bg-primary/10 text-primary-dark dark:text-primary font-medium' : 'hover:ml-2 hover:bg-slate-50 text-slate-600 dark:text-slate-400'"
+          class="flex items-center gap-3 px-3 py-2.5 dark:hover:bg-slate-800/50 dark:hover:text-slate-200 transition-all duration-200 group"
+          :class="route.path === '/product' ? 'font-bold text-primary-dark dark:text-primary bg-slate-50' : 'hover:ml-2 hover:border-b hover:border-white text-white dark:text-slate-400'"
         >
           <span class="material-symbols-outlined">inventory_2</span>
           <span>Produk</span>
@@ -87,8 +87,8 @@ const sidebarClasses = computed(() => [
 
       <RouterLink to="/inventory">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          :class="route.path === '/inventory' ? 'bg-primary/10 text-primary-dark dark:text-primary font-medium' : 'hover:ml-2 hover:bg-slate-50 text-slate-600 dark:text-slate-400'"
+          class="flex items-center gap-3 px-3 py-2.5 dark:hover:bg-slate-800/50 dark:hover:text-slate-200 transition-all duration-200 group"
+          :class="route.path === '/inventory' ? 'font-bold text-primary-dark dark:text-primary bg-slate-50' : 'hover:ml-2 hover:border-b hover:border-white text-white dark:text-slate-400'"
         >
           <span class="material-symbols-outlined">package_2</span>
           <span>Inventaris</span>
@@ -118,7 +118,7 @@ const sidebarClasses = computed(() => [
 
     <div class="p-4 border-t border-slate-200 dark:border-slate-800">
       <div
-        class="flex items-center gap-3 p-2 rounded-lg cursor-default bg-slate-50 hover:bg-slate-200 transition-all duration-300 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50"
+        class="flex backdrop-blur-lg items-center gap-3 p-2 rounded-lg cursor-default bg-white/85 hover:bg-slate-200 transition-all duration-300 dark:bg-slate-800/50 border-slate-100 dark:border-slate-700/50"
       >
         <img
           :src="userStore.user.image"
@@ -133,7 +133,7 @@ const sidebarClasses = computed(() => [
         </div>
         <button
           @click="handleLogout"
-          class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+          class="text-red-400 hover:text-red-600 cursor-pointer dark:hover:text-slate-300"
         >
           <span class="material-symbols-outlined text-[20px]">logout</span>
         </button>
