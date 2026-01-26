@@ -5,6 +5,8 @@ import useUserStore from '@/stores/userStore'
 import { showToast } from '@/utils/toast'
 import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
+import SalesChart from '@/components/SalesChart.vue'
+import TopProductsChart from '@/components/TopProductsChart.vue'
 
 // import { RouterLink } from 'vue-router'
 // import TheWelcome from '../components/TheWelcome.vue'
@@ -24,6 +26,7 @@ onMounted(async () => {
     order: 'createdAt',
     sort: 'DESC'
   })
+  await saleStore.fetchTopProducts()
   sales.value = saleStore.saleItem
   console.log(sales.value)
   await handleFetchProduct()
@@ -53,10 +56,6 @@ const handleFetchProduct = async () => {
 
 const handleSeeAll = () => {
   seeAll.value = !seeAll.value
-}
-
-const handleTopProducts = ()=> {
-  seeTopProduct.value = !seeTopProduct.value
 }
 
 </script>
@@ -188,163 +187,12 @@ const handleTopProducts = ()=> {
       <!-- Bagian analitik dan Produk terlaris -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- analitik -->
-        <div
-          class="lg:col-span-2 p-6 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm"
-        >
-          <div
-            class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"
-          >
-            <div>
-              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Analitik Penjualan</h3>
-              <p class="text-sm text-slate-500 dark:text-slate-400">
-                Ringkasan pendapatan bulan ini
-              </p>
-            </div>
-            <div class="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
-              <button
-                class="px-3 py-1 text-xs font-medium rounded-md bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
-              >
-                Harian
-              </button>
-              <button
-                class="px-3 py-1 text-xs font-medium rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-              >
-                Mingguan
-              </button>
-              <button
-                class="px-3 py-1 text-xs font-medium rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-              >
-                Bulanan
-              </button>
-            </div>
-          </div>
-          <div class="relative h-64 w-full">
-            <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 800 300">
-              <defs>
-                <linearGradient id="gradient" x1="0%" x2="0%" y1="0%" y2="100%">
-                  <stop offset="0%" style="stop-color: #13ec80; stop-opacity: 0.2"></stop>
-                  <stop offset="100%" style="stop-color: #13ec80; stop-opacity: 0"></stop>
-                </linearGradient>
-              </defs>
-              <line
-                class="dark:stroke-slate-800"
-                stroke="#e2e8f0"
-                stroke-width="1"
-                x1="0"
-                x2="800"
-                y1="0"
-                y2="0"
-              ></line>
-              <line
-                class="dark:stroke-slate-800"
-                stroke="#e2e8f0"
-                stroke-dasharray="4 4"
-                stroke-width="1"
-                x1="0"
-                x2="800"
-                y1="75"
-                y2="75"
-              ></line>
-              <line
-                class="dark:stroke-slate-800"
-                stroke="#e2e8f0"
-                stroke-dasharray="4 4"
-                stroke-width="1"
-                x1="0"
-                x2="800"
-                y1="150"
-                y2="150"
-              ></line>
-              <line
-                class="dark:stroke-slate-800"
-                stroke="#e2e8f0"
-                stroke-dasharray="4 4"
-                stroke-width="1"
-                x1="0"
-                x2="800"
-                y1="225"
-                y2="225"
-              ></line>
-              <line
-                class="dark:stroke-slate-800"
-                stroke="#e2e8f0"
-                stroke-width="1"
-                x1="0"
-                x2="800"
-                y1="300"
-                y2="300"
-              ></line>
-              <path
-                d="M0,250 C50,250 50,150 100,150 C150,150 150,200 200,200 C250,200 250,100 300,100 C350,100 350,50 400,50 C450,50 450,120 500,120 C550,120 550,80 600,80 C650,80 650,180 700,180 C750,180 750,100 800,100 V300 H0 Z"
-                fill="url(#gradient)"
-              ></path>
-              <path
-                d="M0,250 C50,250 50,150 100,150 C150,150 150,200 200,200 C250,200 250,100 300,100 C350,100 350,50 400,50 C450,50 450,120 500,120 C550,120 550,80 600,80 C650,80 650,180 700,180 C750,180 750,100 800,100"
-                fill="none"
-                stroke="#13ec80"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="3"
-              ></path>
-              <circle
-                class="dark:stroke-slate-900"
-                cx="400"
-                cy="50"
-                fill="#13ec80"
-                r="6"
-                stroke="white"
-                stroke-width="2"
-              ></circle>
-            </svg>
-            <div
-              class="absolute top-[30px] left-[48%] transform -translate-x-1/2 bg-slate-900 text-white text-xs py-1 px-2 rounded shadow-lg pointer-events-none"
-            >
-              Rp 12.500.000
-            </div>
-          </div>
-          <div class="flex justify-between mt-4 text-xs text-slate-400 font-medium">
-            <span>1 Okt</span>
-            <span>5 Okt</span>
-            <span>10 Okt</span>
-            <span>15 Okt</span>
-            <span>20 Okt</span>
-            <span>25 Okt</span>
-            <span>30 Okt</span>
-          </div>
+        <div class="lg:col-span-2">
+          <SalesChart />
         </div>
-        <!-- produk terlalris -->
-        <div
-          class="max-h-[454px] overflow-auto lg:col-span-1 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col"
-        >
-          <h3 class="sticky top-0 z-99 bg-white p-6 text-lg font-bold text-slate-900 dark:text-white">Produk Terlaris</h3>
-          <div class="flex flex-col p-6 gap-1 flex-1">
-            <div v-for="item in seeTopProduct ? productStore.product : productStore.product.slice(0, 3) " :key="item.id" class="lg:col-span-1 p-3 rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col cursor-default hover:bg-gray-50">
-              <div class="flex items-center gap-3">
-                <img
-                  class="size-12 rounded-lg bg-cover bg-center bg-slate-100 flex-shrink-0"
-                  data-alt="Cup of coffee latte"
-                  :src="item.image"
-                />
-                <div class="flex-1 min-w-0">
-                  <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">
-                      {{ item.name }}
-                  </p>
-                  <p class="text-xs text-slate-500 dark:text-slate-400"> {{ item.Category.name }} </p>
-                </div>
-                <div class="text-right">
-                  <p class="text-sm font-bold text-slate-900 dark:text-white">{{ item.sold_count }}</p>
-                  <p class="text-xs text-slate-500">Terjual</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <button
-            type="button"
-            @click="handleTopProducts"
-            class="w-full cursor-pointer mt-4 py-2 text-sm font-medium text-primary hover:text-primary-dark hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
-          >
-            {{ seeTopProduct ? 'Sembunyikan' : 'Lihat Semua Produk' }}
-          </button>
+        <!-- produk terlaris -->
+        <div class="lg:col-span-1">
+          <TopProductsChart />
         </div>
       </div>
 

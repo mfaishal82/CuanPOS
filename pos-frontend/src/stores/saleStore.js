@@ -8,6 +8,10 @@ const useSaleStore = defineStore('sale', () => {
   const summary = ref(null)
   const saleItem = ref([])
   const sale = ref([])
+  const dailyAnalytics = ref([])
+  const weeklyAnalytics = ref([])
+  const monthlyAnalytics = ref([])
+  const topProducts = ref([])
   const apiUrl = import.meta.env.VITE_API_URL
 
   const createSale = async (items = [], paymentInfo = {}) => {
@@ -20,7 +24,6 @@ const useSaleStore = defineStore('sale', () => {
     const { payment_method, payment_amount, change_amount } = paymentInfo
 
     loading.value = true
-    // console.log('🔄 Creating sale with:', { items, payment_method, payment_amount, change_amount })
 
     try {
       const response = await axios.post(`${apiUrl}/sale/add-item`, {
@@ -85,17 +88,103 @@ const useSaleStore = defineStore('sale', () => {
     }
   }
 
-  const fetchSale = async()=> {
-    try{
+  const fetchSale = async () => {
+    try {
       const response = await axios.get(`${apiUrl}/sale/list-sale`, {
         withCredentials: true
       })
       console.log(response.data.data.allSales)
       sale.value = response.data.data.allSales
-      // return true
-    }catch(error){
+    } catch (error) {
       console.log(error)
-      // return false
+    }
+  }
+
+  // ===== ANALYTICS METHODS =====
+  const fetchDailyAnalytics = async (options = {}) => {
+    loading.value = true
+    try {
+      const { month, year } = options
+      const params = new URLSearchParams()
+      if (month) params.append('month', month)
+      if (year) params.append('year', year)
+
+      const response = await axios.get(`${apiUrl}/sale/analytics/daily?${params}`, {
+        withCredentials: true
+      })
+      dailyAnalytics.value = response.data.data.analytics
+      return true
+    } catch (error) {
+      errorMessage.value = error.response?.data?.message || 'Failed to fetch daily analytics'
+      console.error(error)
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const fetchWeeklyAnalytics = async (options = {}) => {
+    loading.value = true
+    try {
+      const { month, year } = options
+      const params = new URLSearchParams()
+      if (month) params.append('month', month)
+      if (year) params.append('year', year)
+
+      const response = await axios.get(`${apiUrl}/sale/analytics/weekly?${params}`, {
+        withCredentials: true
+      })
+      weeklyAnalytics.value = response.data.data.analytics
+      return true
+    } catch (error) {
+      errorMessage.value = error.response?.data?.message || 'Failed to fetch weekly analytics'
+      console.error(error)
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const fetchMonthlyAnalytics = async (options = {}) => {
+    loading.value = true
+    try {
+      const { year } = options
+      const params = year ? new URLSearchParams({ year }) : new URLSearchParams()
+
+      const response = await axios.get(`${apiUrl}/sale/analytics/monthly?${params}`, {
+        withCredentials: true
+      })
+      monthlyAnalytics.value = response.data.data.analytics
+      return true
+    } catch (error) {
+      errorMessage.value = error.response?.data?.message || 'Failed to fetch monthly analytics'
+      console.error(error)
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const fetchTopProducts = async (options = {}) => {
+    loading.value = true
+    try {
+      const { limit = 10, month, year } = options
+      const params = new URLSearchParams()
+      params.append('limit', limit)
+      if (month) params.append('month', month)
+      if (year) params.append('year', year)
+
+      const response = await axios.get(`${apiUrl}/sale/analytics/top-products?${params}`, {
+        withCredentials: true
+      })
+      topProducts.value = response.data.data.products
+      return true
+    } catch (error) {
+      errorMessage.value = error.response?.data?.message || 'Failed to fetch top products'
+      console.error(error)
+      return false
+    } finally {
+      loading.value = false
     }
   }
 
@@ -108,7 +197,15 @@ const useSaleStore = defineStore('sale', () => {
     fetchSaleItem,
     saleItem,
     fetchSale,
-    sale
+    sale,
+    dailyAnalytics,
+    weeklyAnalytics,
+    monthlyAnalytics,
+    topProducts,
+    fetchDailyAnalytics,
+    fetchWeeklyAnalytics,
+    fetchMonthlyAnalytics,
+    fetchTopProducts
   })
 })
 
