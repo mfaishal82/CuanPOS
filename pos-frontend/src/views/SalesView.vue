@@ -384,12 +384,12 @@ function stopScan() {
               <span>Discount</span>
               <span class="font-medium text-green-500">-Rp 0</span>
             </div> -->
-            <div
+            <!-- <div
               class="border-t border-dashed border-gray-300 dark:border-gray-700 my-2 pt-2 flex justify-between items-end"
             >
-              <span class="text-base font-bold text-secondary dark:text-white truncate">Total yang harus dibayar</span>
-              <span class="text-2xl font-black text-secondary dark:text-white">Rp {{ cartSubtotal.toLocaleString('id-ID') }}</span>
-            </div>
+              <span class="text-base font-bold text-secondary dark:text-white">Total yang harus dibayar</span>
+              <span class="text-xl font-black text-secondary dark:text-white">Rp {{ cartSubtotal.toLocaleString('id-ID') }}</span>
+            </div> -->
           </div>
           <!-- Payment method -->
           <div class="grid grid-cols-3 gap-2">

@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import { Html5Qrcode } from 'html5-qrcode'
-import toastAsync from '@/utils/toast'
+import toastAsync, { showToast } from '@/utils/toast'
 
 const productName = ref('')
 const categoryName = ref('')
@@ -35,27 +35,22 @@ async function handleForm() {
   stopScan()
   loading.value = true
 
-  const success = await toastAsync(productStore.addProduct({  name: productName.value,
-    price: price.value,
-    cost_price: costPrice.value,
-    image: imageFile.value,
-    stock: stock.value,
-    barcode: barcode.value,
-    category_id: selectedCategory.value,
-  }), {
-    pending: "Menambah produk...",
-    success: "Produk berhasil disimpan ✓",
-    error: "Gagal menambah produk"
-  })
+  const success = await productStore.addProduct({
+      name: productName.value,
+      price: price.value,
+      cost_price: costPrice.value,
+      image: imageFile.value,
+      stock: stock.value,
+      barcode: barcode.value,
+      category_id: selectedCategory.value,
+    })
 
   if (success) {
     router.push('/product')
+    showToast('Berhasil menambahkan produk baru', 'success')
   } else {
     // console.log(productStore.errorMessage)
-    toast(`${productStore.errorMessage}`, {
-      type: 'error',
-      dangerouslyHTMLString: true,
-    })
+    showToast(productStore.errorMessage, 'error')
   }
 
   loading.value = false
@@ -105,13 +100,13 @@ function handleImageChange(event) {
 
 function startScan() {
   openCam.value = !openCam.value
-  html5QrCode = new Html5Qrcode("qr-reader")
+  html5QrCode = new Html5Qrcode('qr-reader')
 
   html5QrCode.start(
-    { facingMode: "environment" }, // kamera belakang (HP)
+    { facingMode: 'environment' }, // kamera belakang (HP)
     {
       fps: 10,
-      qrbox: { width: 500, height: 500 }
+      qrbox: { width: 500, height: 500 },
     },
     (decodedText) => {
       // hasil scan
@@ -121,7 +116,7 @@ function startScan() {
     },
     (errorMessage) => {
       // error scan (abaikan saja)
-    }
+    },
   )
 }
 
@@ -195,7 +190,7 @@ function stopScan() {
                     type="text"
                   />
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 items-center justify-center md:grid-cols-2 gap-5">
                   <div class="pt-4 border-t border-border-light dark:border-border-dark">
                     <label
                       class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
@@ -210,18 +205,7 @@ function stopScan() {
                       type="number"
                     />
                   </div>
-                  <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium text-text-main dark:text-gray-300"
-                      >Lacak Stok</span
-                    >
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input checked="" class="sr-only peer" type="checkbox" value="" />
-                      <div
-                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"
-                      ></div>
-                    </label>
-                  </div>
-                  <div>
+                  <div class="pt-4 border-t border-border-light dark:border-border-dark">
                     <label
                       class="block text-sm font-medium text-text-main dark:text-gray-300 mb-2"
                       for="barcode"
@@ -235,9 +219,14 @@ function stopScan() {
                         placeholder="Scan barcode..."
                         type="text"
                       />
-                      <span @click="startScan" class="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 text-text-secondary">
-                        <span class="material-symbols-outlined text-lg">qr_code_scanner</span>
-                      </span>
+                      <a href="#qr-reader">
+                        <span
+                          @click="startScan"
+                          class="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 text-text-secondary"
+                        >
+                          <span class="material-symbols-outlined text-lg">qr_code_scanner</span>
+                        </span>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -305,7 +294,9 @@ function stopScan() {
               class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-6"
             >
               <div v-show="openCam" class="mb-4">
-                <div class="text-lg font-bold text-text-main dark:text-white mb-2"> Scan Barcode </div>
+                <div class="text-lg font-bold text-text-main dark:text-white mb-2">
+                  Scan Barcode
+                </div>
                 <div id="qr-reader" class="w-full h-full"></div>
               </div>
               <h3 class="text-lg font-bold text-text-main dark:text-white mb-4">Gambar Produk</h3>

@@ -60,7 +60,7 @@ const useUserStore = defineStore('user', () => {
     } catch (error) {
       // console.log("Login error", error.response.data.message)
 
-      message.value = error?.response?.data?.message || 'Login failed'
+      message.value = error?.response?.data?.message || 'Tidak bisa terhubung dengan server'
       if (error.response) {
         // Server responded with error status
         // console.error('Response data:', error.response.data)
