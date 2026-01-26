@@ -2,6 +2,7 @@ const { invoiceGenerator } = require("../helpers/invoiceGenerator")
 const redis = require("../helpers/redis")
 const { Sale, SaleItem, Product, Category, sequelize } = require("../models")
 const { Op } = require("sequelize")
+const { QueryTypes } = require("sequelize")
 
 class SaleController {
   static async getAllSales(req, res, next){
@@ -182,7 +183,7 @@ class SaleController {
     }
   }
 
-  // dari AI
+  //! dari sini ke bawah digenerate AI
   static async getSalesSummary(req, res, next) {
     try {
       const { date } = req.query
@@ -255,6 +256,195 @@ class SaleController {
           }
         },
         meta
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  // Analytics Chart - Daily data
+  static async getDailyAnalytics(req, res, next) {
+    try {
+      const { month, year } = req.query
+      const currentDate = new Date()
+      const queryMonth = parseInt(month) || currentDate.getMonth() + 1
+      const queryYear = parseInt(year) || currentDate.getFullYear()
+
+      const rawData = await sequelize.query(`
+        SELECT
+          DATE(s."createdAt")::text as date,
+          COALESCE(SUM(s."total"), 0)::numeric as total_revenue,
+          COUNT(DISTINCT s."id")::integer as total_transactions,
+          COALESCE(SUM(si."quantity"), 0)::integer as total_products_sold,
+          COUNT(DISTINCT s."user_id")::integer as unique_customers
+        FROM "Sales" s
+        LEFT JOIN "SaleItems" si ON s."id" = si."sale_id"
+        WHERE EXTRACT(MONTH FROM s."createdAt") = :month
+          AND EXTRACT(YEAR FROM s."createdAt") = :year
+        GROUP BY DATE(s."createdAt")
+        ORDER BY DATE(s."createdAt") ASC
+      `, {
+        replacements: { month: queryMonth, year: queryYear },
+        type: QueryTypes.SELECT
+      })
+
+      res.json({
+        message: 'Success get daily analytics',
+        data: {
+          period: 'daily',
+          month: queryMonth,
+          year: queryYear,
+          analytics: rawData.map(item => ({
+            date: item.date,
+            total_revenue: parseFloat(item.total_revenue) || 0,
+            total_transactions: parseInt(item.total_transactions) || 0,
+            total_products_sold: parseInt(item.total_products_sold) || 0,
+            unique_customers: parseInt(item.unique_customers) || 0
+          }))
+        }
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  // Analytics Chart - Weekly data
+  static async getWeeklyAnalytics(req, res, next) {
+    try {
+      const { month, year } = req.query
+      const currentDate = new Date()
+      const queryMonth = parseInt(month) || currentDate.getMonth() + 1
+      const queryYear = parseInt(year) || currentDate.getFullYear()
+
+      const rawData = await sequelize.query(`
+        SELECT
+          EXTRACT(WEEK FROM s."createdAt")::integer as week,
+          DATE_TRUNC('week', s."createdAt")::date::text as week_start,
+          COALESCE(SUM(s."total"), 0)::numeric as total_revenue,
+          COUNT(DISTINCT s."id")::integer as total_transactions,
+          COALESCE(SUM(si."quantity"), 0)::integer as total_products_sold,
+          COUNT(DISTINCT s."user_id")::integer as unique_customers
+        FROM "Sales" s
+        LEFT JOIN "SaleItems" si ON s."id" = si."sale_id"
+        WHERE EXTRACT(MONTH FROM s."createdAt") = :month
+          AND EXTRACT(YEAR FROM s."createdAt") = :year
+        GROUP BY EXTRACT(WEEK FROM s."createdAt"), DATE_TRUNC('week', s."createdAt")
+        ORDER BY EXTRACT(WEEK FROM s."createdAt") ASC
+      `, {
+        replacements: { month: queryMonth, year: queryYear },
+        type: QueryTypes.SELECT
+      })
+
+      res.json({
+        message: 'Success get weekly analytics',
+        data: {
+          period: 'weekly',
+          month: queryMonth,
+          year: queryYear,
+          analytics: rawData.map(item => ({
+            week: parseInt(item.week) || 0,
+            week_start: item.week_start,
+            total_revenue: parseFloat(item.total_revenue) || 0,
+            total_transactions: parseInt(item.total_transactions) || 0,
+            total_products_sold: parseInt(item.total_products_sold) || 0,
+            unique_customers: parseInt(item.unique_customers) || 0
+          }))
+        }
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  // Analytics Chart - Monthly data
+  static async getMonthlyAnalytics(req, res, next) {
+    try {
+      const { year } = req.query
+      const currentYear = parseInt(year) || new Date().getFullYear()
+
+      const rawData = await sequelize.query(`
+        SELECT
+          EXTRACT(MONTH FROM s."createdAt")::integer as month,
+          TO_CHAR(s."createdAt", 'YYYY-MM') as month_date,
+          COALESCE(SUM(s."total"), 0)::numeric as total_revenue,
+          COUNT(DISTINCT s."id")::integer as total_transactions,
+          COALESCE(SUM(si."quantity"), 0)::integer as total_products_sold,
+          COUNT(DISTINCT s."user_id")::integer as unique_customers
+        FROM "Sales" s
+        LEFT JOIN "SaleItems" si ON s."id" = si."sale_id"
+        WHERE EXTRACT(YEAR FROM s."createdAt") = :year
+        GROUP BY EXTRACT(MONTH FROM s."createdAt"), TO_CHAR(s."createdAt", 'YYYY-MM')
+        ORDER BY EXTRACT(MONTH FROM s."createdAt") ASC
+      `, {
+        replacements: { year: currentYear },
+        type: QueryTypes.SELECT
+      })
+
+      res.json({
+        message: 'Success get monthly analytics',
+        data: {
+          period: 'monthly',
+          year: currentYear,
+          analytics: rawData.map(item => ({
+            month: parseInt(item.month) || 0,
+            month_date: item.month_date,
+            total_revenue: parseFloat(item.total_revenue) || 0,
+            total_transactions: parseInt(item.total_transactions) || 0,
+            total_products_sold: parseInt(item.total_products_sold) || 0,
+            unique_customers: parseInt(item.unique_customers) || 0
+          }))
+        }
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  // Top Products Analytics
+  static async getTopProductsAnalytics(req, res, next) {
+    try {
+      const { limit = 10, month, year } = req.query
+      const currentDate = new Date()
+      const queryMonth = parseInt(month) || currentDate.getMonth() + 1
+      const queryYear = parseInt(year) || currentDate.getFullYear()
+      const queryLimit = parseInt(limit) || 10
+
+      const rawData = await sequelize.query(`
+        SELECT
+          p."id",
+          p."name",
+          p."price",
+          p."image",
+          COALESCE(SUM(si."quantity"), 0)::integer as total_sold,
+          COALESCE(SUM(si."quantity" * si."price"), 0)::numeric as total_revenue
+        FROM "Products" p
+        LEFT JOIN "SaleItems" si ON p."id" = si."product_id"
+        LEFT JOIN "Sales" s ON si."sale_id" = s."id"
+        WHERE (s."id" IS NULL OR (EXTRACT(MONTH FROM s."createdAt") = :month AND EXTRACT(YEAR FROM s."createdAt") = :year))
+        GROUP BY p."id", p."name", p."price", p."image"
+        ORDER BY total_sold DESC
+        LIMIT :limit
+      `, {
+        replacements: { month: queryMonth, year: queryYear, limit: queryLimit },
+        type: QueryTypes.SELECT
+      })
+
+      res.json({
+        message: 'Success get top products analytics',
+        data: {
+          period: 'top_products',
+          month: queryMonth,
+          year: queryYear,
+          limit: queryLimit,
+          products: rawData.map(product => ({
+            id: product.id,
+            name: product.name,
+            price: parseFloat(product.price) || 0,
+            image: product.image,
+            total_sold: parseInt(product.total_sold) || 0,
+            total_revenue: parseFloat(product.total_revenue) || 0
+          }))
+        }
       })
     } catch (error) {
       next(error)
