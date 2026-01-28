@@ -59,6 +59,16 @@ const router = createRouter({
           name: 'Edit Product',
           component: EditProductView,
         },
+        {
+          path: '/users',
+          name: 'Users',
+          component: ''
+        },
+        {
+          path: '/settings',
+          name: 'Settings',
+          component: ''
+        }
       ],
     },
 

@@ -43,7 +43,8 @@ const sidebarClasses = computed(() => [
 <template>
   <aside
     ref="sidebarReff"
-    :class="sidebarClasses">
+    :class="sidebarClasses"
+    @click="responsiveStore.toggleMobileMenu()">
     <div class="h-16 flex items-center px-6 border-b border-slate-100 dark:border-slate-800/50">
       <RouterLink to="/">
         <div class="flex items-center gap-3">
@@ -95,20 +96,20 @@ const sidebarClasses = computed(() => [
         </div>
       </RouterLink>
 
-      <RouterLink to="#">
+      <RouterLink to="/users">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          href="#"
+          class="flex items-center gap-3 px-3 py-2.5 dark:hover:bg-slate-800/50 dark:hover:text-slate-200 transition-all duration-200 group"
+          :class="route.path === '/users' ? 'font-bold text-primary-dark dark:text-primary bg-slate-50' : 'hover:ml-2 hover:border-b hover:border-white text-white dark:text-slate-400'"
         >
           <span class="material-symbols-outlined">group</span>
-          <span>Pelanggan</span>
+          <span>Kasir</span>
         </div>
       </RouterLink>
 
-      <RouterLink to="#">
+      <RouterLink to="/settings">
         <div
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200 group"
-          href="#"
+          class="flex items-center gap-3 px-3 py-2.5 dark:hover:bg-slate-800/50 dark:hover:text-slate-200 transition-all duration-200 group"
+          :class="route.path === '/settings' ? 'font-bold text-primary-dark dark:text-primary bg-slate-50' : 'hover:ml-2 hover:border-b hover:border-white text-white dark:text-slate-400'"
         >
           <span class="material-symbols-outlined">settings</span>
           <span>Pengaturan</span>
