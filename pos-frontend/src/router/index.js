@@ -9,6 +9,7 @@ import useUserStore from '@/stores/userStore'
 import AddProductView from '@/views/AddProductView.vue'
 import EditProductView from '@/views/EditProductView.vue'
 import AddPurchaseView from '@/views/AddPurchaseView.vue'
+import UsersManagementView from '@/views/UsersManagementView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,7 +63,7 @@ const router = createRouter({
         {
           path: '/users',
           name: 'Users',
-          component: ''
+          component: UsersManagementView
         },
         {
           path: '/settings',

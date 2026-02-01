@@ -129,7 +129,7 @@ const sidebarClasses = computed(() => [
         <div class="flex-1 min-w-0">
           <p class="text-sm font-medium truncate">{{ user.name }}</p>
           <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
-            {{ user.role.toUpperCase() }} Toko
+            {{ user.role?.toUpperCase() }} Toko
           </p>
         </div>
         <button
