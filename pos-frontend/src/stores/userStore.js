@@ -112,6 +112,17 @@ const useUserStore = defineStore('user', () => {
     }
   }
 
+  async function fetchAllUsers() {
+    try {
+      const response = await axios.get(`${apiUrl}/auth/list-users`, {
+        withCredentials: true
+      })
+      console.log(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return {
     message,
     setUser,
@@ -123,6 +134,7 @@ const useUserStore = defineStore('user', () => {
     isLoggedIn,
     fetchUser,
     authChecked,
+    fetchAllUsers
   }
 })
 
