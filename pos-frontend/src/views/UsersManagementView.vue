@@ -1,41 +1,20 @@
+<script setup>
+import useUserStore from '@/stores/userStore'
+import { onMounted } from 'vue'
+
+const userStore = useUserStore()
+
+onMounted(async () => {
+  handleFetch()
+})
+
+const handleFetch = async () => {
+  await userStore.getAllUsers()
+}
+</script>
+
 <template>
   <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark">
-    <header
-      class="h-12 flex items-center justify-between px-6 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10"
-    >
-      <div class="flex items-center gap-4 flex-1">
-        <div class="relative w-full max-w-xs">
-          <span
-            class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[16px]"
-            >search</span
-          >
-          <input
-            class="w-full bg-slate-50 dark:bg-slate-900 border-none rounded text-xs pl-8 pr-3 py-1.5 focus:ring-1 focus:ring-primary placeholder:text-slate-400 dark:text-white"
-            placeholder="Search systems..."
-            type="text"
-          />
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <button
-          class="size-8 flex items-center justify-center rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
-        >
-          <span class="material-symbols-outlined !text-[20px]">notifications</span>
-        </button>
-        <div class="h-4 w-px bg-slate-200 dark:bg-slate-800"></div>
-        <div class="flex items-center gap-2">
-          <div class="text-right hidden sm:block">
-            <p class="text-[11px] font-bold leading-none">Budi Santoso</p>
-          </div>
-          <div
-            class="size-7 rounded bg-cover bg-center"
-            style="
-              background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCjBdI3qU84Rf0slc43fHhgye7Ht67lo3SnKSuGwTQC8aISt5F5NA9thXa99P_TNCBR5DpoDwmfxMG1fg5skYOcePjcCYs6qXKunEEy7SEI2Ksi4j3QQA9ZaymFuHhBLKTEQM3H_3MchjiRm1hW8gCCIC8lVELliOoTLwPeySA6GEOqLDV0-d9BsTiwX-YltRGJLAqcmBI581SSvrjRmuJUxfdi94gKnsiOCpSyulIF3c9P5GXrXwQJd4Xly4EL8B3SIzew3i8zkpAi');
-            "
-          ></div>
-        </div>
-      </div>
-    </header>
     <div class="p-6">
       <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
         <div class="flex flex-col">
@@ -47,9 +26,9 @@
           </p>
         </div>
         <button
-          class="bg-primary hover:bg-primary/90 text-slate-900 text-xs font-bold px-4 py-2 rounded flex items-center gap-1.5 transition-all shadow-sm"
+          class="bg-primary hover:bg-primary/90 text-slate-900 text-xs font-bold px-4 py-2 rounded flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
         >
-          <span class="material-symbols-outlined !font-bold text-[18px]">add</span>
+          <span class="material-symbols-outlined font-bold! text-[18px]">add</span>
           <span>ADD USER</span>
         </button>
       </div>
@@ -85,7 +64,8 @@
             <option>ID</option>
           </select>
           <button
-            class="size-7 flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-100"
+            @click="handleFetch"
+            class="cursor-pointer size-7 flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded hover:bg-slate-100"
           >
             <span class="material-symbols-outlined text-[18px]">refresh</span>
           </button>
@@ -103,57 +83,62 @@
                 <th>Network ID / Email</th>
                 <th class="w-32">Assignment</th>
                 <th class="w-28">Operational Status</th>
-                <th class="text-right w-24">Actions</th>
+                <th class="text-center w-24">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-              <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/50">
-                <td class="text-center font-mono text-[10px] text-slate-400">001</td>
+              <tr
+                v-for="item in userStore.allUsers"
+                :key="item.id"
+                class="hover:bg-slate-50 dark:hover:bg-slate-900/50"
+              >
+                <td class="text-center font-mono text-[10px] text-slate-400">{{ item.id }}</td>
                 <td>
                   <div class="flex items-center gap-2">
-                    <div
+                    <img
                       class="size-6 rounded bg-cover bg-center border border-slate-200 dark:border-slate-800 flex-shrink-0"
-                      style="
-                        background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDqM29FWWLzGWiiHgIHP92xEiotlo-WwjhM0zGqY3Tr3-bu2SskJ6_Eb0jBgz7hP41oPQFAB7OO3O5fsQ9vXPGF6vpIIRT8Lr2vsRdoZgPQ2AvwEAwkJ-QnQh6RNKXVhARncpXf1ruuX9hect1ze9I5cIYRqpXczpm1NLNN0HTvLMjQohnvCdQuarUls0zNGXQD4vDBizizNBnpogDO4eqyohKsRFOEQ6eiX01dx-uWbi9ZeEnmqqzdq7I0TqDpppthu6WZiFAUJ6dI');
-                      "
-                    ></div>
-                    <span class="font-bold text-slate-800 dark:text-slate-200">Andi Wijaya</span>
+                      :src="item.image"
+                    />
+                    <span class="font-bold text-slate-800 dark:text-slate-200">{{
+                      item.name
+                    }}</span>
                   </div>
                 </td>
-                <td class="text-slate-500">andi@cuanpos.com</td>
+                <td class="text-slate-500">{{ '@' + item.username }}</td>
                 <td>
                   <div class="flex items-center gap-1">
                     <span class="material-symbols-outlined text-[14px] text-slate-400"
-                      >point_of_sale</span
-                    >
-                    <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400"
-                      >KASIR</span
-                    >
+                      >{{ item.role === 'cashier' ? 'point_of_sale' : 'admin_panel_settings' }}
+                    </span>
+                    <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                      {{ item.role.toUpperCase() }}
+                    </span>
                   </div>
                 </td>
                 <td>
                   <div class="flex items-center gap-1.5">
                     <span class="size-1.5 bg-primary rounded-full"></span>
-                    <span class="text-[11px] text-slate-600 dark:text-slate-400 uppercase font-bold"
-                      >Active</span
+                    <span
+                      class="text-[11px] text-slate-600 dark:text-slate-400 uppercase font-bold"
+                      >{{ item.status }}</span
                     >
                   </div>
                 </td>
                 <td class="text-right">
                   <div class="flex justify-end gap-1">
-                    <button class="p-1 text-slate-400 hover:text-primary">
-                      <span class="material-symbols-outlined !text-[16px]">edit</span>
+                    <button class="p-1 text-slate-400 cursor-pointer hover:text-primary">
+                      <span class="material-symbols-outlined text-[16px]!">edit</span>
                     </button>
-                    <button class="p-1 text-slate-400 hover:text-slate-600">
-                      <span class="material-symbols-outlined !text-[16px]">visibility</span>
+                    <button class="p-1 text-slate-400 cursor-pointer hover:text-slate-600">
+                      <span class="material-symbols-outlined text-[16px]!">visibility</span>
                     </button>
-                    <button class="p-1 text-slate-400 hover:text-red-500">
-                      <span class="material-symbols-outlined !text-[16px]">delete</span>
+                    <button class="p-1 text-slate-400 cursor-pointer hover:text-red-500">
+                      <span class="material-symbols-outlined text-[16px]!">delete</span>
                     </button>
                   </div>
                 </td>
               </tr>
-              <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/50">
+              <!-- <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/50">
                 <td class="text-center font-mono text-[10px] text-slate-400">002</td>
                 <td>
                   <div class="flex items-center gap-2">
@@ -188,13 +173,13 @@
                 <td class="text-right">
                   <div class="flex justify-end gap-1">
                     <button class="p-1 text-slate-400 hover:text-primary">
-                      <span class="material-symbols-outlined !text-[16px]">edit</span>
+                      <span class="material-symbols-outlined text-[16px]!">edit</span>
                     </button>
                     <button class="p-1 text-slate-400 hover:text-slate-600">
-                      <span class="material-symbols-outlined !text-[16px]">visibility</span>
+                      <span class="material-symbols-outlined text-[16px]!">visibility</span>
                     </button>
                     <button class="p-1 text-slate-400 hover:text-red-500">
-                      <span class="material-symbols-outlined !text-[16px]">delete</span>
+                      <span class="material-symbols-outlined text-[16px]!">delete</span>
                     </button>
                   </div>
                 </td>
@@ -234,13 +219,13 @@
                 <td class="text-right">
                   <div class="flex justify-end gap-1">
                     <button class="p-1 text-slate-400 hover:text-primary">
-                      <span class="material-symbols-outlined !text-[16px]">edit</span>
+                      <span class="material-symbols-outlined text-[16px]!">edit</span>
                     </button>
                     <button class="p-1 text-slate-400 hover:text-slate-600">
-                      <span class="material-symbols-outlined !text-[16px]">visibility</span>
+                      <span class="material-symbols-outlined text-[16px]!">visibility</span>
                     </button>
                     <button class="p-1 text-slate-400 hover:text-red-500">
-                      <span class="material-symbols-outlined !text-[16px]">delete</span>
+                      <span class="material-symbols-outlined text-[16px]!">delete</span>
                     </button>
                   </div>
                 </td>
@@ -280,17 +265,17 @@
                 <td class="text-right">
                   <div class="flex justify-end gap-1">
                     <button class="p-1 text-slate-400 hover:text-primary">
-                      <span class="material-symbols-outlined !text-[16px]">edit</span>
+                      <span class="material-symbols-outlined text-[16px]!">edit</span>
                     </button>
                     <button class="p-1 text-slate-400 hover:text-slate-600">
-                      <span class="material-symbols-outlined !text-[16px]">visibility</span>
+                      <span class="material-symbols-outlined text-[16px]!">visibility</span>
                     </button>
                     <button class="p-1 text-slate-400 hover:text-red-500">
-                      <span class="material-symbols-outlined !text-[16px]">delete</span>
+                      <span class="material-symbols-outlined text-[16px]!">delete</span>
                     </button>
                   </div>
                 </td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
         </div>

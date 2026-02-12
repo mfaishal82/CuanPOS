@@ -8,6 +8,7 @@ const useUserStore = defineStore('user', () => {
   // const role = ref(localStorage.getItem('userRole') || "Admin")
   // const isLoggedIn = ref()
   const user = ref(null)
+  const allUsers = ref([])
   const loading = ref(false)
   const authChecked = ref(false)
   const message = ref('')
@@ -112,12 +113,13 @@ const useUserStore = defineStore('user', () => {
     }
   }
 
-  async function fetchAllUsers() {
+  async function getAllUsers() {
     try {
       const response = await axios.get(`${apiUrl}/auth/list-users`, {
-        withCredentials: true
+        withCredentials: true,
       })
       console.log(response.data)
+      allUsers.value = response.data.data
     } catch (error) {
       console.log(error)
     }
@@ -134,7 +136,8 @@ const useUserStore = defineStore('user', () => {
     isLoggedIn,
     fetchUser,
     authChecked,
-    fetchAllUsers
+    getAllUsers,
+    allUsers,
   }
 })
 
