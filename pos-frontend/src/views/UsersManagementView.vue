@@ -1,11 +1,17 @@
 <script setup>
 import useUserStore from '@/stores/userStore'
-import { onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 const userStore = useUserStore()
 
+const adminTotal = computed(() => userStore.allUsers.filter((user) => user.role === 'admin').length)
+const cashierTotal = computed(
+  () => userStore.allUsers.filter((user) => user.role === 'cashier').length,
+)
+const staffTotal = computed(() => userStore.allUsers.length)
+
 onMounted(async () => {
-  handleFetch()
+  await handleFetch()
 })
 
 const handleFetch = async () => {
@@ -14,7 +20,9 @@ const handleFetch = async () => {
 </script>
 
 <template>
-  <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark">
+  <main
+    class="flex-1 flex flex-col overflow-y-auto min-w-0 bg-background-light dark:bg-background-dark"
+  >
     <div class="p-6">
       <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
         <div class="flex flex-col">
@@ -283,32 +291,9 @@ const handleFetch = async () => {
           class="px-3 py-2 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between"
         >
           <p class="text-[11px] text-slate-500 font-condensed">
-            Record <span class="font-bold text-slate-900 dark:text-white">1-4</span> of
-            <span class="font-bold text-slate-900 dark:text-white">24</span>
+            Record <span class="font-bold text-slate-900 dark:text-white">1</span> of
+            <span class="font-bold text-slate-900 dark:text-white">{{ staffTotal }}</span>
           </p>
-          <div class="flex gap-1">
-            <button
-              class="px-2 py-1 rounded border border-slate-200 dark:border-slate-700 text-[11px] font-bold hover:bg-white dark:hover:bg-slate-800 transition-colors disabled:opacity-30"
-              disabled=""
-            >
-              PREV
-            </button>
-            <button
-              class="px-2 py-1 rounded border border-slate-200 dark:border-slate-700 text-[11px] font-bold bg-white dark:bg-slate-800 text-primary border-primary"
-            >
-              1
-            </button>
-            <button
-              class="px-2 py-1 rounded border border-slate-200 dark:border-slate-700 text-[11px] font-bold hover:bg-white dark:hover:bg-slate-800"
-            >
-              2
-            </button>
-            <button
-              class="px-2 py-1 rounded border border-slate-200 dark:border-slate-700 text-[11px] font-bold hover:bg-white dark:hover:bg-slate-800 transition-colors"
-            >
-              NEXT
-            </button>
-          </div>
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
@@ -322,7 +307,9 @@ const handleFetch = async () => {
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
               TOTAL STAFF
             </p>
-            <p class="text-lg font-bold text-slate-900 dark:text-white leading-none">24</p>
+            <p class="text-lg font-bold text-slate-900 dark:text-white leading-none">
+              {{ staffTotal }}
+            </p>
           </div>
         </div>
         <div
@@ -337,7 +324,9 @@ const handleFetch = async () => {
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
               ADMINISTRATORS
             </p>
-            <p class="text-lg font-bold text-slate-900 dark:text-white leading-none">04</p>
+            <p class="text-lg font-bold text-slate-900 dark:text-white leading-none">
+              {{ adminTotal }}
+            </p>
           </div>
         </div>
         <div
@@ -350,7 +339,9 @@ const handleFetch = async () => {
           </div>
           <div>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">OPERATORS</p>
-            <p class="text-lg font-bold text-slate-900 dark:text-white leading-none">20</p>
+            <p class="text-lg font-bold text-slate-900 dark:text-white leading-none">
+              {{ cashierTotal }}
+            </p>
           </div>
         </div>
         <div
