@@ -10,6 +10,7 @@ import AddProductView from '@/views/AddProductView.vue'
 import EditProductView from '@/views/EditProductView.vue'
 import AddPurchaseView from '@/views/AddPurchaseView.vue'
 import UsersManagementView from '@/views/UsersManagementView.vue'
+import SettingView from '../views/SettingView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,13 +64,13 @@ const router = createRouter({
         {
           path: '/users',
           name: 'Users',
-          component: UsersManagementView
+          component: UsersManagementView,
         },
         {
           path: '/settings',
           name: 'Settings',
-          component: ''
-        }
+          component: SettingView,
+        },
       ],
     },
 
