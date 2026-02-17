@@ -1,6 +1,6 @@
-import axios from "axios"
-import { defineStore } from "pinia"
-import { ref } from "vue"
+import axios from 'axios'
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
 const useSaleStore = defineStore('sale', () => {
   const loading = ref(false)
@@ -26,14 +26,18 @@ const useSaleStore = defineStore('sale', () => {
     loading.value = true
 
     try {
-      const response = await axios.post(`${apiUrl}/sale/add-item`, {
-        items,
-        payment_method,
-        payment_amount,
-        change_amount
-      }, {
-        withCredentials: true,
-      })
+      await axios.post(
+        `${apiUrl}/sale/add-item`,
+        {
+          items,
+          payment_method,
+          payment_amount,
+          change_amount,
+        },
+        {
+          withCredentials: true,
+        },
+      )
 
       errorMessage.value = ''
       return true
@@ -53,10 +57,10 @@ const useSaleStore = defineStore('sale', () => {
     try {
       const params = new URLSearchParams({
         order,
-        sort
+        sort,
       })
       const response = await axios.get(`${apiUrl}/sale/list-item?${params}`, {
-        withCredentials: true
+        withCredentials: true,
       })
       saleItem.value = response.data.data.saleItems
       return true
@@ -76,7 +80,7 @@ const useSaleStore = defineStore('sale', () => {
       const { date } = option
       const params = date ? new URLSearchParams({ date }) : null
       const response = await axios.get(`${apiUrl}/sale/summary?${params}`, {
-        withCredentials: true
+        withCredentials: true,
       })
       summary.value = response.data.data
       return true
@@ -91,7 +95,7 @@ const useSaleStore = defineStore('sale', () => {
   const fetchSale = async () => {
     try {
       const response = await axios.get(`${apiUrl}/sale/list-sale`, {
-        withCredentials: true
+        withCredentials: true,
       })
       console.log(response.data.data.allSales)
       sale.value = response.data.data.allSales
@@ -110,7 +114,7 @@ const useSaleStore = defineStore('sale', () => {
       if (year) params.append('year', year)
 
       const response = await axios.get(`${apiUrl}/sale/analytics/daily?${params}`, {
-        withCredentials: true
+        withCredentials: true,
       })
       dailyAnalytics.value = response.data.data.analytics
       return true
@@ -132,7 +136,7 @@ const useSaleStore = defineStore('sale', () => {
       if (year) params.append('year', year)
 
       const response = await axios.get(`${apiUrl}/sale/analytics/weekly?${params}`, {
-        withCredentials: true
+        withCredentials: true,
       })
       weeklyAnalytics.value = response.data.data.analytics
       return true
@@ -152,7 +156,7 @@ const useSaleStore = defineStore('sale', () => {
       const params = year ? new URLSearchParams({ year }) : new URLSearchParams()
 
       const response = await axios.get(`${apiUrl}/sale/analytics/monthly?${params}`, {
-        withCredentials: true
+        withCredentials: true,
       })
       monthlyAnalytics.value = response.data.data.analytics
       return true
@@ -175,7 +179,7 @@ const useSaleStore = defineStore('sale', () => {
       if (year) params.append('year', year)
 
       const response = await axios.get(`${apiUrl}/sale/analytics/top-products?${params}`, {
-        withCredentials: true
+        withCredentials: true,
       })
       topProducts.value = response.data.data.products
       return true
@@ -188,7 +192,7 @@ const useSaleStore = defineStore('sale', () => {
     }
   }
 
-  return ({
+  return {
     loading,
     errorMessage,
     summary,
@@ -205,8 +209,8 @@ const useSaleStore = defineStore('sale', () => {
     fetchDailyAnalytics,
     fetchWeeklyAnalytics,
     fetchMonthlyAnalytics,
-    fetchTopProducts
-  })
+    fetchTopProducts,
+  }
 })
 
 export default useSaleStore

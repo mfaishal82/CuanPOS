@@ -1,5 +1,6 @@
 <template>
-  <div class="space-y-4">
+  <div class="space-y-4 overflow-y-auto">
+    <!-- Profil Toko -->
     <details
       class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all"
     >
@@ -91,14 +92,14 @@
                 class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
                 rows="3"
               >
-Jl. Kebahagiaan No. 40, Jakarta Selatan, DKI Jakarta 12345</textarea
+              Jl. Kebahagiaan No. 40, Jakarta Selatan, DKI Jakarta 12345</textarea
               >
             </div>
           </div>
         </div>
       </div>
     </details>
-    <details
+    <!-- <details
       class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all"
     >
       <summary class="p-6 cursor-pointer flex items-center justify-between select-none">
@@ -160,6 +161,7 @@ Jl. Kebahagiaan No. 40, Jakarta Selatan, DKI Jakarta 12345</textarea
         </div>
       </div>
     </details>
+
     <details
       class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all"
     >
@@ -214,8 +216,8 @@ Jl. Kebahagiaan No. 40, Jakarta Selatan, DKI Jakarta 12345</textarea
               placeholder="Contoh: Selamat Datang di Toko Kami!"
               rows="2"
             >
-Cuan Coffee &amp; Roastery
-Nikmati Setiap Tetes Kebahagiaan</textarea
+            Cuan Coffee &amp; Roastery
+            Nikmati Setiap Tetes Kebahagiaan</textarea
             >
           </div>
           <div>
@@ -225,13 +227,14 @@ Nikmati Setiap Tetes Kebahagiaan</textarea
               placeholder="Contoh: Ikuti Instagram kami @toko_kami"
               rows="2"
             >
-Terima Kasih Atas Kunjungan Anda!
-Barang yang sudah dibeli tidak dapat ditukar.</textarea
+            Terima Kasih Atas Kunjungan Anda!
+            Barang yang sudah dibeli tidak dapat ditukar.</textarea
             >
           </div>
         </div>
       </div>
     </details>
+
     <details
       class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all"
     >
@@ -293,7 +296,7 @@ Barang yang sudah dibeli tidak dapat ditukar.</textarea
           </div>
         </div>
       </div>
-    </details>
+    </details> -->
   </div>
   <div
     class="fixed bottom-0 left-64 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 p-5 z-10"
