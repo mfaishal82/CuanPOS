@@ -1,3 +1,17 @@
+<script setup>
+import useSettingStore from '@/stores/settingStore'
+import { ref } from 'vue'
+import { onMounted } from 'vue'
+
+const settingStore = useSettingStore()
+
+onMounted(async () => {
+  await settingStore.getSetting()
+
+  console.log(settingStore.shopSetting)
+})
+</script>
+
 <template>
   <div class="space-y-4 overflow-y-auto">
     <!-- Profil Toko -->
@@ -23,7 +37,7 @@
           >expand_more</span
         >
       </summary>
-      <div class="px-6 pb-8 pt-2">
+      <form class="px-6 pb-8 pt-2">
         <div
           class="p-4 mb-6 bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-xl flex gap-3"
         >
@@ -33,14 +47,18 @@
             alamat email akan digunakan untuk komunikasi resmi dan pengiriman invoice digital.
           </p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div
+          v-for="item in settingStore.shopSetting"
+          :key="item.id"
+          class="grid grid-cols-1 md:grid-cols-2 gap-8"
+        >
           <div class="space-y-5">
             <div>
               <label class="block text-sm font-semibold mb-2">Nama Toko</label>
               <input
                 class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
                 type="text"
-                value="Cuan Coffee &amp; Roastery"
+                :value="item.shopName"
               />
             </div>
             <div>
@@ -48,7 +66,7 @@
               <input
                 class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
                 type="tel"
-                value="+62 812 3456 7890"
+                :value="item.phone"
               />
             </div>
             <div>
@@ -56,7 +74,7 @@
               <input
                 class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
                 type="email"
-                value="hello@cuancoffee.com"
+                :value="item.email"
               />
             </div>
           </div>
@@ -70,7 +88,7 @@
                   <img
                     alt="Store Logo"
                     class="w-full h-full object-cover"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD93Clw8qiZpVZf-n6bG4y9hmHbgovnindk-ohKwAtBN5TvY6oZ8I1-ckxyDfVlSOi441cKp0-eBnFwNv_UNw_5ab7RwqZDO_YNESDuWcn-p5W99PgQknpE-RtSssDwUkl0mN-ly5txKshRhF79T0y0WZhBskOvlNgiJu-aQ6qyuUoHnSaWvZnj9EGUNV8N_7tw3S-AUl5w1N6KmQcOieHCr_sYbM5sonn-8_E8rwCGCRkKMSvfBIx5x85rHNRUMhRj6CCjloOHKeZg"
+                    :src="item.logo || 'https://ik.imagekit.io/myfiles/No_Image_Available.jpg'"
                   />
                 </div>
                 <div class="flex-1">
@@ -92,13 +110,14 @@
                 class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
                 rows="3"
               >
-              Jl. Kebahagiaan No. 40, Jakarta Selatan, DKI Jakarta 12345</textarea
+                {{ item.address }}</textarea
               >
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </details>
+
     <!-- <details
       class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all"
     >
@@ -298,6 +317,7 @@
       </div>
     </details> -->
   </div>
+
   <div
     class="fixed bottom-0 left-64 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 p-5 z-10"
   >

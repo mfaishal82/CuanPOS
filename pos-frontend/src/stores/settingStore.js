@@ -11,7 +11,8 @@ const useSettingStore = defineStore('setting', () => {
       const response = await axios.get(`${apiUrl}/setting/get`, {
         withCredentials: true,
       })
-      console.log(response)
+      // console.log(response.data)
+      shopSetting.value = response.data
     } catch (error) {
       console.log(error)
     }
