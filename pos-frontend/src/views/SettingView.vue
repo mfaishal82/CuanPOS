@@ -4,121 +4,147 @@ import { ref } from 'vue'
 import { onMounted } from 'vue'
 
 const settingStore = useSettingStore()
+const shopName = ref('')
+const email = ref('')
+const phone = ref('')
+const address = ref('')
+const logo = ref('')
 
 onMounted(async () => {
   await settingStore.getSetting()
 
-  console.log(settingStore.shopSetting)
+  const shopSetting = settingStore.shopSetting
+  console.log(shopSetting)
+
+  if (shopSetting.length > 0) {
+    const item = shopSetting[0]
+
+    shopName.value = item.shopName
+    email.value = item.email
+    phone.value = item.phone
+    address.value = item.address
+    logo.value = item.address
+  }
 })
+
+const handleForm = async () => {
+  try {
+    await settingStore.createSetting({
+      shopName,
+      email,
+      phone,
+      address,
+      logo,
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
 </script>
 
 <template>
-  <div class="space-y-4 overflow-y-auto">
-    <!-- Profil Toko -->
-    <details
-      class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all"
-    >
-      <summary class="p-6 cursor-pointer flex items-center justify-between select-none">
-        <div class="flex items-center gap-4">
-          <div
-            class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center"
-          >
-            <span class="material-symbols-outlined">storefront</span>
+  <form @submit.prevent="handleForm">
+    <div class="space-y-4 overflow-y-auto">
+      <!-- Profil Toko -->
+      <details
+        class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all"
+      >
+        <summary class="p-6 cursor-pointer flex items-center justify-between select-none">
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined">storefront</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-xl">Profil Toko</h3>
+              <p class="text-sm text-slate-500">
+                Identitas bisnis yang akan tampil di aplikasi dan struk.
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 class="font-bold text-xl">Profil Toko</h3>
-            <p class="text-sm text-slate-500">
-              Identitas bisnis yang akan tampil di aplikasi dan struk.
+          <span
+            class="material-symbols-outlined text-slate-400 group-open:rotate-180 transition-transform"
+            >expand_more</span
+          >
+        </summary>
+        <div class="px-6 pb-8 pt-2">
+          <div
+            class="p-4 mb-6 bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-xl flex gap-3"
+          >
+            <span class="material-symbols-outlined text-blue-500 text-xl">lightbulb</span>
+            <p class="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">
+              <strong>Tips:</strong> Gunakan nama yang mudah diingat pelanggan. Nomor telepon dan
+              alamat email akan digunakan untuk komunikasi resmi dan pengiriman invoice digital.
             </p>
           </div>
-        </div>
-        <span
-          class="material-symbols-outlined text-slate-400 group-open:rotate-180 transition-transform"
-          >expand_more</span
-        >
-      </summary>
-      <form class="px-6 pb-8 pt-2">
-        <div
-          class="p-4 mb-6 bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-xl flex gap-3"
-        >
-          <span class="material-symbols-outlined text-blue-500 text-xl">lightbulb</span>
-          <p class="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">
-            <strong>Tips:</strong> Gunakan nama yang mudah diingat pelanggan. Nomor telepon dan
-            alamat email akan digunakan untuk komunikasi resmi dan pengiriman invoice digital.
-          </p>
-        </div>
-        <div
-          v-for="item in settingStore.shopSetting"
-          :key="item.id"
-          class="grid grid-cols-1 md:grid-cols-2 gap-8"
-        >
-          <div class="space-y-5">
-            <div>
-              <label class="block text-sm font-semibold mb-2">Nama Toko</label>
-              <input
-                class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
-                type="text"
-                :value="item.shopName"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-semibold mb-2">Nomor Telepon</label>
-              <input
-                class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
-                type="tel"
-                :value="item.phone"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-semibold mb-2">Email Bisnis</label>
-              <input
-                class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
-                type="email"
-                :value="item.email"
-              />
-            </div>
-          </div>
-          <div class="space-y-5">
-            <div>
-              <label class="block text-sm font-semibold mb-2">Logo Toko</label>
-              <div class="flex items-center gap-5">
-                <div
-                  class="w-28 h-28 rounded-2xl bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden"
-                >
-                  <img
-                    alt="Store Logo"
-                    class="w-full h-full object-cover"
-                    :src="item.logo || 'https://ik.imagekit.io/myfiles/No_Image_Available.jpg'"
-                  />
-                </div>
-                <div class="flex-1">
-                  <button
-                    class="text-sm font-bold text-primary hover:text-primary/80 transition-colors"
-                  >
-                    Unggah Foto Baru
-                  </button>
-                  <p class="text-[11px] text-slate-400 mt-2 leading-tight">
-                    Format: JPG atau PNG. Ukuran file maksimal 2 MB agar pemuatan aplikasi tetap
-                    cepat.
-                  </p>
-                </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-5">
+              <div>
+                <label class="block text-sm font-semibold mb-2">Nama Toko</label>
+                <input
+                  v-model="shopName"
+                  class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
+                  type="text"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-2">Nomor Telepon</label>
+                <input
+                  v-model="phone"
+                  class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
+                  type="tel"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-2">Email Bisnis</label>
+                <input
+                  v-model="email"
+                  class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
+                  type="email"
+                />
               </div>
             </div>
-            <div>
-              <label class="block text-sm font-semibold mb-2">Alamat Lengkap</label>
-              <textarea
-                class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
-                rows="3"
-              >
-                {{ item.address }}</textarea
-              >
+            <div class="space-y-5">
+              <div>
+                <label class="block text-sm font-semibold mb-2">Logo Toko</label>
+                <div class="flex items-center gap-5">
+                  <div
+                    class="w-28 h-28 rounded-2xl bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden"
+                  >
+                    <img
+                      alt="Store Logo"
+                      class="w-full h-full object-cover"
+                      :src="logo || 'https://ik.imagekit.io/myfiles/No_Image_Available.jpg'"
+                    />
+                  </div>
+                  <div class="flex-1">
+                    <button
+                      class="text-sm font-bold text-primary hover:text-primary/80 transition-colors"
+                    >
+                      Unggah Foto Baru
+                    </button>
+                    <p class="text-[11px] text-slate-400 mt-2 leading-tight">
+                      Format: JPG atau PNG. Ukuran file maksimal 2 MB agar pemuatan aplikasi tetap
+                      cepat.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-2">Alamat Lengkap</label>
+                <textarea
+                  v-model="address"
+                  class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary text-sm p-3"
+                  rows="3"
+                ></textarea>
+              </div>
             </div>
           </div>
         </div>
-      </form>
-    </details>
+      </details>
 
-    <!-- <details
+      <!-- <details
       class="group bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all"
     >
       <summary class="p-6 cursor-pointer flex items-center justify-between select-none">
@@ -316,28 +342,29 @@ onMounted(async () => {
         </div>
       </div>
     </details> -->
-  </div>
+    </div>
 
-  <div
-    class="fixed bottom-0 left-64 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 p-5 z-10"
-  >
-    <div class="max-w-4xl mx-auto flex items-center justify-between">
-      <p class="text-sm text-slate-500 italic hidden md:block">
-        Pastikan semua data sudah benar sebelum menyimpan.
-      </p>
-      <div class="flex gap-4 w-full md:w-auto">
-        <button
-          class="flex-1 md:flex-none px-8 py-3 rounded-xl border border-slate-300 dark:border-slate-700 font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
-        >
-          Batal
-        </button>
-        <button
-          class="flex-1 md:flex-none px-10 py-3 rounded-xl bg-primary text-slate-900 font-bold text-sm shadow-xl shadow-primary/30 hover:brightness-105 active:scale-[0.98] transition-all"
-        >
-          Simpan Pengaturan
-        </button>
+    <div
+      class="fixed bottom-0 left-64 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 p-5 z-10"
+    >
+      <div class="max-w-4xl mx-auto flex items-center justify-between">
+        <p class="text-sm text-slate-500 italic hidden md:block">
+          Pastikan semua data sudah benar sebelum menyimpan.
+        </p>
+        <div class="flex gap-4 w-full md:w-auto">
+          <button
+            class="flex-1 md:flex-none px-8 py-3 rounded-xl border border-slate-300 dark:border-slate-700 font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+          >
+            Batal
+          </button>
+          <button
+            class="flex-1 md:flex-none px-10 py-3 rounded-xl bg-primary text-slate-900 font-bold text-sm shadow-xl shadow-primary/30 hover:brightness-105 active:scale-[0.98] transition-all"
+          >
+            Simpan Pengaturan
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="h-32"></div>
+    <div class="h-32"></div>
+  </form>
 </template>
