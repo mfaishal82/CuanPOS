@@ -10,7 +10,7 @@ module.exports = {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
     await queryInterface.addColumn("Settings", "imageId", {
-      type: Sequelize.INTEGER,
+      type: Sequelize.STRING,
       // allowNull: false,
       validate: {
         notNull: { msg: "imageId not found. imageId required" },

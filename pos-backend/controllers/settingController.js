@@ -36,12 +36,8 @@ class SettingController {
       }
 
       try {
-        const url = imageKit.helper.buildSrc({
-          urlEndpoint: "https://ik.imagekit.io/myfiles",
-          src: "/products/Cfasfsgfsa-shopImage_ZAs-Uf_nG.jpg",
-        });
-        console.log(url);
-        await imageKit.files.delete(url);
+        let fileId = setting.imageId;
+        await imageKit.files.delete(fileId);
         // console.log("Old image deleted");
       } catch (err) {
         console.log("Old image not found or error deleting:", err.message);
@@ -52,6 +48,7 @@ class SettingController {
         fileName: `${shopName}-shopImage.jpg`,
         folder: "/products",
       });
+      // console.log(response);
 
       // console.log(setting);
       if (!setting) {
@@ -61,6 +58,7 @@ class SettingController {
           phone,
           address,
           logo: response.url,
+          imageId: response.fileId,
         });
       } else {
         await setting.update({
@@ -69,6 +67,7 @@ class SettingController {
           phone,
           address,
           logo: response.url,
+          imageId: response.fileId,
         });
       }
 
