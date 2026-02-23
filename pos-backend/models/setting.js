@@ -35,11 +35,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       imageId: {
         type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notNull: { msg: "imageId not found. imageId is required" },
-          notEmpty: { msg: "imageId not found. imageId is required" },
-        },
       },
     },
     {

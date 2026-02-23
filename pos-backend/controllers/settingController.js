@@ -24,7 +24,7 @@ class SettingController {
       //  1 MB = 1024 KB dan 1 KB = 1024 bytes
       // 1 MB = 1024 KB = 1024 × 1024 bytes = 1,048,576 bytes
 
-      console.log(req.file);
+      // console.log(req.file);
       if (req.file) {
         if (!checkType.includes(req.file.mimetype)) {
           throw { name: "BadRequest" };
@@ -33,42 +33,43 @@ class SettingController {
         if (req.file.size > maxSizeByte) {
           throw new Error("File size too big. Max 2MB");
         }
-      }
 
-      try {
-        let fileId = setting.imageId;
-        await imageKit.files.delete(fileId);
-        // console.log("Old image deleted");
-      } catch (err) {
-        console.log("Old image not found or error deleting:", err.message);
-      }
+        try {
+          let fileId = setting.imageId;
+          await imageKit.files.delete(fileId);
+          // console.log("Old image deleted");
+        } catch (err) {
+          console.log("Old image not found or error deleting");
+          // console.log("Old image not found or error deleting:", err.message);
+        }
 
-      const response = await imageKit.files.upload({
-        file: req.file.buffer.toString("base64"),
-        fileName: `${shopName}-shopImage.jpg`,
-        folder: "/products",
-      });
-      // console.log(response);
-
-      // console.log(setting);
-      if (!setting) {
-        await Setting.create({
-          shopName,
-          email,
-          phone,
-          address,
-          logo: response.url,
-          imageId: response.fileId,
+        const response = await imageKit.files.upload({
+          file: req.file.buffer.toString("base64"),
+          fileName: `${shopName}-shopImage.jpg`,
+          folder: "/products",
         });
-      } else {
-        await setting.update({
-          shopName,
-          email,
-          phone,
-          address,
-          logo: response.url,
-          imageId: response.fileId,
-        });
+        // console.log(response);
+
+        // console.log(setting);
+        if (!setting) {
+          await Setting.create({
+            shopName,
+            email,
+            phone,
+            address,
+            logo: response.url,
+            imageId: response.fileId,
+          });
+        } else {
+          await setting.update({
+            shopName,
+            email,
+            phone,
+            address,
+            logo: response.url,
+            imageId: response.fileId,
+          });
+        }
       }
 
       res.status(200).json({

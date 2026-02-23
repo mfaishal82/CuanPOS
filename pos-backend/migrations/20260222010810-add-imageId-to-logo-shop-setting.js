@@ -12,10 +12,6 @@ module.exports = {
     await queryInterface.addColumn("Settings", "imageId", {
       type: Sequelize.STRING,
       // allowNull: false,
-      validate: {
-        notNull: { msg: "imageId not found. imageId required" },
-        notEmpty: { msg: "imageId not found. imageId required" },
-      },
     });
   },
 
