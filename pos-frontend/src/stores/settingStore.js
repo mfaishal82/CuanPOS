@@ -5,6 +5,7 @@ import { ref } from 'vue'
 const useSettingStore = defineStore('setting', () => {
   const shopSetting = ref([])
   const errMessage = ref('')
+  const successMsg = ref('')
   const apiUrl = import.meta.env.VITE_API_URL
 
   async function getSetting() {
@@ -20,8 +21,9 @@ const useSettingStore = defineStore('setting', () => {
   }
 
   async function createSetting(options = {}) {
-    const { shopName, email, phone, address, logo } = options
     try {
+      console.log(options)
+      const { shopName, email, phone, address, logo } = options
       const response = await axios.post(
         `${apiUrl}/setting/update`,
         {
@@ -33,11 +35,16 @@ const useSettingStore = defineStore('setting', () => {
         },
         {
           withCredentials: true,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
       )
-      console.log(response)
+      console.log(response.data.message)
+      successMsg.value = response.data.message
     } catch (error) {
       console.log(error)
+      errMessage.value = error.message
     }
   }
 
@@ -46,6 +53,7 @@ const useSettingStore = defineStore('setting', () => {
     createSetting,
     shopSetting,
     errMessage,
+    successMsg,
   }
 })
 

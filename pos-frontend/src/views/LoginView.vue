@@ -73,7 +73,7 @@ function togglePassword() {
           </RouterLink>
         </div>
         <div class="flex-1 flex flex-col justify-center px-6 lg:px-20 xl:px-32 pb-12">
-          <div class="max-w-[480px] w-full mx-auto">
+          <div class="max-w-120 w-full mx-auto">
             <div class="mb-12 text-center lg:text-left">
               <h1
                 class="text-3xl lg:text-4xl font-black text-text-main dark:text-white tracking-tight mb-3"
@@ -165,7 +165,7 @@ function togglePassword() {
             background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAdntpDX3XPVDIEJsEVlgYN3aArfq0HkF_uSTsSaBFyjOwfM0Ks6jivY_rZKW4tZ3Cps2IBPMCnDtpSX4SPOVEHy8Ac7QCQkazSRaFMZvwalB7eU910bll2PrYUrc2cfJpVYp6QHPy4u1Q2BxIf7fAJ0JsbUwqbRfzLY6s0AMYz9a-FoL131NdH9SCQnCxFFk4KgfLiVXZ1n0qCvCH8Q4d3KOhRDU8OUlFzgNfnmfxDyxu78V2MXgx5PeRFG0yD3843uCzmrc0E83iE');
           "
         ></div>
-        <div class="absolute inset-0 bg-gradient-to-br from-primary/30 to-background-dark/90"></div>
+        <div class="absolute inset-0 bg-linear-to-br from-primary/30 to-background-dark/90"></div>
         <div class="relative z-10 flex flex-col justify-end p-20 h-full w-full max-w-2xl">
           <div
             class="bg-background-dark/30 backdrop-blur-md rounded-2xl p-8 border border-white/10"
