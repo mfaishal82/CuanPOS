@@ -40,7 +40,7 @@ const useSettingStore = defineStore('setting', () => {
           },
         },
       )
-      console.log(response.data.message)
+      // console.log(response.data.message)
       successMsg.value = response.data.message
     } catch (error) {
       console.log(error)

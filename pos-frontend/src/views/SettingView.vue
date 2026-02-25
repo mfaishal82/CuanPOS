@@ -18,7 +18,7 @@ onMounted(async () => {
   await settingStore.getSetting()
 
   const shopSetting = settingStore.shopSetting
-  console.log(shopSetting)
+  // console.log(shopSetting)
 
   if (shopSetting.length > 0) {
     const item = shopSetting[0]
