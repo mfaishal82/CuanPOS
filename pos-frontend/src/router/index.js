@@ -11,6 +11,7 @@ import EditProductView from '@/views/EditProductView.vue'
 import AddPurchaseView from '@/views/AddPurchaseView.vue'
 import UsersManagementView from '@/views/UsersManagementView.vue'
 import SettingView from '../views/SettingView.vue'
+import UserFormView from '@/views/UserFormView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -70,6 +71,11 @@ const router = createRouter({
           path: '/settings',
           name: 'Settings',
           component: SettingView,
+        },
+        {
+          path: '/users/form/:id',
+          name: 'User Form',
+          component: UserFormView,
         },
       ],
     },

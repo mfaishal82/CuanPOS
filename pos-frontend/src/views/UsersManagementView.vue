@@ -1,6 +1,6 @@
 <script setup>
 import useUserStore from '@/stores/userStore'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted } from 'vue'
 
 const userStore = useUserStore()
 
@@ -104,7 +104,7 @@ const handleFetch = async () => {
                 <td>
                   <div class="flex items-center gap-2">
                     <img
-                      class="size-6 rounded bg-cover bg-center border border-slate-200 dark:border-slate-800 flex-shrink-0"
+                      class="size-6 rounded bg-cover bg-center border border-slate-200 dark:border-slate-800 shrink-0"
                       :src="item.image"
                     />
                     <span class="font-bold text-slate-800 dark:text-slate-200">{{
@@ -301,7 +301,7 @@ const handleFetch = async () => {
           class="bg-white dark:bg-slate-950 p-3 rounded border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-3"
         >
           <div class="size-8 rounded bg-primary/10 flex items-center justify-center text-primary">
-            <span class="material-symbols-outlined !text-[18px]">group</span>
+            <span class="material-symbols-outlined text-[18px]!">group</span>
           </div>
           <div>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
@@ -318,7 +318,7 @@ const handleFetch = async () => {
           <div
             class="size-8 rounded bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center text-blue-600"
           >
-            <span class="material-symbols-outlined !text-[18px]">admin_panel_settings</span>
+            <span class="material-symbols-outlined text-[18px]!">admin_panel_settings</span>
           </div>
           <div>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
@@ -335,7 +335,7 @@ const handleFetch = async () => {
           <div
             class="size-8 rounded bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600"
           >
-            <span class="material-symbols-outlined !text-[18px]">point_of_sale</span>
+            <span class="material-symbols-outlined text-[18px]!">point_of_sale</span>
           </div>
           <div>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">OPERATORS</p>
@@ -350,7 +350,7 @@ const handleFetch = async () => {
           <div
             class="size-8 rounded bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-500"
           >
-            <span class="material-symbols-outlined !text-[18px]">sync</span>
+            <span class="material-symbols-outlined text-[18px]!">sync</span>
           </div>
           <div>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
