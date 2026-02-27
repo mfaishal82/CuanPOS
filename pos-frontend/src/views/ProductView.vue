@@ -31,7 +31,7 @@ const handleFetch = async () => {
     sort: sortBy.value,
     order: orderBy.value,
     barcode: 'all',
-    sku: 'all'
+    sku: 'all',
   })
 }
 
@@ -306,9 +306,7 @@ const pageNumbers = computed(() => {
                     </span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div
-                      class="flex items-center justify-end gap-2"
-                    >
+                    <div class="flex items-center justify-end gap-2">
                       <RouterLink
                         :to="{ name: 'Edit Product', params: { id: item.id } }"
                         class="text-slate-400 hover:text-primary transition-colors p-1"

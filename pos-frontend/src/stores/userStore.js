@@ -125,6 +125,27 @@ const useUserStore = defineStore('user', () => {
     }
   }
 
+  async function createUser(options = {}) {
+    try {
+      const { name, userName, role } = options
+      const response = await axios.post(
+        `${apiUrl}/auth/register`,
+        {
+          name,
+          userName,
+          role,
+        },
+        {
+          withCredentials: true,
+        },
+      )
+
+      console.log(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return {
     message,
     setUser,
@@ -138,6 +159,7 @@ const useUserStore = defineStore('user', () => {
     authChecked,
     getAllUsers,
     allUsers,
+    createUser,
   }
 })
 

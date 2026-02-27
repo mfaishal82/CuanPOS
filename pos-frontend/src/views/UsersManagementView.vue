@@ -1,6 +1,7 @@
 <script setup>
 import useUserStore from '@/stores/userStore'
 import { computed, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
 
 const userStore = useUserStore()
 
@@ -33,12 +34,13 @@ const handleFetch = async () => {
             Configure access levels and monitor system operators.
           </p>
         </div>
-        <button
+        <RouterLink
+          to="/users/form"
           class="bg-primary hover:bg-primary/90 text-slate-900 text-xs font-bold px-4 py-2 rounded flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
         >
           <span class="material-symbols-outlined font-bold! text-[18px]">add</span>
           <span>ADD USER</span>
-        </button>
+        </RouterLink>
       </div>
       <div
         class="flex items-center gap-2 mb-2 p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded shadow-sm overflow-x-auto"
