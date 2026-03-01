@@ -18,6 +18,12 @@ onMounted(async () => {
 const handleFetch = async () => {
   await userStore.getAllUsers()
 }
+
+const handleDeleteUser = async (id) => {
+  await userStore.deleteUser(id)
+
+  await handleFetch()
+}
 </script>
 
 <template>
@@ -142,7 +148,10 @@ const handleFetch = async () => {
                     <button class="p-1 text-slate-400 cursor-pointer hover:text-slate-600">
                       <span class="material-symbols-outlined text-[16px]!">visibility</span>
                     </button>
-                    <button class="p-1 text-slate-400 cursor-pointer hover:text-red-500">
+                    <button
+                      @click="handleDeleteUser(item.id)"
+                      class="p-1 text-slate-400 cursor-pointer hover:text-red-500"
+                    >
                       <span class="material-symbols-outlined text-[16px]!">delete</span>
                     </button>
                   </div>

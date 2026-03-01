@@ -12,6 +12,7 @@ const useUserStore = defineStore('user', () => {
   const loading = ref(false)
   const authChecked = ref(false)
   const message = ref('')
+  const errMessage = ref('')
   const apiUrl = import.meta.env.VITE_API_URL
   // console.log(apiUrl)
   const isLoggedIn = computed(() => user.value !== null)
@@ -127,13 +128,15 @@ const useUserStore = defineStore('user', () => {
 
   async function createUser(options = {}) {
     try {
-      const { name, userName, role } = options
+      console.log(options)
+      const { name, userName, role, password } = options
       const response = await axios.post(
         `${apiUrl}/auth/register`,
         {
           name,
-          userName,
+          username: userName,
           role,
+          password,
         },
         {
           withCredentials: true,
@@ -142,7 +145,22 @@ const useUserStore = defineStore('user', () => {
 
       console.log(response.data)
     } catch (error) {
-      console.log(error)
+      // console.log(error)
+      errMessage.value = error
+    }
+  }
+
+  async function deleteUser(id) {
+    try {
+      // console.log(id)
+      const response = await axios.delete(`${apiUrl}/auth/user/${id}`, {
+        withCredentials: true,
+      })
+
+      // console.log(response.data)
+      message.value = response.data.message
+    } catch (error) {
+      errMessage.value = error
     }
   }
 
@@ -160,6 +178,8 @@ const useUserStore = defineStore('user', () => {
     getAllUsers,
     allUsers,
     createUser,
+    errMessage,
+    deleteUser,
   }
 })
 
