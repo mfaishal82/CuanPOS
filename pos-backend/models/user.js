@@ -39,12 +39,12 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      role: DataTypes.ENUM("admin", "user"),
+      role: {
+        type: DataTypes.ENUM("admin", "cashier"),
+        defaultValue: "cashier",
+      },
       email: {
         type: DataTypes.STRING,
-        validate: {
-          isEmail: true,
-        },
       },
       image: {
         type: DataTypes.STRING,
