@@ -145,7 +145,7 @@ function togglePassword() {
                 >
               </div> -->
               <button
-                class="w-full h-12 mt-2 bg-primary hover:bg-primary/90 text-text-main font-bold text-base rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2"
+                class="w-full cursor-pointer h-12 mt-2 bg-primary hover:bg-primary/90 text-text-main font-bold text-base rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2"
                 :disable="loading"
               >
                 <span>

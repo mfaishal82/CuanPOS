@@ -25,7 +25,7 @@ const useProductStore = defineStore('product', () => {
         order,
         sort,
         barcode,
-        sku
+        sku,
       })
 
       const response = await axios.get(`${apiUrl}/product/list?${params}`, {
@@ -126,7 +126,7 @@ const useProductStore = defineStore('product', () => {
         errorMessage.value = 'ID produk tidak ada'
         return false
       }
-      const response = await axios.put(
+      await axios.put(
         `${apiUrl}/product/${id}`,
         {
           name,
