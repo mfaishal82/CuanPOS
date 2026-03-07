@@ -9,6 +9,7 @@ const useUserStore = defineStore('user', () => {
   // const isLoggedIn = ref()
   const user = ref(null)
   const allUsers = ref([])
+  const selectedUser = ref({})
   const loading = ref(false)
   const authChecked = ref(false)
   const message = ref('')
@@ -126,6 +127,19 @@ const useUserStore = defineStore('user', () => {
     }
   }
 
+  async function getUserById(id) {
+    try {
+      // console.log(id)
+      const response = await axios.get(`${apiUrl}/auth/user/${id}`, {
+        withCredentials: true,
+      })
+      // console.log(response.data)
+      selectedUser.value = response.data
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   async function createUser(options = {}) {
     try {
       // console.log(options)
@@ -150,6 +164,29 @@ const useUserStore = defineStore('user', () => {
       console.error(error)
       errMessage.value = error
       return false
+    }
+  }
+
+  async function editUser(options = {}) {
+    try {
+      const { id, name, username, password, role } = options
+
+      const response = await axios.put(
+        `${apiUrl}/auth/user/${id}`,
+        {
+          name,
+          username,
+          password,
+          role,
+        },
+        {
+          withCredentials: true,
+        },
+      )
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+      errMessage.value = error
     }
   }
 
@@ -183,6 +220,9 @@ const useUserStore = defineStore('user', () => {
     createUser,
     errMessage,
     deleteUser,
+    getUserById,
+    selectedUser,
+    editUser,
   }
 })
 
