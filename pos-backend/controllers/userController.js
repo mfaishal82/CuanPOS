@@ -192,7 +192,10 @@ class UserController {
       const user = await User.findByPk(id);
       if (!user) throw { name: "NotFound" };
 
-      await user.update({ name, username, password, status, role });
+      await user.update(
+        { name, username, password, status, role },
+        { validate: false },
+      );
 
       res.status(200).json({
         message: `Success update data for ${user.username}`,
