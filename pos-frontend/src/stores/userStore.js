@@ -168,10 +168,11 @@ const useUserStore = defineStore('user', () => {
   }
 
   async function editUser(options = {}) {
+    // console.log(options)
     try {
       const { id, name, username, password, role } = options
 
-      const response = await axios.put(
+      await axios.put(
         `${apiUrl}/auth/user/${id}`,
         {
           name,
@@ -183,10 +184,11 @@ const useUserStore = defineStore('user', () => {
           withCredentials: true,
         },
       )
-      console.log(response)
+      return true
     } catch (error) {
-      console.log(error)
-      errMessage.value = error
+      // console.log(error)
+      errMessage.value = error.response.data.message
+      return false
     }
   }
 

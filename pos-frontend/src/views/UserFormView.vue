@@ -3,25 +3,49 @@ import { onMounted, ref } from 'vue'
 import useUserStore from '../stores/userStore'
 import router from '@/router'
 import Swal from 'sweetalert2'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const userStore = useUserStore()
 const name = ref('')
 const username = ref('')
 const role = ref('')
 const password = ref('')
 
-onMounted(() => {})
+const id = route.params.id
+
+onMounted(async () => {
+  // console.log(id)
+  if (route.params.id) {
+    await userStore.getUserById(id)
+  }
+  name.value = userStore.selectedUser.name || ''
+  username.value = userStore.selectedUser.username || ''
+  role.value = userStore.selectedUser.role || ''
+  // console.log(userStore.selectedUser)
+})
 
 const handleForm = async () => {
-  const success = await userStore.createUser({
-    name: name.value,
-    username: username.value,
-    role: role.value,
-    password: password.value,
-  })
+  let success
+  if (!route.params.id) {
+    success = await userStore.createUser({
+      name: name.value,
+      username: username.value,
+      role: role.value,
+      password: password.value,
+    })
+    // console.log(success)
+  } else {
+    success = await userStore.editUser({
+      id,
+      name: name.value,
+      username: username.value,
+      password: password.value,
+      role: role.value,
+    })
+  }
 
   // console.log(success)
-
   if (success) {
     router.push('/users')
   } else {
@@ -143,7 +167,6 @@ const handleForm = async () => {
                 class="w-full pl-14 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                 id="password"
                 name="password"
-                placeholder="*********"
                 type="password"
               />
             </div>

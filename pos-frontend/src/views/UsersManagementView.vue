@@ -142,9 +142,12 @@ const handleDeleteUser = async (id) => {
                 </td>
                 <td class="text-right">
                   <div class="flex justify-end gap-1">
-                    <button class="p-1 text-slate-400 cursor-pointer hover:text-primary">
+                    <RouterLink
+                      :to="{ name: 'User Form Edit', params: { id: item.id } }"
+                      class="p-1 text-slate-400 cursor-pointer hover:text-primary"
+                    >
                       <span class="material-symbols-outlined text-[16px]!">edit</span>
-                    </button>
+                    </RouterLink>
                     <button class="p-1 text-slate-400 cursor-pointer hover:text-slate-600">
                       <span class="material-symbols-outlined text-[16px]!">visibility</span>
                     </button>
