@@ -76,15 +76,15 @@ const sidebarClasses = computed(() => [
         </div>
       </RouterLink>
 
-      <RouterLink to="/product">
-        <div
+      <!-- <RouterLink to="/product"> -->
+        <!-- <div
           class="flex items-center gap-3 px-3 py-2.5 dark:hover:bg-slate-800/50 dark:hover:text-slate-200 transition-all duration-200 group"
           :class="route.path === '/product' || route.path === '/product/add-product' || route.path === '/product/edit-product' ? 'font-bold text-primary-dark dark:text-primary bg-slate-50' : 'hover:ml-2 hover:border-b hover:border-white text-white dark:text-slate-400'"
         >
           <span class="material-symbols-outlined">inventory_2</span>
           <span>Produk</span>
-        </div>
-      </RouterLink>
+        </div> -->
+      <!-- </RouterLink> -->
 
       <RouterLink to="/inventory">
         <div
