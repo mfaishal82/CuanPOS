@@ -101,7 +101,11 @@ class UserController {
   static async getMe(req, res, next) {
     try {
       const id = req.user.id;
-      if (!id) throw { name: "NotFound" };
+      if (!id) {
+        return res.status(401).json({
+          message: "Token not found",
+        });
+      }
 
       const user = await User.findByPk(id, {
         attributes: ["id", "name", "username", "role", "image", "status"],

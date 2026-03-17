@@ -4,7 +4,7 @@ const { sequelize, User } = require("../models");
 const { queryInterface } = sequelize;
 const { hashPassword } = require("../helpers/bcrypt");
 
-const data1 = {
+const data = {
   name: "Testing Admin",
   username: "testadmin",
   password: hashPassword("12345678"),
@@ -22,7 +22,7 @@ beforeAll(async () => {
     cascade: true,
     restartIdentity: true,
   });
-  await queryInterface.bulkInsert("Users", [data1]);
+  await queryInterface.bulkInsert("Users", [data]);
 });
 
 afterAll(async () => {

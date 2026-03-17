@@ -3,8 +3,10 @@ async function errorHandler(error, req, res, next) {
   let status = error.status || 500
   let message = error.message || "Internal Server Error"
 
-  // console.log("Error name:", error.name)
-  // console.log("Error object:", error)
+  // if (status === 500) {
+  //   console.log("Error name:", error.name)
+  //   console.log("Error object:", error)
+  // }
   switch(error.name) {
     case "SequelizeUniqueConstraintError":
     case "SequelizeValidationError":
