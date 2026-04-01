@@ -33,11 +33,6 @@ module.exports = {
         allowNull: false,
         defaultValue: "cashier",
       },
-      image: {
-        type: DataTypes.STRING,
-        defaultValue:
-          "https://ik.imagekit.io/myfiles/vecteezy_male-profile-picture-placeholder-for-social-media-forum_.jpg",
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

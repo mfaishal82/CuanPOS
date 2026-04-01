@@ -1,4 +1,4 @@
-const app = require("../app");
+const app = require("../app.tsc");
 const request = require("supertest");
 const { sequelize, User } = require("../models");
 const { queryInterface } = sequelize;
