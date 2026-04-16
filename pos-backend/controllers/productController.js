@@ -13,16 +13,19 @@ const { Op } = require("sequelize");
 class ProductController {
   static async getProducts(req, res, next) {
     try {
-      let { page, limit, searchProduct, order, sort, category, barcode, sku } = req.query;
+      let { page, limit, searchProduct, order, sort, category, barcode, sku } =
+        req.query;
       page = parseInt(page) || 1;
       limit = parseInt(limit) || 10;
       const offset = (page - 1) * limit; // contoh: page 1 - 1 = 0 x 10 = 0 <-- offset / batas bawah
 
-      const cacheKey = `products:${page}:${limit}:${searchProduct || "all"}:${order || "updatedAt"}:${sort || "DESC"}:${category || "all"}:${barcode || "all"}:${sku || "all"}`;
-      const cacheData = await redis.get(cacheKey);
-      if (cacheData) {
-        // console.log("lewat")
-        return res.status(200).json(JSON.parse(cacheData));
+      if (process.env.NODE_ENV) {
+        const cacheKey = `products:${page}:${limit}:${searchProduct || "all"}:${order || "updatedAt"}:${sort || "DESC"}:${category || "all"}:${barcode || "all"}:${sku || "all"}`;
+        const cacheData = await redis.get(cacheKey);
+        if (cacheData) {
+          // console.log("lewat")
+          return res.status(200).json(JSON.parse(cacheData));
+        }
       }
       // console.log(cacheKey, '(<=== ini cache key')
       // console.log(cacheData, '(<=== ini cache data')
@@ -33,12 +36,12 @@ class ProductController {
           [Op.iLike]: `%${searchProduct}%`,
         };
       }
-      if (barcode && barcode !== 'all') {
+      if (barcode && barcode !== "all") {
         option.barcode = {
           [Op.iLike]: `%${barcode}%`,
         };
       }
-      if (sku && sku !== 'all') {
+      if (sku && sku !== "all") {
         option.sku = {
           [Op.iLike]: `%${sku}%`,
         };
@@ -87,8 +90,9 @@ class ProductController {
         data: rows,
       };
 
-      await redis.set(cacheKey, JSON.stringify(response));
-
+      if (process.env.NODE_ENV) {
+        await redis.set(cacheKey, JSON.stringify(response));
+      }
       res.status(200).json(response);
     } catch (error) {
       next(error);
