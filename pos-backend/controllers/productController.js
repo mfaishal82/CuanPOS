@@ -153,9 +153,11 @@ class ProductController {
         category_id: category,
       });
 
-      const keys = await redis.keys("products:*");
-      if (keys.length > 0) {
-        await redis.del(keys);
+      if (process.env.NODE_ENV) {
+        const keys = await redis.keys("products:*");
+        if (keys.length > 0) {
+          await redis.del(keys);
+        }
       }
 
       res.status(201).json({
@@ -217,9 +219,11 @@ class ProductController {
 
       await product.update(updateData);
 
-      const keys = await redis.keys("products:*");
-      if (keys.length > 0) {
-        await redis.del(keys);
+      if (process.env.NODE_ENV) {
+        const keys = await redis.keys("products:*");
+        if (keys.length > 0) {
+          await redis.del(keys);
+        }
       }
 
       res.status(200).json({
@@ -244,9 +248,11 @@ class ProductController {
       await product.destroy();
       await imageKit.files.delete(fileId);
 
-      const keys = await redis.keys("products:*");
-      if (keys.length > 0) {
-        await redis.del(keys);
+      if (process.env.NODE_ENV) {
+        const keys = await redis.keys("products:*");
+        if (keys.length > 0) {
+          await redis.del(keys);
+        }
       }
 
       res.status(200).json({
