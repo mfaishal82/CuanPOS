@@ -17,6 +17,7 @@ router.use("/category", require("./categoryRouter"));
 router.use("/purchase", require("./purchaseRouter"));
 router.use("/sale", require("./saleRouter"));
 router.use("/setting", require("./settingRouter"));
+router.use("/payment", require("./paymentRouter"));
 
 router.use(errorHandler);
 
