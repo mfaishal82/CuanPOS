@@ -29,10 +29,10 @@ class PaymentController {
         },
       );
 
-      console.log(
-        "QRIS Response dari Pakasir:",
-        JSON.stringify(qrisResponse.data, null, 2),
-      );
+      // console.log(
+      //   "QRIS Response dari Pakasir:",
+      //   JSON.stringify(qrisResponse.data, null, 2),
+      // );
 
       res.status(200).json({
         message: "QRIS created successfully",
@@ -75,6 +75,7 @@ class PaymentController {
           payment_amount,
           change_amount,
           payment_method,
+          payment_status: "paid",
         },
         { transaction: t },
       );
