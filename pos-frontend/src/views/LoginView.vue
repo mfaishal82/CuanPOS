@@ -180,7 +180,7 @@ function togglePassword() {
             <blockquote class="text-2xl font-bold text-white mb-6 leading-relaxed">
               "CuanPOS transformed how we manage our inventory. Sales are up 40% since we switched!"
             </blockquote>
-            <div class="flex items-center gap-4">
+            <!-- <div class="flex items-center gap-4">
               <img
                 alt="Portrait of a smiling business man"
                 class="w-12 h-12 rounded-full object-cover border-2 border-primary"
@@ -191,7 +191,7 @@ function togglePassword() {
                 <div class="text-white font-bold">Muhammad Faisal</div>
                 <div class="text-primary text-sm font-medium">Owner, Tech Haven</div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
         <div

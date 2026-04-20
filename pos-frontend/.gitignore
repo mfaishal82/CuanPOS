@@ -38,3 +38,5 @@ __screenshots__/
 .vercel
 .env*.local
 /src/views/TemplateView.vue
+
+.vercel
