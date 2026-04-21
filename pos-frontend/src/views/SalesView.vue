@@ -5,6 +5,8 @@ import useSaleStore from '@/stores/saleStore';
 import { computed, onMounted, ref } from 'vue';
 import { Html5Qrcode } from 'html5-qrcode'
 import { showToast } from '@/utils/toast';
+import usePaymentStore from '@/stores/paymentStore';
+import QrcodeVue from 'qrcode.vue';
 
 const loading = ref(false)
 // const product_id = ref('')
@@ -20,10 +22,13 @@ const payment_amount = ref(0)
 // const change_amount = ref(0)
 const showCart = ref(false)
 const showScanner = ref(false)
+const showQrisModal = ref(false)
+const qrisPaymentData = ref(null)
 // const cartQuantity = ref(0)
 const productCart = ref([])
 const productStore = useProductStore()
 const saleStore = useSaleStore()
+const paymentStore = usePaymentStore()
 
 let html5QrCode = null
 let lastScannedBarcode = ''
@@ -124,12 +129,17 @@ const handleInputCart = (product) => {
 }
 
 const handleForm = async () => {
+  const normalizedPaymentAmount = payment_method.value === 'QRIS'
+    ? cartSubtotal.value
+    : Number(payment_amount.value || 0)
 
-  if(payment_amount.value < cartSubtotal.value) {
+  if(payment_method.value !== 'QRIS' && normalizedPaymentAmount < cartSubtotal.value) {
     showToast(`Jumlah pembayaran harus lebih dari >=  Rp ${cartSubtotal.value}`, 'error')
     return
   }
+
   loading.value = true
+
   try {
     const items = productCart.value.map(item => ({
       product_id: item.product_id,
@@ -138,13 +148,36 @@ const handleForm = async () => {
 
     const paymentInfo = {
       payment_method: payment_method.value,
-      payment_amount: payment_amount.value,
+      payment_amount: normalizedPaymentAmount,
       change_amount: cartChangeAmount.value
     }
-    const success = await saleStore.createSale(items, paymentInfo)
+    const saleResult = await saleStore.createSale(items, paymentInfo)
 
-    if(success) {
-      showToast('Transaksi berhasil disimpan ✓', 'success')
+    if(saleResult.success) {
+      if (payment_method.value === 'QRIS') {
+        const createdSaleId = saleResult.data?.sale_id || saleResult.data?.id || saleResult.data?.sale?.id || saleResult.data?.sale?.sale_id
+
+        if (!createdSaleId) {
+          showToast('Transaksi berhasil, tapi sale_id untuk QRIS tidak ditemukan.', 'error')
+          return
+        }
+
+        const qrisResult = await paymentStore.createQRIS({
+          sale_id: createdSaleId,
+          payment_amount: normalizedPaymentAmount
+        })
+
+        if (!qrisResult.success || !qrisResult.data?.qris_code) {
+          showToast(qrisResult.message || 'Gagal membuat QRIS.', 'error')
+          return
+        }
+
+        qrisPaymentData.value = qrisResult.data
+        showQrisModal.value = true
+        showToast('QRIS berhasil dibuat. Silakan scan kode QR.', 'success')
+      } else {
+        showToast('Transaksi berhasil disimpan ✓', 'success')
+      }
 
       productCart.value = []
       payment_method.value = 'Cash'
@@ -163,7 +196,26 @@ const handleForm = async () => {
   } catch (error) {
     console.log(error)
     showToast('Error completing sale', 'error')
+  } finally {
+    loading.value = false
   }
+}
+
+const closeQrisModal = () => {
+  showQrisModal.value = false
+  qrisPaymentData.value = null
+}
+
+const formatRupiah = (value) => {
+  return Number(value || 0).toLocaleString('id-ID')
+}
+
+const formatQrisExpiredAt = (value) => {
+  if (!value) return '-'
+  return new Date(value).toLocaleString('id-ID', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  })
 }
 
 function startScan() {
@@ -264,7 +316,7 @@ function stopScan() {
             :class="showCart ? 'text-sm' : 'text-lg'"
             class="group bg-surface-light dark:bg-surface-dark rounded-2xl p-3 shadow-sm hover:shadow-lg transition-all border border-transparent hover:border-primary cursor-default flex flex-col h-full"
           >
-            <div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden mb-3 bg-gray-100">
+            <div class="relative w-full aspect-4/3 rounded-xl overflow-hidden mb-3 bg-gray-100">
               <img
                 :src="item.image"
                 class="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
@@ -298,7 +350,7 @@ function stopScan() {
     <!-- Side bar Cart -->
     <aside
       v-show="showCart"
-      class="max-w-[353px] max-md:min-w-full overflow-y-scroll bg-surface-light dark:bg-surface-dark border-l border-border-light dark:border-border-dark flex justifu-center flex-col z-30 shadow-xl shrink-0 transition-all duration-300">
+      class="max-w-88.25 max-md:min-w-full overflow-y-scroll bg-surface-light dark:bg-surface-dark border-l border-border-light dark:border-border-dark flex justifu-center flex-col z-30 shadow-xl shrink-0 transition-all duration-300">
       <form @submit.prevent="handleForm">
         <div
           class="p-3 border-b border-border-light dark:border-border-dark flex justify-between items-start"
@@ -392,7 +444,7 @@ function stopScan() {
             </div> -->
           </div>
           <!-- Payment method -->
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-2 gap-2">
             <button
               type="button"
               @click="payment_method = 'Cash'"
@@ -411,7 +463,7 @@ function stopScan() {
               <span class="material-symbols-outlined mb-1">qr_code_scanner</span>
               QRIS
             </button>
-            <button
+            <!-- <button
               type="button"
               @click="payment_method = 'Transfer'"
               :class="payment_method === 'Transfer' ? 'border-2 border-primary text-primary bg-white dark:bg-surface-dark' : 'border border-gray-200 dark:border-gray-700 bg-white dark:bg-surface-dark text-gray-500 dark:text-gray-400 hover:border-primary hover:text-primary'"
@@ -419,7 +471,7 @@ function stopScan() {
             >
               <span class="material-symbols-outlined mb-1">send</span>
               Transfer
-            </button>
+            </button> -->
           </div>
 
           <!-- Payment amount -->
@@ -474,12 +526,11 @@ function stopScan() {
 
           <button
             type="submit"
-            @click="handleForm"
             :disabled="loading ||productCart.length === 0"
             class="cursor-pointer w-full bg-primary hover:bg-primary-dark text-secondary font-bold text-lg py-3.5 rounded-xl shadow-lg shadow-green-200 dark:shadow-none hover:shadow-green-300 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
           >
             <span class="material-symbols-outlined">check_circle</span>
-            Selesaikan Pembayaran
+            {{ payment_method === 'QRIS' ? 'Proses Pembayaran' : 'Selesaikan Pembayaran' }}
           </button>
         </div>
         </form>
@@ -493,6 +544,47 @@ function stopScan() {
         <span v-if="cartQuantity" class="material-symbols-outlined text-[20px] hover:text-white duration-200">shopping_cart</span>
         <span v-else class="material-symbols-outlined text-[20px] hover:text-white duration-200">scan</span>
       </button>
+    </div>
+
+    <div
+      v-if="showQrisModal && qrisPaymentData"
+      class="fixed inset-0 z-50 bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-4"
+    >
+      <div class="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-5 space-y-4">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h3 class="text-xl font-bold text-secondary dark:text-white">Pembayaran QRIS</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Silakan scan QR di bawah ini.</p>
+          </div>
+          <button type="button" @click="closeQrisModal" class="cursor-pointer text-gray-500 hover:text-red-500">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-xl p-4 flex justify-center">
+          <QrcodeVue
+            :value="qrisPaymentData.qris_code"
+            :size="230"
+            level="M"
+            render-as="svg"
+          />
+        </div>
+
+        <div class="text-sm space-y-1 text-secondary dark:text-gray-100">
+          <div class="flex justify-between">
+            <span>Total</span>
+            <span class="font-semibold">Rp {{ formatRupiah(qrisPaymentData.total_payment) }}</span>
+          </div>
+          <div class="flex justify-between text-gray-500 dark:text-gray-400">
+            <span>Biaya Admin</span>
+            <span>Rp {{ formatRupiah(qrisPaymentData.fee) }}</span>
+          </div>
+          <div class="flex justify-between text-gray-500 dark:text-gray-400">
+            <span>Berlaku Sampai</span>
+            <span>{{ formatQrisExpiredAt(qrisPaymentData.expired_at) }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

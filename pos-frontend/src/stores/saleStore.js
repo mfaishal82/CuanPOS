@@ -16,9 +16,12 @@ const useSaleStore = defineStore('sale', () => {
 
   const createSale = async (items = [], paymentInfo = {}) => {
     if (!Array.isArray(items) || items.length === 0) {
-      console.error('❌ items must be a non-empty array')
+      // console.error('❌ items must be a non-empty array')
       errorMessage.value = 'Keranjang kosong!'
-      return false
+      return {
+        success: false,
+        data: null,
+      }
     }
 
     const { payment_method, payment_amount, change_amount } = paymentInfo
@@ -26,7 +29,7 @@ const useSaleStore = defineStore('sale', () => {
     loading.value = true
 
     try {
-      await axios.post(
+      const response = await axios.post(
         `${apiUrl}/sale/add-item`,
         {
           items,
@@ -40,11 +43,17 @@ const useSaleStore = defineStore('sale', () => {
       )
 
       errorMessage.value = ''
-      return true
+      return {
+        success: true,
+        data: response.data?.data || null,
+      }
     } catch (error) {
       console.error('❌ Create sale failed:', error.response?.data || error.message)
       errorMessage.value = error.response?.data?.message || 'Failed to create sale'
-      return false
+      return {
+        success: false,
+        data: null,
+      }
     } finally {
       loading.value = false
     }

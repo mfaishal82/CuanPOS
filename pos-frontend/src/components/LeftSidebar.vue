@@ -34,7 +34,7 @@ onClickOutside(sidebarReff, ()=> {
 })
 
 const sidebarClasses = computed(() => [
-  'w-64 max-md:absolute flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-gradient-to-br from-green-900 to-green-500 dark:bg-surface-dark flex flex-col transition-all duration-500 md:relative md:block',
+  'w-64 max-md:absolute flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-gradient-to-br from-green-900 to-green-500 dark:bg-surface-dark flex flex-col justify-between transition-all duration-500 md:relative md:block',
   responsiveStore.isMobile ? 'left-0 top-0 h-screen z-50' : 'hidden md:flex'
 ])
 
